@@ -1,0 +1,4 @@
+You can load a file of 0's and 1's as a starting population, or default to a randomly filled board. This is still pretty ugly.
+There are even some files up that you can load!
+
+This was created using VS2012 Express
