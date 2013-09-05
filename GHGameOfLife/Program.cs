@@ -15,8 +15,8 @@ namespace GameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 80; // Console width
-        static int CONSOLE_HEIGHT = 45; // Console height
+        static int CONSOLE_WIDTH = 46; // Console width
+        static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -32,20 +32,24 @@ namespace GameOfLife
                                               initConsWidth, initConsHeight, 
                                               initConsPosLeft, initConsPosTop };
 
-            InitializeConsole();
-            MainMenu();
+            bool validWindowSize = InitializeConsole();
+            MainMenu(validWindowSize);
             ResetConsole(initialValues);
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Initializes the console for display. 
         /// </summary>
-        private static void InitializeConsole()
+        private static bool InitializeConsole()
         {        
             /* Need to check the current window/buffer size before applying the
              * new size. An exception is thrown if the buffer somehow stays 
              * small and the window grows...
              */
+
+            if (CONSOLE_WIDTH < MIN_WIDTH || CONSOLE_HEIGHT < MIN_HEIGHT)
+                return false;
+
             Console.BackgroundColor = MenuEntries.DefaultBG;
             Console.ForegroundColor = MenuEntries.DefaultFG;
             Console.Title = "Ian's Game of Life";
@@ -90,6 +94,8 @@ namespace GameOfLife
             for (int i = 5; i < borderRight; i++)
                 Console.Write(horiz);
             Console.Write(botRight);
+
+            return true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -97,8 +103,14 @@ namespace GameOfLife
         /// you want to individually go through generations or just let it go
         /// for a certain number of generations.
         /// </summary>
-        private static void MainMenu()
+        private static void MainMenu( bool validWindowSize )
         {
+            if (!validWindowSize)
+            {
+                Console.WriteLine("Error: Window Size Too Small");
+                return;
+            }
+
             PopType pop = PopType.DEFAULT;
             RunType run = RunType.LOOP;
             

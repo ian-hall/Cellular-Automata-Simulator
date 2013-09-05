@@ -67,7 +67,7 @@ namespace GameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Just loops through the board until it has done the supplied number
-        /// of loops, or if until stopped.
+        /// of loops or until it is stopped.
         /// </summary>
         /// <param name="b">The board to get the next generation of</param>
         /// <param name="loops">Which generation to go to</param>
@@ -96,20 +96,29 @@ namespace GameOfLife
                         Console.Write("".PadRight(Console.WindowWidth));
                         Console.SetCursorPosition(unpauseLeft, printRow);
                         Console.Write(MenuEntries.Unpause);  
-                        Boolean spacePressed = false;
-                        while (!spacePressed)
+                        Boolean keyPressed = false;
+
+                        while (!keyPressed)
                         {
                             while (!Console.KeyAvailable)
                             {
-                                System.Threading.Thread.Sleep(100);
+                                System.Threading.Thread.Sleep(50);
                             }
-                            if (Console.ReadKey(true).Key == ConsoleKey.Spacebar)
+                            
+                            ConsoleKey pressed = Console.ReadKey(true).Key;
+                            if (pressed == ConsoleKey.Spacebar)
                             {
-                                spacePressed = true;
+                                keyPressed = true;
                                 Console.SetCursorPosition(0, printRow);
                                 Console.Write("".PadRight(Console.WindowWidth));
                                 Console.SetCursorPosition(pauseLeft, printRow);
                                 Console.Write(MenuEntries.Pause);  
+                            }
+                            // Early Exit
+                            else if (pressed == ConsoleKey.Escape)
+                            {
+                                keyPressed = true;
+                                i = maxGen;
                             }
                         }
                         
