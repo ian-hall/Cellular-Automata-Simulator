@@ -67,7 +67,7 @@ namespace GameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Just loops through the board until it has done the supplied number
-        /// of loops.
+        /// of loops, or if until stopped.
         /// </summary>
         /// <param name="b">The board to get the next generation of</param>
         /// <param name="loops">Which generation to go to</param>

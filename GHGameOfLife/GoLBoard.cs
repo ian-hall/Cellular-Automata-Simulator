@@ -235,7 +235,6 @@ namespace GameOfLife
                 Console.Write(write);
             }
 
-            //TODO: Add this to a buffer?
             Console.BackgroundColor = MenuEntries.DefaultBG;         
             int rowStart = space;
 

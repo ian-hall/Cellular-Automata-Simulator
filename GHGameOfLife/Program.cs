@@ -56,8 +56,8 @@ namespace GameOfLife
             Console.Clear();
 
             //hurr unicode
-            char vert =     '║'; //'\u2551'
-            char horiz =    '═'; //'\u2550'
+            char vert =     '║'; // '\u2551'
+            char horiz =    '═'; // '\u2550'
             char topLeft =  '╔'; // '\u2554'
             char topRight = '╗'; // '\u2557'
             char botLeft =  '╚'; // '\u255A'

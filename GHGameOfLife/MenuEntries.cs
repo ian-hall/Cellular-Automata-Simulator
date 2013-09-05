@@ -14,7 +14,7 @@ namespace GameOfLife
         public const String FilePop = "2) Load population from a file";
         public const String GetNext = "1) One generation at a time.";
         public const String Loop = "2) Just keep on loopin'";
-        public const String MaxGen = "Gen to go to: ";
+        public const String MaxGen = "Generation to go to: ";
         public const String Choice = "Your choice: ";
         public const String Err = "Invalid entry.";
 
@@ -22,7 +22,7 @@ namespace GameOfLife
         public const String FileError2 = "Loading default pop.";
         public const String Enter = "Press ENTER key";
 
-        public const String NextPrompt = "Get next (y/n)? ";
+        public const String NextPrompt = "Get next generation (y/n)? ";
         public const String Pause = "Press SPACE to pause";
         public const String Unpause = "Press SPACE to continue";
     }
