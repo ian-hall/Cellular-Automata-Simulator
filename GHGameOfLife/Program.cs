@@ -11,11 +11,11 @@ namespace GameOfLife
         enum RunType { NEXTGEN, LOOP };
 
         // Don't go below these values or the text will be screwy
-        const int MIN_WIDTH = 46;
+        const int MIN_WIDTH = 50;
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 46; // Console width
+        static int CONSOLE_WIDTH = 50; // Console width
         static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
@@ -99,10 +99,12 @@ namespace GameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Displays the main menu. Pick how to load the population and weather
+        /// Displays the main menu. Pick how to load the population and whether
         /// you want to individually go through generations or just let it go
         /// for a certain number of generations.
         /// </summary>
+        /// <param name="validWindowSize">Makes sure the console window
+        ///                                          is of adaquate size</param>
         private static void MainMenu( bool validWindowSize )
         {
             if (!validWindowSize)
@@ -114,7 +116,8 @@ namespace GameOfLife
             PopType pop = PopType.DEFAULT;
             RunType run = RunType.LOOP;
             
-            int welcomeLeft = (Console.WindowWidth / 2) - (MenuEntries.Welcome.Length / 2);
+            int welcomeLeft = (Console.WindowWidth / 2) - 
+                                            (MenuEntries.Welcome.Length / 2);
             Console.SetCursorPosition(welcomeLeft, 8);
             Console.Write(MenuEntries.Welcome);
 
@@ -134,7 +137,8 @@ namespace GameOfLife
                 Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
                 Console.Write(MenuEntries.Choice);
                 Console.CursorVisible = true;
-                int input = (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
+                int input = 
+                        (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
                 Console.CursorVisible = false;
                 if (input == 1)
                 {
@@ -176,7 +180,8 @@ namespace GameOfLife
                 Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
                 Console.Write(MenuEntries.Choice);
                 Console.CursorVisible = true;
-                int input = (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
+                int input = 
+                        (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
                 Console.CursorVisible = false;
                 if (input == 1)
                 {
@@ -253,7 +258,8 @@ namespace GameOfLife
                     }
                     else
                     {
-                        Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
+                        Console.SetCursorPosition(welcomeLeft, 
+                                                            windowCenter + 3);
                         Console.Write(MenuEntries.Err);
                         continue;
                     }
@@ -267,7 +273,7 @@ namespace GameOfLife
                 RunGame(pop, run);
             }
         }
-        //------------------------------------------------------------------------------
+        //----------------------------------------------------------------------
         /// <summary>
         /// This like runs the game or something
         /// </summary>
@@ -276,7 +282,8 @@ namespace GameOfLife
         /// <param name="maxPop"></param>
         private static void RunGame(PopType pop, RunType type, int maxPop = -1)
         {
-            GoLBoard initial = new GoLBoard(CONSOLE_HEIGHT - 10, CONSOLE_WIDTH - 10);
+            GoLBoard initial = new GoLBoard(CONSOLE_HEIGHT - 10, 
+                                                            CONSOLE_WIDTH - 10);
             switch (pop)
             {
                 case PopType.DEFAULT:
@@ -357,6 +364,10 @@ namespace GameOfLife
             Console.SetWindowSize(initConsoleWidth, initConsHeight);
             Console.SetBufferSize(initBuffWidth, initBuffHeight);      
             Console.ResetColor();
+            Console.WriteLine("Press any key to exit...");
+            while (!Console.KeyAvailable)
+                System.Threading.Thread.Sleep(50);
+            Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
     }

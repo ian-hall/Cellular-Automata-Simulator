@@ -22,18 +22,22 @@ namespace GameOfLife
             Boolean getNext = true;
             
             int printRow = (Console.WindowHeight) - 3;
-            int promoptLeft = (Console.WindowWidth / 2) - (MenuEntries.NextPrompt.Length / 2);
-            int errLeft = (Console.WindowWidth / 2) - (MenuEntries.Err.Length / 2);
+            int promoptLeft = (Console.WindowWidth / 2) - 
+                                            (MenuEntries.NextPrompt.Length / 2);
+            int errLeft = (Console.WindowWidth / 2) - 
+                                                   (MenuEntries.Err.Length / 2);
 
             while (getNext)
             {
                 Boolean validEntry = false;
                 while (!validEntry)
                 {
-                    Console.SetCursorPosition(0, printRow);
-                    Console.Write("".PadRight(Console.WindowWidth));
+                    MenuEntries.clearLine(printRow);
+                    /*Console.SetCursorPosition(0, printRow);
+                     *Console.Write("".PadRight(Console.WindowWidth));
+                     */
                     Console.SetCursorPosition(promoptLeft, printRow);
-                    Console.Write(MenuEntries.NextPrompt);     
+                    Console.Write(MenuEntries.NextPrompt);   
                     Console.CursorVisible = true;
                     char input = Console.ReadKey().KeyChar;
                     Console.CursorVisible = false;
@@ -54,14 +58,18 @@ namespace GameOfLife
                         continue;
                     }
                 }
-                Console.SetCursorPosition(0, printRow + 1);
-                Console.Write("".PadRight(Console.WindowWidth));  
+                MenuEntries.clearLine(printRow+1);
+                /*Console.SetCursorPosition(0, printRow + 1);
+                 *Console.Write("".PadRight(Console.WindowWidth));
+                 */
                 if (getNext)
                 {
                     b.Next();
                     b.Print();
                 }
             }
+            MenuEntries.clearLine(printRow);
+            MenuEntries.clearLine(printRow + 1);
             Console.CursorVisible = false;
         }
 //------------------------------------------------------------------------------
@@ -74,11 +82,15 @@ namespace GameOfLife
         public static void JustLoop(GoLBoard b, int maxGen)
         {
             int printRow = (Console.WindowHeight) - 3;
-            int pauseLeft = (Console.WindowWidth / 2) - (MenuEntries.Pause.Length / 2);
-            int unpauseLeft = (Console.WindowWidth / 2) - (MenuEntries.Unpause.Length / 2);
+            int pauseLeft = (Console.WindowWidth / 2) - 
+                                                 (MenuEntries.Pause.Length / 2);
+            int unpauseLeft = (Console.WindowWidth / 2) - 
+                                               (MenuEntries.Unpause.Length / 2);
 
-            Console.SetCursorPosition(0, printRow);
-            Console.Write("".PadRight(Console.WindowWidth));
+            MenuEntries.clearLine(printRow);
+            /*Console.SetCursorPosition(0, printRow);
+             *Console.Write("".PadRight(Console.WindowWidth));
+             */
             Console.SetCursorPosition(pauseLeft, printRow);
             Console.Write(MenuEntries.Pause);     
 
@@ -92,8 +104,10 @@ namespace GameOfLife
                     {
                         //If it is, wait until the bar is pressed again
                         //To start going again
-                        Console.SetCursorPosition(0, printRow);
-                        Console.Write("".PadRight(Console.WindowWidth));
+                        MenuEntries.clearLine(printRow);
+                        /*Console.SetCursorPosition(0, printRow);
+                         *Console.Write("".PadRight(Console.WindowWidth));
+                         */
                         Console.SetCursorPosition(unpauseLeft, printRow);
                         Console.Write(MenuEntries.Unpause);  
                         Boolean keyPressed = false;
@@ -109,8 +123,10 @@ namespace GameOfLife
                             if (pressed == ConsoleKey.Spacebar)
                             {
                                 keyPressed = true;
-                                Console.SetCursorPosition(0, printRow);
-                                Console.Write("".PadRight(Console.WindowWidth));
+                                MenuEntries.clearLine(printRow);
+                                /*Console.SetCursorPosition(0, printRow);
+                                 *Console.Write("".PadRight(Console.WindowWidth));
+                                 */                                
                                 Console.SetCursorPosition(pauseLeft, printRow);
                                 Console.Write(MenuEntries.Pause);  
                             }
@@ -118,7 +134,7 @@ namespace GameOfLife
                             else if (pressed == ConsoleKey.Escape)
                             {
                                 keyPressed = true;
-                                i = maxGen;
+                                i = maxGen;                              
                             }
                         }
                         
@@ -128,6 +144,7 @@ namespace GameOfLife
                 b.Print();
                 System.Threading.Thread.Sleep(33);
             }
+            MenuEntries.clearLine(printRow);
         }
 //------------------------------------------------------------------------------
     }

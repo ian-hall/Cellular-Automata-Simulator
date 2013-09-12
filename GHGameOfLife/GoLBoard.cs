@@ -74,7 +74,8 @@ namespace GameOfLife
         public void BuildFromFile()
         {
             OpenFileDialog openWindow = new OpenFileDialog();
-            if (openWindow.ShowDialog() == DialogResult.OK && ValidFile(openWindow.FileName))
+            if (openWindow.ShowDialog() == 
+                            DialogResult.OK && ValidFile(openWindow.FileName))
             {
                 StreamReader reader = new StreamReader(openWindow.FileName);
                 var rows = File.ReadLines(openWindow.FileName).Count();
@@ -142,7 +143,8 @@ namespace GameOfLife
             else
             {
                 int windowCenter = Console.WindowHeight / 2;
-                int welcomeLeft = (Console.WindowWidth / 2) - (MenuEntries.Welcome.Length / 2);
+                int welcomeLeft = (Console.WindowWidth / 2) - 
+                                            (MenuEntries.Welcome.Length / 2);
                 int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
 
                 //Clear the selection...
@@ -160,7 +162,8 @@ namespace GameOfLife
                 while (true)
                 {
                     char c = Console.ReadKey().KeyChar;
-                    Console.SetCursorPosition(welcomeLeft + MenuEntries.Enter.Length, windowCenter + 1);
+                    Console.SetCursorPosition(welcomeLeft + 
+                                MenuEntries.Enter.Length, windowCenter + 1);
                     Console.Write(" ");
                     if (c == '\r')
                     {
@@ -169,10 +172,11 @@ namespace GameOfLife
                     else
                     {
                         //Keeps the cursor in place until ENTER is pressed
-                        Console.SetCursorPosition(welcomeLeft + MenuEntries.Enter.Length, windowCenter + 1);
+                        Console.SetCursorPosition(welcomeLeft +
+                                MenuEntries.Enter.Length, windowCenter + 1);
                     }
                 }
- 
+
                 BuildDefaultPop();
             }
 
@@ -208,7 +212,6 @@ namespace GameOfLife
                     _Board[r, c] = nextBoard[r, c];
 
         }
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
         /// <summary>
         /// Displays the board in the console. It is centered in the console
