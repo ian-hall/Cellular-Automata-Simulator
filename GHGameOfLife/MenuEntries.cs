@@ -26,11 +26,12 @@ namespace GameOfLife
         public const String Pause       = "Press SPACE to pause";
         public const String Unpause     = "Press SPACE to continue " + 
                                                             "or ESC to exit";
-
+//------------------------------------------------------------------------------
         public static void clearLine(int row)
         {
             Console.SetCursorPosition(0, row);
             Console.Write("".PadRight(Console.WindowWidth));
         }
+//------------------------------------------------------------------------------
     }
 }

@@ -15,8 +15,8 @@ namespace GameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 50; // Console width
-        static int CONSOLE_HEIGHT = 30; // Console height
+        static int CONSOLE_WIDTH = 80; // Console width
+        static int CONSOLE_HEIGHT = 50; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -41,18 +41,21 @@ namespace GameOfLife
         /// Initializes the console for display. 
         /// </summary>
         private static bool InitializeConsole()
-        {        
+        {
+            Console.BackgroundColor = MenuEntries.DefaultBG;
+            Console.ForegroundColor = MenuEntries.DefaultFG;
+            Console.Title = "Ian's Game of Life";
             /* Need to check the current window/buffer size before applying the
              * new size. An exception is thrown if the buffer somehow stays 
              * small and the window grows...
              */
-
             if (CONSOLE_WIDTH < MIN_WIDTH || CONSOLE_HEIGHT < MIN_HEIGHT)
                 return false;
+            if (CONSOLE_WIDTH > Console.LargestWindowWidth ||
+                                CONSOLE_HEIGHT > Console.LargestWindowHeight)
+                return false;
 
-            Console.BackgroundColor = MenuEntries.DefaultBG;
-            Console.ForegroundColor = MenuEntries.DefaultFG;
-            Console.Title = "Ian's Game of Life";
+
             Console.SetWindowSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);
             Console.SetWindowPosition(0, 0);
             Console.SetBufferSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);                                 
@@ -109,7 +112,7 @@ namespace GameOfLife
         {
             if (!validWindowSize)
             {
-                Console.WriteLine("Error: Window Size Too Small");
+                Console.WriteLine("Error with console size");
                 return;
             }
 
@@ -315,7 +318,6 @@ namespace GameOfLife
             b.BuildDefaultPop();
             b.Print();
             GoLRunner.NextGeneration(b);
-            //GoLRunner.JustLoop(b);
         }
 //------------------------------------------------------------------------------
         private static void RunFromFile()
@@ -324,7 +326,6 @@ namespace GameOfLife
             b.BuildFromFile();
             b.Print();
             GoLRunner.NextGeneration(b);
-            //GoLRunner.JustLoop(b);
         }
 //------------------------------------------------------------------------------
         /// <summary>

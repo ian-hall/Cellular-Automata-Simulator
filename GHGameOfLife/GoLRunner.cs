@@ -33,9 +33,6 @@ namespace GameOfLife
                 while (!validEntry)
                 {
                     MenuEntries.clearLine(printRow);
-                    /*Console.SetCursorPosition(0, printRow);
-                     *Console.Write("".PadRight(Console.WindowWidth));
-                     */
                     Console.SetCursorPosition(promoptLeft, printRow);
                     Console.Write(MenuEntries.NextPrompt);   
                     Console.CursorVisible = true;
@@ -59,9 +56,6 @@ namespace GameOfLife
                     }
                 }
                 MenuEntries.clearLine(printRow+1);
-                /*Console.SetCursorPosition(0, printRow + 1);
-                 *Console.Write("".PadRight(Console.WindowWidth));
-                 */
                 if (getNext)
                 {
                     b.Next();
@@ -88,9 +82,6 @@ namespace GameOfLife
                                                (MenuEntries.Unpause.Length / 2);
 
             MenuEntries.clearLine(printRow);
-            /*Console.SetCursorPosition(0, printRow);
-             *Console.Write("".PadRight(Console.WindowWidth));
-             */
             Console.SetCursorPosition(pauseLeft, printRow);
             Console.Write(MenuEntries.Pause);     
 
@@ -105,9 +96,6 @@ namespace GameOfLife
                         //If it is, wait until the bar is pressed again
                         //To start going again
                         MenuEntries.clearLine(printRow);
-                        /*Console.SetCursorPosition(0, printRow);
-                         *Console.Write("".PadRight(Console.WindowWidth));
-                         */
                         Console.SetCursorPosition(unpauseLeft, printRow);
                         Console.Write(MenuEntries.Unpause);  
                         Boolean keyPressed = false;
@@ -123,10 +111,7 @@ namespace GameOfLife
                             if (pressed == ConsoleKey.Spacebar)
                             {
                                 keyPressed = true;
-                                MenuEntries.clearLine(printRow);
-                                /*Console.SetCursorPosition(0, printRow);
-                                 *Console.Write("".PadRight(Console.WindowWidth));
-                                 */                                
+                                MenuEntries.clearLine(printRow);                            
                                 Console.SetCursorPosition(pauseLeft, printRow);
                                 Console.Write(MenuEntries.Pause);  
                             }
