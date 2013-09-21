@@ -118,16 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Pop_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Pop 1.gol;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="canadagoose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\canadagoose;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Pop_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Pop 2.gol;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="growbyone" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\growbyone;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Pop_3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Pop 3.gol;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="shipinbottle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\shipinbottle;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Pop_4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\Pop 4.gol;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="sparky" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\sparky;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="twinbees" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\twinbees;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

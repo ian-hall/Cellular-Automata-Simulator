@@ -55,16 +55,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Resources\Pop 1.gol" />
-    <None Include="Resources\Pop 2.gol" />
-    <None Include="Resources\Pop 3.gol" />
-    <None Include="Resources\Pop 4.gol" />
+    <None Include="Resources\canadagoose" />
+    <None Include="Resources\growbyone" />
+    <None Include="Resources\twinbees" />
+    <None Include="Resources\shipinbottle" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="StartingPopulations.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>StartingPopulations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sparky" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -56,12 +56,12 @@ namespace GameOfLife
         /// </summary>
         public void BuildDefaultPop() 
         {
-            Random gen = new Random();
+            Random rand = new Random();
             for (int r = 0; r < _RowsUsed; r++)
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    _Board[r, c] = gen.Next()%2;
+                    _Board[r, c] = rand.Next()%2;
                 }
             }
         }
@@ -185,6 +185,7 @@ namespace GameOfLife
         /// <summary>
         /// Updates the board for the next generation of peoples
         /// </summary>
+        /// Need to enable wrapping here
         public void Next()
         {
             int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
@@ -273,10 +274,21 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the current dude dies.</returns>
+        /// Need to make this wrap
         public Boolean WillDie(int r, int c)
         {
             int n = 0;
 
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+
+            /*
             if (r != 0 && c != 0)
             {
                 if (_Board[r - 1, c - 1] == 1) n++;
@@ -309,7 +321,7 @@ namespace GameOfLife
             {
                 if (_Board[r + 1, c + 1] == 1) n++;
             }
-
+            */
             if (n < 2) return true;
             if (n > 3) return true;
             else return false;
@@ -323,10 +335,21 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the miracle of life occurs.</returns>
+        /// Need to make this wrap
         public Boolean WillBeBorn(int r, int c)
         {
             int n = 0;
+            
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;       
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;         
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;       
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;      
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;    
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;           
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;           
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
 
+            /*
             if (r != 0 && c != 0)
             {
                 if (_Board[r - 1, c - 1] == 1) n++;
@@ -359,7 +382,7 @@ namespace GameOfLife
             {
                 if (_Board[r + 1, c + 1] == 1) n++;
             }
-
+            */
             if (n == 3) return true;
             else return false;
         }

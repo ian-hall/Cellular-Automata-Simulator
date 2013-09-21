@@ -312,21 +312,21 @@ namespace GameOfLife
         }
 
 //------------------------------------------------------------------------------
-        private static void RunDefault()
+        /*private static void RunDefault()
         {
             GoLBoard b = new GoLBoard(CONSOLE_HEIGHT - 10, CONSOLE_WIDTH - 10);
             b.BuildDefaultPop();
             b.Print();
             GoLRunner.NextGeneration(b);
-        }
+        }*/
 //------------------------------------------------------------------------------
-        private static void RunFromFile()
+        /*private static void RunFromFile()
         {
             GoLBoard b = new GoLBoard(CONSOLE_HEIGHT - 10, CONSOLE_WIDTH - 10);
             b.BuildFromFile();
             b.Print();
             GoLRunner.NextGeneration(b);
-        }
+        }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.

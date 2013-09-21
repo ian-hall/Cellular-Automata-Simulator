@@ -63,9 +63,9 @@ namespace GHGameOfLife {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Pop_1 {
+        internal static byte[] canadagoose {
             get {
-                object obj = ResourceManager.GetObject("Pop_1", resourceCulture);
+                object obj = ResourceManager.GetObject("canadagoose", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace GHGameOfLife {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Pop_2 {
+        internal static byte[] growbyone {
             get {
-                object obj = ResourceManager.GetObject("Pop_2", resourceCulture);
+                object obj = ResourceManager.GetObject("growbyone", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace GHGameOfLife {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Pop_3 {
+        internal static byte[] shipinbottle {
             get {
-                object obj = ResourceManager.GetObject("Pop_3", resourceCulture);
+                object obj = ResourceManager.GetObject("shipinbottle", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -93,9 +93,19 @@ namespace GHGameOfLife {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] Pop_4 {
+        internal static byte[] sparky {
             get {
-                object obj = ResourceManager.GetObject("Pop_4", resourceCulture);
+                object obj = ResourceManager.GetObject("sparky", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] twinbees {
+            get {
+                object obj = ResourceManager.GetObject("twinbees", resourceCulture);
                 return ((byte[])(obj));
             }
         }
