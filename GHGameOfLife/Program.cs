@@ -15,8 +15,8 @@ namespace GameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 80; // Console width
-        static int CONSOLE_HEIGHT = 50; // Console height
+        static int CONSOLE_WIDTH = 50; // Console width
+        static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -33,6 +33,7 @@ namespace GameOfLife
                                               initConsPosLeft, initConsPosTop };
 
             bool validWindowSize = InitializeConsole();
+            //TODO Prompt to go again before resetting the console and closing
             MainMenu(validWindowSize);
             ResetConsole(initialValues);
         }
@@ -108,6 +109,9 @@ namespace GameOfLife
         /// </summary>
         /// <param name="validWindowSize">Makes sure the console window
         ///                                          is of adaquate size</param>
+        ///                                          
+        ///  TODO: Change this to default to stepping with the option to
+        ///  continuously run. Add choices of the preloaded populations
         private static void MainMenu( bool validWindowSize )
         {
             if (!validWindowSize)
@@ -127,7 +131,7 @@ namespace GameOfLife
             int windowCenter = Console.WindowHeight / 2;
 
             Console.SetCursorPosition(welcomeLeft, windowCenter-4);
-            Console.Write(MenuEntries.PlzChoose);
+            Console.Write(MenuEntries.PlsChoose);
 
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter-3);
             Console.Write(MenuEntries.DefPop);
@@ -206,7 +210,7 @@ namespace GameOfLife
 
             // Clear everything again for the next prompt
             Console.SetCursorPosition(welcomeLeft, windowCenter - 4);
-            Console.Write("".PadRight(MenuEntries.PlzChoose.Length));
+            Console.Write("".PadRight(MenuEntries.PlsChoose.Length));
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 3);
             Console.Write("".PadRight(MenuEntries.GetNext.Length));
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
@@ -218,7 +222,7 @@ namespace GameOfLife
 
             if (run == RunType.LOOP)
             {
-                int loopTo = 25;
+                int loopTo = -1;
                 validEntry = false;
                 int distToBorder = (CONSOLE_WIDTH - 5) - welcomeLeft;
                 while (!validEntry)
@@ -232,7 +236,6 @@ namespace GameOfLife
                     Console.CursorVisible = true;
                                 
                     String input = "";
-                    //int maxLen = distToBorder - MenuEntries.MaxGen.Length;
                     int maxLen = Int32.MaxValue.ToString().Length-1;
                     while (true)
                     {
@@ -299,7 +302,9 @@ namespace GameOfLife
 
             initial.Print();
 
-            switch(type)
+            GoLRunner.NewRunStyle(initial);
+
+            /*switch(type)
             {
                 case RunType.NEXTGEN:
                     GoLRunner.NextGeneration(initial);
@@ -307,26 +312,9 @@ namespace GameOfLife
                 case RunType.LOOP:
                     GoLRunner.JustLoop(initial, maxPop);
                     break;              
-            }
+            }*/
 
         }
-
-//------------------------------------------------------------------------------
-        /*private static void RunDefault()
-        {
-            GoLBoard b = new GoLBoard(CONSOLE_HEIGHT - 10, CONSOLE_WIDTH - 10);
-            b.BuildDefaultPop();
-            b.Print();
-            GoLRunner.NextGeneration(b);
-        }*/
-//------------------------------------------------------------------------------
-        /*private static void RunFromFile()
-        {
-            GoLBoard b = new GoLBoard(CONSOLE_HEIGHT - 10, CONSOLE_WIDTH - 10);
-            b.BuildFromFile();
-            b.Print();
-            GoLRunner.NextGeneration(b);
-        }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.

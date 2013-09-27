@@ -9,7 +9,7 @@ namespace GameOfLife
         public const ConsoleColor PopColor = ConsoleColor.Cyan;
         
         public const String Welcome     = "Welcome to the GAME OF LIFE!!!!";
-        public const String PlzChoose   = "Please choose an option!";
+        public const String PlsChoose   = "Please choose an option!";
         public const String DefPop      = "1) Random population";
         public const String FilePop     = "2) Load population from a file";
         public const String GetNext     = "1) One generation at a time";
@@ -19,13 +19,18 @@ namespace GameOfLife
         public const String Err         = "**Invalid entry**";
 
         public const String FileError1  = "Error loading file...";
-        public const String FileError2  = "Loading default pop.";
+        public const String FileError2  = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
         public const String NextPrompt  = "Get next generation (y/n)? ";
         public const String Pause       = "Press SPACE to pause";
         public const String Unpause     = "Press SPACE to continue " + 
                                                             "or ESC to exit";
+
+        public const String RunOptions1 = "Press SPACE to step through, " +
+                                                        "or pause if running.";
+        public const String RunOptions2 = "Press R to run continuously.";
+        public const String RunOptions3 = "Press ESC to exit";
 //------------------------------------------------------------------------------
         public static void clearLine(int row)
         {

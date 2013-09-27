@@ -132,5 +132,65 @@ namespace GameOfLife
             MenuEntries.clearLine(printRow);
         }
 //------------------------------------------------------------------------------
-    }
+        public static void NewRunStyle(GoLBoard b)
+        {
+            int printRow = (Console.WindowHeight) - 4;
+            int opt1Left = (Console.WindowWidth / 2) -
+                                            (MenuEntries.RunOptions1.Length / 2);
+            int opt2Left = (Console.WindowWidth / 2) -
+                                            (MenuEntries.RunOptions2.Length / 2);
+            int opt3Left = (Console.WindowWidth / 2) -
+                                            (MenuEntries.RunOptions3.Length / 2);
+
+            Console.SetCursorPosition(opt1Left, printRow++);
+            Console.Write(MenuEntries.RunOptions1);
+            Console.SetCursorPosition(opt2Left, printRow++);
+            Console.Write(MenuEntries.RunOptions2);
+            Console.SetCursorPosition(opt3Left, printRow);
+            Console.Write(MenuEntries.RunOptions3);
+            bool keepRunning = true;
+            while (keepRunning)
+            {
+                
+                if (Console.KeyAvailable)
+                {
+                    //Check if it is the space bar...
+                    if (Console.ReadKey(true).Key == ConsoleKey.Spacebar)
+                    {
+                        //If it is, wait until the bar is pressed again
+                        //To start going again
+                        Boolean keyPressed = false;
+
+                        while (!keyPressed)
+                        {
+                            while (!Console.KeyAvailable)
+                            {
+                                System.Threading.Thread.Sleep(50);
+                            }
+
+                            ConsoleKey pressed = Console.ReadKey(true).Key;
+                            if (pressed == ConsoleKey.Spacebar)
+                            {
+                                keyPressed = true;
+                            }
+                            // Early Exit
+                            else if (pressed == ConsoleKey.Escape)
+                            {
+                                keyPressed = true;
+                                keepRunning = false;
+                            }
+                        }
+
+                    }
+                }
+                b.Next();
+                b.Print();
+                System.Threading.Thread.Sleep(33);
+            }
+            MenuEntries.clearLine(printRow);
+            MenuEntries.clearLine(printRow + 1);
+            Console.CursorVisible = false;
+        }
+//------------------------------------------------------------------------------
+    } // end class
 }
