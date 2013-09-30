@@ -131,10 +131,12 @@ namespace GameOfLife
             Console.SetCursorPosition(welcomeLeft, windowCenter-4);
             Console.Write(MenuEntries.PlsChoose);
 
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter-3);
+            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 3);
             Console.Write(MenuEntries.PopChoice1);
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter-2);
+            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
             Console.Write(MenuEntries.PopChoice2);
+            //Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 1);
+            //Console.Write(MenuEntries.PopChoice3);
 
             Boolean validEntry = false;
             while (!validEntry)
@@ -175,7 +177,7 @@ namespace GameOfLife
 
             RunGame(pop);
         }
-        //----------------------------------------------------------------------
+//------------------------------------------------------------------------------
         /// <summary>
         /// This like runs the game or something
         /// </summary>

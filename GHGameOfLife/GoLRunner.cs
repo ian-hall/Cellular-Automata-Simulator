@@ -10,7 +10,7 @@ namespace GameOfLife
     /// </summary>
     static class GoLRunner
     {
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
         /// <summary>
         /// Goes through the board one generation at a time.
         /// Asks the user if they want to continue or not after each generation.
@@ -66,7 +66,7 @@ namespace GameOfLife
             MenuEntries.clearLine(printRow + 1);
             Console.CursorVisible = false;
         }*/
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
         /// <summary>
         /// Just loops through the board until it has done the supplied number
         /// of loops or until it is stopped.
@@ -130,7 +130,7 @@ namespace GameOfLife
             }
             MenuEntries.clearLine(printRow);
         }*/
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
         /// <summary>
         /// Runs the game
         /// </summary>
@@ -140,11 +140,11 @@ namespace GameOfLife
         {
             int printRow = (Console.WindowHeight) - 4;
             int opt1Left = (Console.WindowWidth / 2) -
-                                            (MenuEntries.RunOptions1.Length / 2);
+                                        (MenuEntries.RunOptions1.Length / 2);
             int opt2Left = (Console.WindowWidth / 2) -
-                                            (MenuEntries.RunOptions2.Length / 2);
+                                        (MenuEntries.RunOptions2.Length / 2);
             int opt3Left = (Console.WindowWidth / 2) -
-                                            (MenuEntries.RunOptions3.Length / 2);
+                                        (MenuEntries.RunOptions3.Length / 2);
 
             Console.SetCursorPosition(opt1Left, printRow++);
             Console.Write(MenuEntries.RunOptions1);
@@ -154,20 +154,23 @@ namespace GameOfLife
             Console.Write(MenuEntries.RunOptions3);
             bool go = true;
             bool continuous = false;
+            bool paused = true;
+            printStatus(continuous, paused);
             while (go)
             {
+                // If it isnt running, and no keys are pressed
                 while (!Console.KeyAvailable && !continuous)
                 {
-                    System.Threading.Thread.Sleep(33);
+                    System.Threading.Thread.Sleep(50);
                 }
-
+                // if it IS running, and no keys are pressed
                 while (!Console.KeyAvailable && continuous)
                 {
                     b.Next();
                     b.Print();
                     System.Threading.Thread.Sleep(33);
                 }
-
+                //if PAUSE is pressed while it is not running
                 ConsoleKey pressed = Console.ReadKey(true).Key;
                 if (pressed == ConsoleKey.Spacebar && !continuous)
                 {
@@ -175,11 +178,13 @@ namespace GameOfLife
                     b.Print();
                 }
 
-                /// if paused while autostepping, wait until space
+                /// if paused while running, wait until space
                 /// is pressed again to start going
                 if (pressed == ConsoleKey.Spacebar && continuous)
                 {
                     bool keyPressed = false;
+                    paused = true;
+                    printStatus(continuous, paused);
                     while (!keyPressed)
                     {
                         while (!Console.KeyAvailable)
@@ -187,15 +192,23 @@ namespace GameOfLife
                             System.Threading.Thread.Sleep(50);
                         }
 
-                        pressed = Console.ReadKey(true).Key;
-                        if (pressed == ConsoleKey.Spacebar)
+                        ConsoleKey pauseEntry = Console.ReadKey(true).Key;
+                        if (pauseEntry == ConsoleKey.Spacebar) //unpause
                         {
                             keyPressed = true;
+                            paused = false;
+                            printStatus(continuous, paused);
                         }
-                        else if (pressed == ConsoleKey.Escape)
+                        else if (pauseEntry == ConsoleKey.Escape)
                         {
                             keyPressed = true;
                             go = false;
+                        }
+                        else if (pauseEntry == ConsoleKey.R)
+                        {
+                            continuous = false;
+                            keyPressed = true;
+                            printStatus(continuous, paused);
                         }
                     }
                 }
@@ -203,6 +216,8 @@ namespace GameOfLife
                 if (pressed == ConsoleKey.R)
                 {
                     continuous  = !continuous;
+                    paused = !paused;
+                    printStatus(continuous, paused);
                 }
 
                 if (pressed == ConsoleKey.Escape)
@@ -214,6 +229,23 @@ namespace GameOfLife
             MenuEntries.clearLine(printRow + 1);
             Console.CursorVisible = false;
         }
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        private static void printStatus(bool running, bool paused)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            MenuEntries.clearLine(3);
+            if (running)
+            {
+                Console.SetCursorPosition(5, 3);
+                Console.Write("AUTO");
+            }
+            if (paused)
+            {
+                Console.SetCursorPosition(10, 3);
+                Console.Write("PAUSED");
+            }          
+            Console.ForegroundColor = MenuEntries.DefaultFG;
+        }
+ //------------------------------------------------------------------------------
     } // end class
 }
