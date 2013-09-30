@@ -19,32 +19,22 @@ namespace GameOfLife
         private int _ColsUsed;
         private int _Generation;
         private const char _LiveCell = '☻';
+        private const char _DeadCell = ' ';
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
         /// off the size of the console window...
         /// </summary>
-        /// <param name="rowMax"></param>
-        /// <param name="colMax"></param>
+        /// <param name="rowMax">Number of rows</param>
+        /// <param name="colMax">Number of columns</param>
         public GoLBoard(int rowMax, int colMax)
         {
-            if (rowMax < 20 || colMax < 20)
-            {
-                Console.WriteLine("Must be 20x20 or larger");
-                Environment.Exit(1);
-            }
-
-            int[,] tempBoard = new int[rowMax, colMax];
             _Board = new int[rowMax, colMax];
             for (int r = 0; r < rowMax; r++)
             {
                 for (int c = 0; c < colMax; c++)
-                    tempBoard[r, c] = 0;
+                    _Board[r, c] = 0;
             }
-
-            for (int r = 0; r < _RowsUsed; r++)
-                for (int c = 0; c < _ColsUsed; c++)
-                    _Board[r, c] = tempBoard[r, c];
 
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
@@ -141,8 +131,8 @@ namespace GameOfLife
                 reader.Close();
             }
             else
-            {
-                int windowCenter = Console.WindowHeight / 2;
+            {   //Error loading file
+                int windowCenter = Console.WindowHeight / 2; //Vert position
                 int welcomeLeft = (Console.WindowWidth / 2) - 
                                             (MenuEntries.Welcome.Length / 2);
                 int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
@@ -231,8 +221,7 @@ namespace GameOfLife
             else
             {
                 Console.SetCursorPosition(0, 1);
-                String clear = " ";
-                Console.Write(clear.PadRight(Console.WindowWidth));
+                Console.Write(" ".PadRight(Console.WindowWidth));
                 String write = "Generation " + _Generation;
                 int left = (Console.WindowWidth/2) - (write.Length / 2);
                 Console.SetCursorPosition(left, 1);
@@ -249,8 +238,9 @@ namespace GameOfLife
                 {
                     int check = _Board[r, c];
                     if (check == 0)
-                    {                        
-                        Console.Write(' ');
+                    {
+                        Console.ForegroundColor = MenuEntries.DeadColor;
+                        Console.Write(_DeadCell);
                     }
                     else
                     {
@@ -274,7 +264,6 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the current dude dies.</returns>
-        /// Need to make this wrap
         public Boolean WillDie(int r, int c)
         {
             int n = 0;
@@ -288,40 +277,6 @@ namespace GameOfLife
             if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
             if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
 
-            /*
-            if (r != 0 && c != 0)
-            {
-                if (_Board[r - 1, c - 1] == 1) n++;
-            }
-            if (r != 0 && c != _ColsUsed - 1)
-            {
-                if (_Board[r - 1, c + 1] == 1) n++;
-            }
-            if (r != 0)
-            {
-                if (_Board[r - 1, c] == 1) n++;
-            }
-            if (r != _RowsUsed - 1 && c != 0)
-            {
-                if (_Board[r + 1, c - 1] == 1) n++;
-            }
-            if (c != 0)
-            {
-                if (_Board[r, c - 1] == 1) n++;
-            }
-            if (r != _RowsUsed - 1)
-            {
-                if (_Board[r + 1, c] == 1) n++;
-            }
-            if (c != _ColsUsed - 1)
-            {
-                if (_Board[r, c + 1] == 1) n++;
-            }
-            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
-            {
-                if (_Board[r + 1, c + 1] == 1) n++;
-            }
-            */
             if (n < 2) return true;
             if (n > 3) return true;
             else return false;
@@ -335,7 +290,6 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the miracle of life occurs.</returns>
-        /// Need to make this wrap
         public Boolean WillBeBorn(int r, int c)
         {
             int n = 0;
@@ -349,40 +303,6 @@ namespace GameOfLife
             if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;           
             if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
 
-            /*
-            if (r != 0 && c != 0)
-            {
-                if (_Board[r - 1, c - 1] == 1) n++;
-            }
-            if (r != 0 && c != _ColsUsed - 1)
-            {
-                if (_Board[r - 1, c + 1] == 1) n++;
-            }
-            if (r != 0)
-            {
-                if (_Board[r - 1, c] == 1) n++;
-            }
-            if (r != _RowsUsed - 1 && c != 0)
-            {
-                if (_Board[r + 1, c - 1] == 1) n++;
-            }
-            if (c != 0)
-            {
-                if (_Board[r, c - 1] == 1) n++;
-            }
-            if (r != _RowsUsed - 1)
-            {
-                if (_Board[r + 1, c] == 1) n++;
-            }
-            if (c != _ColsUsed - 1)
-            {
-                if (_Board[r, c + 1] == 1) n++;
-            }
-            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
-            {
-                if (_Board[r + 1, c + 1] == 1) n++;
-            }
-            */
             if (n == 3) return true;
             else return false;
         }
@@ -423,7 +343,7 @@ namespace GameOfLife
         /// Makes sure there are only 1s and 0s in a given string, used to 
         /// validate the file loaded in BuildFromFile()
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">current string</param>
         /// <returns>True if the string is 1s and 0s</returns>
         private Boolean OnesAndZerosOnly(String s)
         {

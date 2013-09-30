@@ -9,22 +9,22 @@ namespace GameOfLife
     /// certain generation.
     /// </summary>
     static class GoLRunner
-    {   
-//------------------------------------------------------------------------------
+    {
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Goes through the board one generation at a time.
         /// Asks the user if they want to continue or not after each generation.
         /// Returns true when the user is done.
         /// </summary>
         /// <param name="b">The board to get the next generation of</param>
-        public static void NextGeneration(GoLBoard b)
+        /*public static void NextGeneration(GoLBoard b)
         {
             Boolean getNext = true;
-            
+
             int printRow = (Console.WindowHeight) - 3;
-            int promoptLeft = (Console.WindowWidth / 2) - 
+            int promoptLeft = (Console.WindowWidth / 2) -
                                             (MenuEntries.NextPrompt.Length / 2);
-            int errLeft = (Console.WindowWidth / 2) - 
+            int errLeft = (Console.WindowWidth / 2) -
                                                    (MenuEntries.Err.Length / 2);
 
             while (getNext)
@@ -34,7 +34,7 @@ namespace GameOfLife
                 {
                     MenuEntries.clearLine(printRow);
                     Console.SetCursorPosition(promoptLeft, printRow);
-                    Console.Write(MenuEntries.NextPrompt);   
+                    Console.Write(MenuEntries.NextPrompt);
                     Console.CursorVisible = true;
                     char input = Console.ReadKey().KeyChar;
                     Console.CursorVisible = false;
@@ -55,7 +55,7 @@ namespace GameOfLife
                         continue;
                     }
                 }
-                MenuEntries.clearLine(printRow+1);
+                MenuEntries.clearLine(printRow + 1);
                 if (getNext)
                 {
                     b.Next();
@@ -65,28 +65,30 @@ namespace GameOfLife
             MenuEntries.clearLine(printRow);
             MenuEntries.clearLine(printRow + 1);
             Console.CursorVisible = false;
-        }
-//------------------------------------------------------------------------------
+        }*/
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Just loops through the board until it has done the supplied number
         /// of loops or until it is stopped.
         /// </summary>
         /// <param name="b">The board to get the next generation of</param>
         /// <param name="loops">Which generation to go to</param>
-        public static void JustLoop(GoLBoard b, int maxGen)
+        /*public static void JustLoop(GoLBoard b, int maxGen)
         {
             int printRow = (Console.WindowHeight) - 3;
-            int pauseLeft = (Console.WindowWidth / 2) - 
+            int pauseLeft = (Console.WindowWidth / 2) -
                                                  (MenuEntries.Pause.Length / 2);
-            int unpauseLeft = (Console.WindowWidth / 2) - 
+            int unpauseLeft = (Console.WindowWidth / 2) -
                                                (MenuEntries.Unpause.Length / 2);
 
             MenuEntries.clearLine(printRow);
             Console.SetCursorPosition(pauseLeft, printRow);
-            Console.Write(MenuEntries.Pause);     
+            Console.Write(MenuEntries.Pause);
 
             for (int i = 0; i < maxGen; i++)
             {
+                b.Next();
+                b.Print();
                 //If the user is pressing a button...
                 if (Console.KeyAvailable)
                 {
@@ -97,7 +99,7 @@ namespace GameOfLife
                         //To start going again
                         MenuEntries.clearLine(printRow);
                         Console.SetCursorPosition(unpauseLeft, printRow);
-                        Console.Write(MenuEntries.Unpause);  
+                        Console.Write(MenuEntries.Unpause);
                         Boolean keyPressed = false;
 
                         while (!keyPressed)
@@ -106,32 +108,34 @@ namespace GameOfLife
                             {
                                 System.Threading.Thread.Sleep(50);
                             }
-                            
+
                             ConsoleKey pressed = Console.ReadKey(true).Key;
                             if (pressed == ConsoleKey.Spacebar)
                             {
                                 keyPressed = true;
-                                MenuEntries.clearLine(printRow);                            
+                                MenuEntries.clearLine(printRow);
                                 Console.SetCursorPosition(pauseLeft, printRow);
-                                Console.Write(MenuEntries.Pause);  
+                                Console.Write(MenuEntries.Pause);
                             }
                             // Early Exit
                             else if (pressed == ConsoleKey.Escape)
                             {
                                 keyPressed = true;
-                                i = maxGen;                              
+                                i = maxGen;
                             }
                         }
-                        
                     }
                 }
-                b.Next();
-                b.Print();
                 System.Threading.Thread.Sleep(33);
             }
             MenuEntries.clearLine(printRow);
-        }
-//------------------------------------------------------------------------------
+        }*/
+        //------------------------------------------------------------------------------
+        /// <summary>
+        /// Runs the game
+        /// </summary>
+        /// <param name="b">The board to start with</param>
+        /// TODO: Add a status display
         public static void NewRunStyle(GoLBoard b)
         {
             int printRow = (Console.WindowHeight) - 4;
@@ -148,49 +152,68 @@ namespace GameOfLife
             Console.Write(MenuEntries.RunOptions2);
             Console.SetCursorPosition(opt3Left, printRow);
             Console.Write(MenuEntries.RunOptions3);
-            bool keepRunning = true;
-            while (keepRunning)
+            bool go = true;
+            bool continuous = false;
+            while (go)
             {
-                
-                if (Console.KeyAvailable)
+                while (!Console.KeyAvailable && !continuous)
                 {
-                    //Check if it is the space bar...
-                    if (Console.ReadKey(true).Key == ConsoleKey.Spacebar)
+                    System.Threading.Thread.Sleep(33);
+                }
+
+                while (!Console.KeyAvailable && continuous)
+                {
+                    b.Next();
+                    b.Print();
+                    System.Threading.Thread.Sleep(33);
+                }
+
+                ConsoleKey pressed = Console.ReadKey(true).Key;
+                if (pressed == ConsoleKey.Spacebar && !continuous)
+                {
+                    b.Next();
+                    b.Print();
+                }
+
+                /// if paused while autostepping, wait until space
+                /// is pressed again to start going
+                if (pressed == ConsoleKey.Spacebar && continuous)
+                {
+                    bool keyPressed = false;
+                    while (!keyPressed)
                     {
-                        //If it is, wait until the bar is pressed again
-                        //To start going again
-                        Boolean keyPressed = false;
-
-                        while (!keyPressed)
+                        while (!Console.KeyAvailable)
                         {
-                            while (!Console.KeyAvailable)
-                            {
-                                System.Threading.Thread.Sleep(50);
-                            }
-
-                            ConsoleKey pressed = Console.ReadKey(true).Key;
-                            if (pressed == ConsoleKey.Spacebar)
-                            {
-                                keyPressed = true;
-                            }
-                            // Early Exit
-                            else if (pressed == ConsoleKey.Escape)
-                            {
-                                keyPressed = true;
-                                keepRunning = false;
-                            }
+                            System.Threading.Thread.Sleep(50);
                         }
 
+                        pressed = Console.ReadKey(true).Key;
+                        if (pressed == ConsoleKey.Spacebar)
+                        {
+                            keyPressed = true;
+                        }
+                        else if (pressed == ConsoleKey.Escape)
+                        {
+                            keyPressed = true;
+                            go = false;
+                        }
                     }
                 }
-                b.Next();
-                b.Print();
-                System.Threading.Thread.Sleep(33);
+
+                if (pressed == ConsoleKey.R)
+                {
+                    continuous  = !continuous;
+                }
+
+                if (pressed == ConsoleKey.Escape)
+                {
+                    go = false;
+                }
             }
             MenuEntries.clearLine(printRow);
             MenuEntries.clearLine(printRow + 1);
             Console.CursorVisible = false;
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
     } // end class
 }

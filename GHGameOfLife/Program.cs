@@ -7,16 +7,16 @@ namespace GameOfLife
 {
     class Program
     {
-        enum PopType { DEFAULT, FILE };
-        enum RunType { NEXTGEN, LOOP };
+        enum PopType { RANDOM, FILE };
+        //enum RunType { NEXTGEN, LOOP };
 
         // Don't go below these values or the text will be screwy
         const int MIN_WIDTH = 50;
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 50; // Console width
-        static int CONSOLE_HEIGHT = 30; // Console height
+        static int CONSOLE_WIDTH = 80; // Console width
+        static int CONSOLE_HEIGHT = 50; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -33,8 +33,9 @@ namespace GameOfLife
                                               initConsPosLeft, initConsPosTop };
 
             bool validWindowSize = InitializeConsole();
-            //TODO Prompt to go again before resetting the console and closing
+            
             MainMenu(validWindowSize);
+            //TODO Prompt to go again before resetting the console and closing
             ResetConsole(initialValues);
         }
 //------------------------------------------------------------------------------
@@ -110,33 +111,30 @@ namespace GameOfLife
         /// <param name="validWindowSize">Makes sure the console window
         ///                                          is of adaquate size</param>
         ///                                          
-        ///  TODO: Change this to default to stepping with the option to
-        ///  continuously run. Add choices of the preloaded populations
+        ///  TODO: Add menu to select preloaded populations
         private static void MainMenu( bool validWindowSize )
         {
             if (!validWindowSize)
             {
-                Console.WriteLine("Error with console size");
+                Console.WriteLine("Problem with console size");
                 return;
             }
 
-            PopType pop = PopType.DEFAULT;
-            RunType run = RunType.LOOP;
-            
+            PopType pop = PopType.RANDOM;
+            //RunType run = RunType.LOOP;
+            int windowCenter = Console.WindowHeight / 2; //Vertical Position
             int welcomeLeft = (Console.WindowWidth / 2) - 
                                             (MenuEntries.Welcome.Length / 2);
             Console.SetCursorPosition(welcomeLeft, 8);
             Console.Write(MenuEntries.Welcome);
 
-            int windowCenter = Console.WindowHeight / 2;
-
             Console.SetCursorPosition(welcomeLeft, windowCenter-4);
             Console.Write(MenuEntries.PlsChoose);
 
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter-3);
-            Console.Write(MenuEntries.DefPop);
+            Console.Write(MenuEntries.PopChoice1);
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter-2);
-            Console.Write(MenuEntries.FilePop);
+            Console.Write(MenuEntries.PopChoice2);
 
             Boolean validEntry = false;
             while (!validEntry)
@@ -149,7 +147,7 @@ namespace GameOfLife
                 Console.CursorVisible = false;
                 if (input == 1)
                 {
-                    pop = PopType.DEFAULT;
+                    pop = PopType.RANDOM;
                     validEntry = true;
                 }
                 else if (input == 2)
@@ -165,119 +163,17 @@ namespace GameOfLife
                 }
             }
            
-            //Clear the current options and...
+            //Clear the current options
             Console.SetCursorPosition(welcomeLeft+4, windowCenter - 3);
-            Console.Write("".PadRight(MenuEntries.DefPop.Length));
+            Console.Write("".PadRight(MenuEntries.PopChoice1.Length));
             Console.SetCursorPosition(welcomeLeft+4, windowCenter - 2);
-            Console.Write("".PadRight(MenuEntries.FilePop.Length));
+            Console.Write("".PadRight(MenuEntries.PopChoice2.Length));
             Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
             Console.Write("".PadRight(MenuEntries.Choice.Length+2));
             Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
             Console.Write("".PadRight(MenuEntries.Err.Length));
 
-            // ...add the new options!
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 3);
-            Console.Write(MenuEntries.GetNext);
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
-            Console.Write(MenuEntries.Loop);
-
-            validEntry = false;
-            while (!validEntry)
-            {
-                Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
-                Console.Write(MenuEntries.Choice);
-                Console.CursorVisible = true;
-                int input = 
-                        (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
-                Console.CursorVisible = false;
-                if (input == 1)
-                {
-                    run = RunType.NEXTGEN;
-                    validEntry = true;
-                }
-                else if (input == 2)
-                {
-                    run = RunType.LOOP;
-                    validEntry = true;
-                }
-                else
-                {
-                    Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
-                    Console.Write(MenuEntries.Err);
-                    continue;
-                }
-            }
-
-            // Clear everything again for the next prompt
-            Console.SetCursorPosition(welcomeLeft, windowCenter - 4);
-            Console.Write("".PadRight(MenuEntries.PlsChoose.Length));
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 3);
-            Console.Write("".PadRight(MenuEntries.GetNext.Length));
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
-            Console.Write("".PadRight(MenuEntries.Loop.Length));
-            Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
-            Console.Write("".PadRight(MenuEntries.Choice.Length + 2));
-            Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
-            Console.Write("".PadRight(MenuEntries.Err.Length));
-
-            if (run == RunType.LOOP)
-            {
-                int loopTo = -1;
-                validEntry = false;
-                int distToBorder = (CONSOLE_WIDTH - 5) - welcomeLeft;
-                while (!validEntry)
-                {
-                    Console.SetCursorPosition(welcomeLeft, windowCenter);
-                    Console.Write("".PadRight(distToBorder));
-                    Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                    Console.Write(MenuEntries.Enter);
-                    Console.SetCursorPosition(welcomeLeft, windowCenter);
-                    Console.Write(MenuEntries.MaxGen);                    
-                    Console.CursorVisible = true;
-                                
-                    String input = "";
-                    int maxLen = Int32.MaxValue.ToString().Length-1;
-                    while (true)
-                    {
-                        char c = Console.ReadKey(true).KeyChar;
-                        if (c == '\r')
-                            break;
-                        if (c == '\b')
-                        {
-                            if (input != "")
-                            {
-                                input = input.Substring(0, input.Length - 1);
-                                Console.Write("\b \b");
-                            }
-                        }
-                        else if (input.Length < maxLen)
-                        {
-                            Console.Write(c);
-                            input += c;
-                        }
-                    }
-                    Console.CursorVisible = false;
-                    if (IsValidNumber(input))
-                    {
-                        loopTo = Int32.Parse(input);
-                        validEntry = true;
-                    }
-                    else
-                    {
-                        Console.SetCursorPosition(welcomeLeft, 
-                                                            windowCenter + 3);
-                        Console.Write(MenuEntries.Err);
-                        continue;
-                    }
-                }
-                Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
-                Console.Write("".PadRight(MenuEntries.Err.Length));
-                RunGame(pop, run, loopTo);
-            }
-            else
-            {
-                RunGame(pop, run);
-            }
+            RunGame(pop);
         }
         //----------------------------------------------------------------------
         /// <summary>
@@ -286,13 +182,13 @@ namespace GameOfLife
         /// <param name="pop"></param>
         /// <param name="type"></param>
         /// <param name="maxPop"></param>
-        private static void RunGame(PopType pop, RunType type, int maxPop = -1)
+        private static void RunGame(PopType pop/*, RunType type, int maxPop = -1*/)
         {
             GoLBoard initial = new GoLBoard(CONSOLE_HEIGHT - 10, 
                                                             CONSOLE_WIDTH - 10);
             switch (pop)
             {
-                case PopType.DEFAULT:
+                case PopType.RANDOM:
                     initial.BuildDefaultPop();
                     break;
                 case PopType.FILE:
@@ -322,7 +218,7 @@ namespace GameOfLife
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static Boolean IsValidNumber(String s)
+        /*private static Boolean IsValidNumber(String s)
         {
             try
             {
@@ -337,7 +233,7 @@ namespace GameOfLife
             {
                 return false;
             }
-        }
+        }*/
 //------------------------------------------------------------------------------
         private static void ResetConsole( int[] initValues)
         {
@@ -348,14 +244,17 @@ namespace GameOfLife
             int initConsolePosLeft = initValues[4];
             int initConsolePosTop = initValues[5];
 
+            MenuEntries.clearLine(CONSOLE_HEIGHT - 2);
+            Console.SetCursorPosition(0, CONSOLE_HEIGHT - 2);
+            Console.Write("Press any key to exit...");
+            while (!Console.KeyAvailable)
+                System.Threading.Thread.Sleep(50);
+            
             Console.SetWindowSize(1, 1);
             Console.SetWindowPosition(initConsolePosLeft, initConsolePosTop);
             Console.SetWindowSize(initConsoleWidth, initConsHeight);
             Console.SetBufferSize(initBuffWidth, initBuffHeight);      
             Console.ResetColor();
-            Console.WriteLine("Press any key to exit...");
-            while (!Console.KeyAvailable)
-                System.Threading.Thread.Sleep(50);
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
