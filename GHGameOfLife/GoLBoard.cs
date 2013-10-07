@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 
-namespace GameOfLife
+namespace GHGameOfLife
 {
     /// <summary>
     /// This class pretty much does everything. It sets up the console, 
@@ -61,114 +61,128 @@ namespace GameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        public void BuildFromFile()
+        public void BuildFromFile(StreamReader reader = null)
         {
-            OpenFileDialog openWindow = new OpenFileDialog();
-            if (openWindow.ShowDialog() == 
-                            DialogResult.OK && ValidFile(openWindow.FileName))
+            MenuEntries.FileErrorType errType;
+            if (reader == null)
+            {            
+                OpenFileDialog openWindow = new OpenFileDialog();
+                if (openWindow.ShowDialog() ==
+                                DialogResult.OK && ValidFile(openWindow.FileName, out errType))
+                {
+                    reader = new StreamReader(openWindow.FileName);
+                }
+                else
+                {   //Error loading file                  
+                    int windowCenter = Console.WindowHeight / 2; //Vert position
+                    int welcomeLeft = (Console.WindowWidth / 2) -
+                                                (MenuEntries.Welcome.Length / 2);
+                    int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
+
+                    //Clear the selection...
+                    //Console.SetCursorPosition(welcomeLeft, windowCenter);
+                    //Console.Write("".PadRight(distToBorder));
+                    MenuEntries.clearWithinBorder(windowCenter);
+
+                    Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
+                    Console.Write(MenuEntries.FileError1);
+                    Console.SetCursorPosition(welcomeLeft, windowCenter);
+                    Console.Write(MenuEntries.FileError2);
+                    Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
+                    Console.Write(MenuEntries.Enter);
+
+                    /// Change to Console.KeyAvailable
+                    while (true)
+                    {
+                        char c = Console.ReadKey().KeyChar;
+                        Console.SetCursorPosition(welcomeLeft +
+                                    MenuEntries.Enter.Length, windowCenter + 1);
+                        Console.Write(" ");
+                        if (c == '\r')
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            //Keeps the cursor in place until ENTER is pressed
+                            Console.SetCursorPosition(welcomeLeft +
+                                    MenuEntries.Enter.Length, windowCenter + 1);
+                        }
+                    }
+
+                    BuildDefaultPop();
+                    return; //move outside
+                }
+            }
+            int rows = 0;
+            while (!reader.EndOfStream)
             {
-                StreamReader reader = new StreamReader(openWindow.FileName);
-                var rows = File.ReadLines(openWindow.FileName).Count();
-                int[][] startingPop = new int[rows][];
+                reader.ReadLine();
+                rows++;
+            }
+            reader.BaseStream.Position = 0;
 
-                int currRow = 0;
-                while (!reader.EndOfStream)
+            int[][] startingPop = new int[rows][];
+
+            int currRow = 0;
+            while (!reader.EndOfStream)
+            {
+                String currLine = reader.ReadLine();
+                int[] temp = new int[currLine.Length];
+                for (int i = 0; i < temp.Length; i++)
                 {
-                    String currLine = reader.ReadLine();
-                    int[] temp = new int[currLine.Length];
-                    for (int i = 0; i < temp.Length; i++)
-                    {
-                        temp[i] = (int)char.GetNumericValue(currLine[i]);
-                    }
-                    startingPop[currRow] = temp;
-                    currRow++;
+                    temp[i] = (int)char.GetNumericValue(currLine[i]);
                 }
+                startingPop[currRow] = temp;
+                currRow++;
+            }
 
-                /* Because the loaded population is centered we need
-                 * to do some math to keep it centered relative to the
-                 * total size of the board.
-                 */ 
-                int midRow = _RowsUsed / 2;
-                int midCol = _ColsUsed / 2;
+            /* Because the loaded population is centered we need
+             * to do some math to keep it centered relative to the
+             * total size of the board.
+             */
+            int midRow = _RowsUsed / 2;
+            int midCol = _ColsUsed / 2;
 
-                int rowsNum = startingPop.Length;
-                int colNum = startingPop[0].Length;
-                int rowLow, rowHigh, colLow, colHigh;
+            int rowsNum = startingPop.Length;
+            int colNum = startingPop[0].Length;
+            int rowLow, rowHigh, colLow, colHigh;
 
-                if (rowsNum % 2 == 0)
-                {
-                    rowLow = midRow - rowsNum / 2;
-                    rowHigh = midRow + rowsNum / 2;
-                }
-                else
-                {
-                    rowLow = midRow - rowsNum / 2;
-                    rowHigh = (midRow + rowsNum / 2) + 1;
-                }
-
-
-                if (colNum % 2 == 0)
-                {
-                    colLow = midCol - colNum / 2;
-                    colHigh = midCol + colNum / 2;
-                }
-                else
-                {
-                    colLow = midCol - colNum / 2;
-                    colHigh = (midCol + colNum / 2) + 1;
-                }
-                
-
-                for (int r = rowLow; r < rowHigh; r++)
-                {
-                    for (int c = colLow; c < colHigh; c++)
-                    {
-                        int popRow = r - rowLow;
-                        int popCol = c - colLow;
-                        _Board[r, c] = startingPop[popRow][popCol];
-                    }
-                }
-                reader.Close();
+            if (rowsNum % 2 == 0)
+            {
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = midRow + rowsNum / 2;
             }
             else
-            {   //Error loading file
-                int windowCenter = Console.WindowHeight / 2; //Vert position
-                int welcomeLeft = (Console.WindowWidth / 2) - 
-                                            (MenuEntries.Welcome.Length / 2);
-                int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
-
-                //Clear the selection...
-                Console.SetCursorPosition(welcomeLeft, windowCenter);
-                Console.Write("".PadRight(distToBorder));
-
-                Console.SetCursorPosition(welcomeLeft, windowCenter-1);
-                Console.Write(MenuEntries.FileError1);
-                Console.SetCursorPosition(welcomeLeft, windowCenter);
-                Console.Write(MenuEntries.FileError2);
-                Console.SetCursorPosition(welcomeLeft, windowCenter+1);
-                Console.Write(MenuEntries.Enter);
-
-
-                while (true)
-                {
-                    char c = Console.ReadKey().KeyChar;
-                    Console.SetCursorPosition(welcomeLeft + 
-                                MenuEntries.Enter.Length, windowCenter + 1);
-                    Console.Write(" ");
-                    if (c == '\r')
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        //Keeps the cursor in place until ENTER is pressed
-                        Console.SetCursorPosition(welcomeLeft +
-                                MenuEntries.Enter.Length, windowCenter + 1);
-                    }
-                }
-
-                BuildDefaultPop();
+            {
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = (midRow + rowsNum / 2) + 1;
             }
+
+
+            if (colNum % 2 == 0)
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = midCol + colNum / 2;
+            }
+            else
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = (midCol + colNum / 2) + 1;
+            }
+
+
+            for (int r = rowLow; r < rowHigh; r++)
+            {
+                for (int c = colLow; c < colHigh; c++)
+                {
+                    int popRow = r - rowLow;
+                    int popCol = c - colLow;
+                    _Board[r, c] = startingPop[popRow][popCol];
+                }
+            }
+
+            reader.Close();
 
         }
 //------------------------------------------------------------------------------
@@ -264,7 +278,7 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the current dude dies.</returns>
-        public Boolean WillDie(int r, int c)
+        private Boolean WillDie(int r, int c)
         {
             int n = 0;
 
@@ -290,7 +304,7 @@ namespace GameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the miracle of life occurs.</returns>
-        public Boolean WillBeBorn(int r, int c)
+        private Boolean WillBeBorn(int r, int c)
         {
             int n = 0;
             
@@ -314,12 +328,21 @@ namespace GameOfLife
         /// </summary>
         /// <param name="filename"></param>
         /// <returns>True if it is a valid file</returns>
-        private Boolean ValidFile(String filename)
+        private Boolean ValidFile(String filename, 
+                                        out MenuEntries.FileErrorType errType)
         {
+            // Checks if the file is empty
+            if (new FileInfo(filename).Length == 0)
+            {
+                errType = MenuEntries.FileErrorType.CONTENTS;
+                return false;
+            }
+
             StreamReader reader = new StreamReader(filename);
-            var rows = File.ReadLines(filename).Count();
+            var rows = File.ReadLines(filename).Count();         
             if (rows >= _RowsUsed)
             {
+                errType = MenuEntries.FileErrorType.LENGTH;
                 return false;
             }
             while (!reader.EndOfStream)
@@ -327,15 +350,18 @@ namespace GameOfLife
                 String currLine = reader.ReadLine();
                 if (currLine.Length >= _ColsUsed)
                 {
+                    errType = MenuEntries.FileErrorType.WIDTH;
                     return false;
                 }
                 if (!OnesAndZerosOnly(currLine))
                 {
+                    errType = MenuEntries.FileErrorType.CONTENTS;
                     return false;
                 }
 
             }
             reader.Close();
+            errType = MenuEntries.FileErrorType.NONE;
             return true;
         }
 //------------------------------------------------------------------------------
@@ -369,5 +395,5 @@ namespace GameOfLife
             return true;
         }
 //------------------------------------------------------------------------------
-    }
+    } // end class
 }

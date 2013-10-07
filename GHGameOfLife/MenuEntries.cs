@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace GameOfLife
+namespace GHGameOfLife
 {
     public static class MenuEntries
     {
+        public enum FileErrorType { NONE, LENGTH, WIDTH, CONTENTS };
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
         public const ConsoleColor PopColor  = ConsoleColor.Cyan;
@@ -37,5 +38,11 @@ namespace GameOfLife
             Console.Write("".PadRight(Console.WindowWidth));
         }
 //------------------------------------------------------------------------------
-    }
+        public static void clearWithinBorder(int row)
+        {
+            Console.SetCursorPosition(5, row);
+            Console.Write("".PadRight(Console.WindowWidth-10));
+        }
+//------------------------------------------------------------------------------
+    } // end class
 }

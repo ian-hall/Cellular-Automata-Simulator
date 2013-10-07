@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Reflection;
 
 
-namespace GameOfLife
+namespace GHGameOfLife
 {
     class Program
     {
-        enum PopType { RANDOM, FILE };
-        //enum RunType { NEXTGEN, LOOP };
+        enum PopType { RANDOM, FILE, PREMADE };
 
         // Don't go below these values or the text will be screwy
         const int MIN_WIDTH = 50;
@@ -121,7 +121,6 @@ namespace GameOfLife
             }
 
             PopType pop = PopType.RANDOM;
-            //RunType run = RunType.LOOP;
             int windowCenter = Console.WindowHeight / 2; //Vertical Position
             int welcomeLeft = (Console.WindowWidth / 2) - 
                                             (MenuEntries.Welcome.Length / 2);
@@ -135,8 +134,8 @@ namespace GameOfLife
             Console.Write(MenuEntries.PopChoice1);
             Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
             Console.Write(MenuEntries.PopChoice2);
-            //Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 1);
-            //Console.Write(MenuEntries.PopChoice3);
+            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 1);
+            Console.Write(MenuEntries.PopChoice3);
 
             Boolean validEntry = false;
             while (!validEntry)
@@ -147,6 +146,26 @@ namespace GameOfLife
                 int input = 
                         (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
                 Console.CursorVisible = false;
+                switch (input)
+                {
+                    case 1:
+                        pop = PopType.RANDOM;
+                        validEntry = true;
+                        break;
+                    case 2:
+                        pop = PopType.FILE;
+                        validEntry = true;
+                        break;
+                    case 3:
+                        pop = PopType.PREMADE;
+                        validEntry = true;
+                        break;
+                    default:
+                        Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
+                        Console.Write(MenuEntries.Err);
+                        break;
+                }
+                /*
                 if (input == 1)
                 {
                     pop = PopType.RANDOM;
@@ -162,18 +181,23 @@ namespace GameOfLife
                     Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
                     Console.Write(MenuEntries.Err);
                     continue;
-                }
+                }*/
             }
            
             //Clear the current options
+            for (int i = -4; i <= 3; i++)
+                MenuEntries.clearWithinBorder(windowCenter + i);
+            /*
             Console.SetCursorPosition(welcomeLeft+4, windowCenter - 3);
             Console.Write("".PadRight(MenuEntries.PopChoice1.Length));
             Console.SetCursorPosition(welcomeLeft+4, windowCenter - 2);
             Console.Write("".PadRight(MenuEntries.PopChoice2.Length));
+            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 1);
+            Console.Write("".PadRight(MenuEntries.PopChoice3.Length));
             Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
             Console.Write("".PadRight(MenuEntries.Choice.Length+2));
             Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
-            Console.Write("".PadRight(MenuEntries.Err.Length));
+            Console.Write("".PadRight(MenuEntries.Err.Length));*/
 
             RunGame(pop);
         }
@@ -195,6 +219,12 @@ namespace GameOfLife
                     break;
                 case PopType.FILE:
                     initial.BuildFromFile();
+                    break;
+                case PopType.PREMADE:
+                    Assembly _assembly = Assembly.GetExecutingAssembly();
+                    //sparky population is broken...
+                    StreamReader reader = new StreamReader(_assembly.GetManifestResourceStream("GHGameOfLife.Resources.sparky.txt"));
+                    initial.BuildFromFile(reader);
                     break;
             }
 
@@ -260,5 +290,5 @@ namespace GameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-    }
+    } // end class
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace GameOfLife
+namespace GHGameOfLife
 {
     /// <summary>
     /// Static class that keeps getting the next generation of the board.

@@ -47,28 +47,16 @@
     <Compile Include="MenuEntries.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StartingPopulations.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StartingPopulations.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Resources\canadagoose" />
-    <None Include="Resources\growbyone" />
-    <None Include="Resources\twinbees" />
-    <None Include="Resources\shipinbottle" />
+    <EmbeddedResource Include="Resources\canadagoose" />
+    <EmbeddedResource Include="Resources\growbyone" />
+    <EmbeddedResource Include="Resources\twinbees" />
+    <EmbeddedResource Include="Resources\shipinbottle" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="StartingPopulations.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>StartingPopulations.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\sparky" />
+    <EmbeddedResource Include="Resources\sparky.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
