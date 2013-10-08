@@ -5,8 +5,7 @@ namespace GHGameOfLife
 {
     /// <summary>
     /// Static class that keeps getting the next generation of the board.
-    /// Will either prompt the user to step through or just loop to a 
-    /// certain generation.
+    /// Will either prompt the user to step through or loop 
     /// </summary>
     static class GoLRunner
     {

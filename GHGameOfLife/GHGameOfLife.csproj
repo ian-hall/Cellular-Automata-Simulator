@@ -45,18 +45,27 @@
     <Compile Include="GoLBoard.cs" />
     <Compile Include="GoLRunner.cs" />
     <Compile Include="MenuEntries.cs" />
+    <Compile Include="Pops.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Pops.resx</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EmbeddedResource Include="Resources\canadagoose" />
-    <EmbeddedResource Include="Resources\growbyone" />
-    <EmbeddedResource Include="Resources\twinbees" />
-    <EmbeddedResource Include="Resources\shipinbottle" />
+    <None Include="Resources\canadagoose.txt" />
+    <None Include="Resources\growbyone.txt" />
+    <None Include="Resources\twinbees.txt" />
+    <None Include="Resources\shipinbottle.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\sparky.txt" />
+    <EmbeddedResource Include="Pops.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Pops.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Resources\sparky.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

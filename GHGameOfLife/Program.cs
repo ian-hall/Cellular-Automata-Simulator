@@ -6,6 +6,7 @@ using System.Reflection;
 
 namespace GHGameOfLife
 {
+    enum LoadedPops { GOOSE, GROW, SHIP, SPARK, BEES };
     class Program
     {
         enum PopType { RANDOM, FILE, PREMADE };
@@ -221,10 +222,9 @@ namespace GHGameOfLife
                     initial.BuildFromFile();
                     break;
                 case PopType.PREMADE:
-                    Assembly _assembly = Assembly.GetExecutingAssembly();
-                    //sparky population is broken...
-                    StreamReader reader = new StreamReader(_assembly.GetManifestResourceStream("GHGameOfLife.Resources.sparky.txt"));
-                    initial.BuildFromFile(reader);
+                    //Assembly _assembly = Assembly.GetExecutingAssembly();
+                    //StreamReader reader = new StreamReader(_assembly.GetManifestResourceStream("GHGameOfLife.Pops.sparky"));
+                    initial.BuildFromResource(LoadedPops.GOOSE);
                     break;
             }
 

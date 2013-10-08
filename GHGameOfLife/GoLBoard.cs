@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace GHGameOfLife
 {
@@ -61,14 +62,15 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
+        /// TODO: Add check for length of all lines
         public void BuildFromFile(StreamReader reader = null)
         {
             MenuEntries.FileErrorType errType;
             if (reader == null)
             {            
                 OpenFileDialog openWindow = new OpenFileDialog();
-                if (openWindow.ShowDialog() ==
-                                DialogResult.OK && ValidFile(openWindow.FileName, out errType))
+                if (openWindow.ShowDialog() == DialogResult.OK 
+                                && ValidFile(openWindow.FileName, out errType))
                 {
                     reader = new StreamReader(openWindow.FileName);
                 }
@@ -91,7 +93,7 @@ namespace GHGameOfLife
                     Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
                     Console.Write(MenuEntries.Enter);
 
-                    /// Change to Console.KeyAvailable
+                    //Change to Console.KeyAvailable
                     while (true)
                     {
                         char c = Console.ReadKey().KeyChar;
@@ -186,6 +188,73 @@ namespace GHGameOfLife
 
         }
 //------------------------------------------------------------------------------
+        public void BuildFromResource(LoadedPops pop)
+        {
+            string startingPop = "-1";
+
+            switch (pop)
+            {
+                case LoadedPops.BEES:
+                    startingPop = GHGameOfLife.Pops.twinbees;
+                    break;
+                case LoadedPops.GOOSE:
+                    startingPop = GHGameOfLife.Pops.canadagoose;
+                    break;
+                case LoadedPops.GROW:
+                    startingPop = GHGameOfLife.Pops.growbyone;
+                    break;
+                case LoadedPops.SHIP:
+                    startingPop = GHGameOfLife.Pops.shipinbottle;
+                    break;
+                case LoadedPops.SPARK:
+                    startingPop = GHGameOfLife.Pops.sparky;
+                    break;
+            }
+
+            string[] popByLine = Regex.Split(startingPop, "\r\n");
+
+            int midRow = _RowsUsed / 2;
+            int midCol = _ColsUsed / 2;
+
+            int rowsNum = popByLine.Count();
+            int colNum = popByLine[0].Length;
+            int rowLow, rowHigh, colLow, colHigh;
+
+            if (rowsNum % 2 == 0)
+            {
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = midRow + rowsNum / 2;
+            }
+            else
+            {
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = (midRow + rowsNum / 2) + 1;
+            }
+
+
+            if (colNum % 2 == 0)
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = midCol + colNum / 2;
+            }
+            else
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = (midCol + colNum / 2) + 1;
+            }
+
+
+            for (int r = rowLow; r < rowHigh; r++)
+            {
+                for (int c = colLow; c < colHigh; c++)
+                {
+                    int popRow = r - rowLow;
+                    int popCol = c - colLow;
+                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                }
+            }
+        }
+//------------------------------------------------------------------------------
         /// <summary>
         /// Updates the board for the next generation of peoples
         /// </summary>
@@ -220,7 +289,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Displays the board in the console. It is centered in the console
-        /// with a space of 5 on all sides. A border displays around the board.
+        /// with a space of 5 on all sides to compensate for the border
         /// </summary>
         public void Print()
         {
