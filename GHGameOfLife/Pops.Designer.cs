@@ -61,6 +61,31 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 011000000000000000000000000
+        ///011000000000000000000000000
+        ///000000000000000000000000000
+        ///000000000000000100000000000
+        ///110000000000000110000000011
+        ///110000000000000011000000011
+        ///000000000001100110000000000
+        ///000000000000000000000000000
+        ///000000000000000000000000000
+        ///000000000000000000000000000
+        ///000000000001100110000000000
+        ///110000000000000011000000000
+        ///110000000000000110000000000
+        ///000000000000000100000000000
+        ///000000000000000000000000000
+        ///011000000000000000000000000
+        ///011000000000000000000000000.
+        /// </summary>
+        internal static string bees {
+            get {
+                return ResourceManager.GetString("bees", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 1110000000000
         ///1000000000110
         ///0100000011101
@@ -74,9 +99,9 @@ namespace GHGameOfLife {
         ///0011000000000
         ///0011000000000.
         /// </summary>
-        internal static string canadagoose {
+        internal static string goose {
             get {
-                return ResourceManager.GetString("canadagoose", resourceCulture);
+                return ResourceManager.GetString("goose", resourceCulture);
             }
         }
         
@@ -97,9 +122,9 @@ namespace GHGameOfLife {
         ///00000001010010110
         ///00000000100000000.
         /// </summary>
-        internal static string growbyone {
+        internal static string grow {
             get {
-                return ResourceManager.GetString("growbyone", resourceCulture);
+                return ResourceManager.GetString("grow", resourceCulture);
             }
         }
         
@@ -123,9 +148,9 @@ namespace GHGameOfLife {
         ///000100100001001000
         ///000011000000110000.
         /// </summary>
-        internal static string shipinbottle {
+        internal static string ship {
             get {
-                return ResourceManager.GetString("shipinbottle", resourceCulture);
+                return ResourceManager.GetString("ship", resourceCulture);
             }
         }
         
@@ -144,34 +169,9 @@ namespace GHGameOfLife {
         ///0000000000100000000000000011000
         ///0000000000100000000000000000000.
         /// </summary>
-        internal static string sparky {
+        internal static string spark {
             get {
-                return ResourceManager.GetString("sparky", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 011000000000000000000000000
-        ///011000000000000000000000000
-        ///000000000000000000000000000
-        ///000000000000000100000000000
-        ///110000000000000110000000011
-        ///110000000000000011000000011
-        ///000000000001100110000000000
-        ///000000000000000000000000000
-        ///000000000000000000000000000
-        ///000000000000000000000000000
-        ///000000000001100110000000000
-        ///110000000000000011000000000
-        ///110000000000000110000000000
-        ///000000000000000100000000000
-        ///000000000000000000000000000
-        ///011000000000000000000000000
-        ///011000000000000000000000000.
-        /// </summary>
-        internal static string twinbees {
-            get {
-                return ResourceManager.GetString("twinbees", resourceCulture);
+                return ResourceManager.GetString("spark", resourceCulture);
             }
         }
     }

@@ -2,9 +2,9 @@
 
 namespace GHGameOfLife
 {
-    public static class MenuEntries
+    public static class MenuText
     {
-        public enum FileErrorType { NONE, LENGTH, WIDTH, CONTENTS };
+        public enum FileError { NONE, LENGTH, WIDTH, CONTENTS, SIZE };
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
         public const ConsoleColor PopColor  = ConsoleColor.Cyan;
@@ -22,10 +22,10 @@ namespace GHGameOfLife
         public const String FileError2  = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
-        public const String NextPrompt  = "Get next generation (y/n)? ";
-        public const String Pause       = "Press SPACE to pause";
-        public const String Unpause     = "Press SPACE to continue " + 
-                                                            "or ESC to exit";
+        //public const String NextPrompt  = "Get next generation (y/n)? ";
+        //public const String Pause       = "Press SPACE to pause";
+        //public const String Unpause     = "Press SPACE to continue " + 
+        //                                                    "or ESC to exit";
 
         public const String RunOptions1 = "Press SPACE to step through, " +
                                                         "or pause if running.";
@@ -43,6 +43,7 @@ namespace GHGameOfLife
             Console.SetCursorPosition(5, row);
             Console.Write("".PadRight(Console.WindowWidth-10));
         }
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
     } // end class
 }

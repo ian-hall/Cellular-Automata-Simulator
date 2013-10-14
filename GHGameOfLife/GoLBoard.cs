@@ -12,6 +12,7 @@ namespace GHGameOfLife
     /// This class pretty much does everything. It sets up the console, 
     /// fills in the initial pop from a file or randomly, and then 
     /// does all the checking for living/dying of the population.
+    /// TODO: Change around constructors
     /// </summary>
     class GoLBoard
     {
@@ -19,6 +20,7 @@ namespace GHGameOfLife
         private int _RowsUsed;
         private int _ColsUsed;
         private int _Generation;
+        public bool _Initialized { get; private set; }
         private const char _LiveCell = '☻';
         private const char _DeadCell = ' ';
 //------------------------------------------------------------------------------
@@ -39,11 +41,12 @@ namespace GHGameOfLife
 
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
+            _Initialized = false;
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
-        /// Easy enough to get using (random int) % 2
+        /// Easy enough to get using (random int)%2
         /// </summary>
         public void BuildDefaultPop() 
         {
@@ -55,6 +58,7 @@ namespace GHGameOfLife
                     _Board[r, c] = rand.Next()%2;
                 }
             }
+            _Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -62,60 +66,65 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        /// TODO: Add check for length of all lines
-        public void BuildFromFile(StreamReader reader = null)
+        public void BuildFromFile()
         {
-            MenuEntries.FileErrorType errType;
-            if (reader == null)
-            {            
-                OpenFileDialog openWindow = new OpenFileDialog();
-                if (openWindow.ShowDialog() == DialogResult.OK 
-                                && ValidFile(openWindow.FileName, out errType))
+            MenuText.FileError errType = MenuText.FileError.NONE;
+            StreamReader reader = null;
+
+            OpenFileDialog openWindow = new OpenFileDialog();          
+            if (openWindow.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openWindow.FileName;
+                ValidateFile(filePath, out errType);
+                reader = new StreamReader(openWindow.FileName);
+
+            }
+            else
+            {   // No File loaded
+                errType = MenuText.FileError.CONTENTS;
+                int windowCenter = Console.WindowHeight / 2; //Vert position
+                int welcomeLeft = (Console.WindowWidth / 2) -
+                                            (MenuText.Welcome.Length / 2);
+                int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
+
+                MenuText.clearWithinBorder(windowCenter);
+
+                Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
+                Console.Write(MenuText.FileError1);
+                Console.SetCursorPosition(welcomeLeft, windowCenter);
+                Console.Write(MenuText.FileError2);
+                Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
+                Console.Write(MenuText.Enter);
+
+                bool keyPressed = false;
+                while (!keyPressed)
                 {
-                    reader = new StreamReader(openWindow.FileName);
-                }
-                else
-                {   //Error loading file                  
-                    int windowCenter = Console.WindowHeight / 2; //Vert position
-                    int welcomeLeft = (Console.WindowWidth / 2) -
-                                                (MenuEntries.Welcome.Length / 2);
-                    int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
-
-                    //Clear the selection...
-                    //Console.SetCursorPosition(welcomeLeft, windowCenter);
-                    //Console.Write("".PadRight(distToBorder));
-                    MenuEntries.clearWithinBorder(windowCenter);
-
-                    Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
-                    Console.Write(MenuEntries.FileError1);
-                    Console.SetCursorPosition(welcomeLeft, windowCenter);
-                    Console.Write(MenuEntries.FileError2);
-                    Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                    Console.Write(MenuEntries.Enter);
-
-                    //Change to Console.KeyAvailable
-                    while (true)
+                    if (!Console.KeyAvailable)
+                        System.Threading.Thread.Sleep(50);
+                    else
                     {
-                        char c = Console.ReadKey().KeyChar;
-                        Console.SetCursorPosition(welcomeLeft +
-                                    MenuEntries.Enter.Length, windowCenter + 1);
-                        Console.Write(" ");
-                        if (c == '\r')
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            //Keeps the cursor in place until ENTER is pressed
-                            Console.SetCursorPosition(welcomeLeft +
-                                    MenuEntries.Enter.Length, windowCenter + 1);
-                        }
+                        if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                            keyPressed = true;
                     }
-
-                    BuildDefaultPop();
-                    return; //move outside
                 }
             }
+
+            switch(errType)
+            {
+                case MenuText.FileError.NONE:
+                    string startingPop = reader.ReadToEnd();
+                    reader.Close();
+                    fillBoard(startingPop);
+                    break;
+                default:
+                    BuildDefaultPop();
+                    break;
+            }
+
+            _Initialized = true;
+            
+            
+            /*
             int rows = 0;
             while (!reader.EndOfStream)
             {
@@ -142,7 +151,7 @@ namespace GHGameOfLife
             /* Because the loaded population is centered we need
              * to do some math to keep it centered relative to the
              * total size of the board.
-             */
+             *//*
             int midRow = _RowsUsed / 2;
             int midCol = _ColsUsed / 2;
 
@@ -182,35 +191,74 @@ namespace GHGameOfLife
                     int popCol = c - colLow;
                     _Board[r, c] = startingPop[popRow][popCol];
                 }
-            }
-
-            reader.Close();
+            }*/
 
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the board from a resource
+        /// </summary>
+        /// <param name="pop"></param>
         public void BuildFromResource(LoadedPops pop)
         {
-            string startingPop = "-1";
+            
+            var rm = GHGameOfLife.Pops.ResourceManager;
+            var startingPop = rm.GetString(pop.ToString());
 
-            switch (pop)
+            fillBoard(startingPop);
+
+            _Initialized = true;
+            /*
+            string[] popByLine = Regex.Split(startingPop, "\r\n");
+
+            int midRow = _RowsUsed / 2;
+            int midCol = _ColsUsed / 2;
+
+            int rowsNum = popByLine.Count();
+            int colNum = popByLine[0].Length;
+            int rowLow, rowHigh, colLow, colHigh;
+
+            if (rowsNum % 2 == 0)
             {
-                case LoadedPops.BEES:
-                    startingPop = GHGameOfLife.Pops.twinbees;
-                    break;
-                case LoadedPops.GOOSE:
-                    startingPop = GHGameOfLife.Pops.canadagoose;
-                    break;
-                case LoadedPops.GROW:
-                    startingPop = GHGameOfLife.Pops.growbyone;
-                    break;
-                case LoadedPops.SHIP:
-                    startingPop = GHGameOfLife.Pops.shipinbottle;
-                    break;
-                case LoadedPops.SPARK:
-                    startingPop = GHGameOfLife.Pops.sparky;
-                    break;
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = midRow + rowsNum / 2;
+            }
+            else
+            {
+                rowLow = midRow - rowsNum / 2;
+                rowHigh = (midRow + rowsNum / 2) + 1;
             }
 
+
+            if (colNum % 2 == 0)
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = midCol + colNum / 2;
+            }
+            else
+            {
+                colLow = midCol - colNum / 2;
+                colHigh = (midCol + colNum / 2) + 1;
+            }
+
+
+            for (int r = rowLow; r < rowHigh; r++)
+            {
+                for (int c = colLow; c < colHigh; c++)
+                {
+                    int popRow = r - rowLow;
+                    int popCol = c - colLow;
+                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                }
+            }*/
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Used by files to fill the game board, cente
+        /// </summary>
+        /// <param name="startingPop"></param>
+        private void fillBoard(string startingPop)
+        {
             string[] popByLine = Regex.Split(startingPop, "\r\n");
 
             int midRow = _RowsUsed / 2;
@@ -311,10 +359,10 @@ namespace GHGameOfLife
                 Console.Write(write);
             }
 
-            Console.BackgroundColor = MenuEntries.DefaultBG;         
-            int rowStart = space;
+            Console.BackgroundColor = MenuText.DefaultBG;         
+            int row = space;
 
-            Console.SetCursorPosition(space, rowStart);
+            Console.SetCursorPosition(space, row);
             for (int r = 0; r < _RowsUsed; r++)
             {
                 for (int c = 0; c < _ColsUsed; c++)
@@ -322,21 +370,21 @@ namespace GHGameOfLife
                     int check = _Board[r, c];
                     if (check == 0)
                     {
-                        Console.ForegroundColor = MenuEntries.DeadColor;
+                        Console.ForegroundColor = MenuText.DeadColor;
                         Console.Write(_DeadCell);
                     }
                     else
                     {
-                        Console.ForegroundColor = MenuEntries.PopColor;
+                        Console.ForegroundColor = MenuText.PopColor;
                         Console.Write(_LiveCell);
                     }
                 }
-                rowStart++;
-                Console.SetCursorPosition(space, rowStart);
+                row++;
+                Console.SetCursorPosition(space, row);
             }
 
-            Console.BackgroundColor = MenuEntries.DefaultBG;
-            Console.ForegroundColor = MenuEntries.DefaultFG;    
+            Console.BackgroundColor = MenuText.DefaultBG;
+            Console.ForegroundColor = MenuText.DefaultFG;    
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -393,45 +441,92 @@ namespace GHGameOfLife
         /// <summary>
         /// Validates the selected file from the BuildFromFile() method.
         /// A Valid file is all 0s and 1s and does not have more rows or columns
-        /// than the console window.
+        /// than the console window. The file must also be under 256KB
         /// </summary>
-        /// <param name="filename"></param>
-        /// <returns>True if it is a valid file</returns>
-        private Boolean ValidFile(String filename, 
-                                        out MenuEntries.FileErrorType errType)
+        /// <param name="filename">Path to a file to be checked</param>
+        /// <param name="errType">The type of error returned</param>
+        private void ValidateFile(String filename, 
+                                        out MenuText.FileError errType)
         {
-            // Checks if the file is empty
-            if (new FileInfo(filename).Length == 0)
+            errType = MenuText.FileError.NONE;
+
+            // File should exist, but its good to make sure.
+            FileInfo file = new FileInfo(filename);
+            if (!file.Exists)
             {
-                errType = MenuEntries.FileErrorType.CONTENTS;
-                return false;
+                errType = MenuText.FileError.CONTENTS;
+                return;
+            }
+
+            // Checks if the file is empty or too large ( > 256KB )
+            if (file.Length == 0 || file.Length > 32768)
+            {
+                errType = MenuText.FileError.SIZE;
             }
 
             StreamReader reader = new StreamReader(filename);
+            string wholeFile = reader.ReadToEnd();
+            reader.Close();
+            string[] fileByLine = Regex.Split(wholeFile, "\r\n");
+
+
+            int rows = fileByLine.Length;
+            int cols = fileByLine[0].Length;
+
+            // Error if there are more lines than the board can hold
+            if (rows >= _RowsUsed) 
+                errType = MenuText.FileError.LENGTH;
+            // Error if the first line is too wide,
+            // 'cols' also used to check against all other lines
+            if (cols >= _ColsUsed) 
+                errType = MenuText.FileError.WIDTH;
+
+            foreach (string line in fileByLine)
+            {
+                //Error if all lines are not the same width
+                if (line.Length != cols)
+                {
+                    errType = MenuText.FileError.WIDTH;
+                    break;
+                }
+                if (!OnesAndZerosOnly(line))
+                {
+                    errType = MenuText.FileError.CONTENTS;
+                    break;
+                }
+                // No reason to continue after the first error
+            }
+
+            /*
             var rows = File.ReadLines(filename).Count();         
             if (rows >= _RowsUsed)
             {
-                errType = MenuEntries.FileErrorType.LENGTH;
-                return false;
+                errType = MenuText.FileError.LENGTH;
+                //return false;
             }
+            reader.BaseStream.Position = 0;
+            int lastLineLen = reader.ReadLine().Length;
+            reader.BaseStream.Position = 0;
             while (!reader.EndOfStream)
             {
                 String currLine = reader.ReadLine();
                 if (currLine.Length >= _ColsUsed)
                 {
-                    errType = MenuEntries.FileErrorType.WIDTH;
-                    return false;
+                    errType = MenuText.FileError.WIDTH;
+                    reader.Close();
+                    //return false;
                 }
                 if (!OnesAndZerosOnly(currLine))
                 {
-                    errType = MenuEntries.FileErrorType.CONTENTS;
-                    return false;
+                    errType = MenuText.FileError.CONTENTS;
+                    reader.Close();
+                    //return false;
                 }
-
+                lastLineLen = currLine.Length;
             }
             reader.Close();
-            errType = MenuEntries.FileErrorType.NONE;
-            return true;
+            errType = MenuText.FileError.NONE;
+            //return true;*/
         }
 //------------------------------------------------------------------------------
         /// <summary>

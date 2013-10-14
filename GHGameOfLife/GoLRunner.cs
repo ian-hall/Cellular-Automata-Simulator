@@ -137,20 +137,26 @@ namespace GHGameOfLife
         /// TODO: Add a status display
         public static void NewRunStyle(GoLBoard b)
         {
+            if (!b._Initialized)
+            {
+                Console.Write("ERROR");
+                return;
+            }
+
             int printRow = (Console.WindowHeight) - 4;
             int opt1Left = (Console.WindowWidth / 2) -
-                                        (MenuEntries.RunOptions1.Length / 2);
+                                        (MenuText.RunOptions1.Length / 2);
             int opt2Left = (Console.WindowWidth / 2) -
-                                        (MenuEntries.RunOptions2.Length / 2);
+                                        (MenuText.RunOptions2.Length / 2);
             int opt3Left = (Console.WindowWidth / 2) -
-                                        (MenuEntries.RunOptions3.Length / 2);
+                                        (MenuText.RunOptions3.Length / 2);
 
             Console.SetCursorPosition(opt1Left, printRow++);
-            Console.Write(MenuEntries.RunOptions1);
+            Console.Write(MenuText.RunOptions1);
             Console.SetCursorPosition(opt2Left, printRow++);
-            Console.Write(MenuEntries.RunOptions2);
+            Console.Write(MenuText.RunOptions2);
             Console.SetCursorPosition(opt3Left, printRow);
-            Console.Write(MenuEntries.RunOptions3);
+            Console.Write(MenuText.RunOptions3);
             bool go = true;
             bool continuous = false;
             bool paused = true;
@@ -224,15 +230,15 @@ namespace GHGameOfLife
                     go = false;
                 }
             }
-            MenuEntries.clearLine(printRow);
-            MenuEntries.clearLine(printRow + 1);
+            MenuText.clearLine(printRow);
+            MenuText.clearLine(printRow + 1);
             Console.CursorVisible = false;
         }
 //------------------------------------------------------------------------------
         private static void printStatus(bool running, bool paused)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            MenuEntries.clearLine(3);
+            MenuText.clearLine(3);
             if (running)
             {
                 Console.SetCursorPosition(5, 3);
@@ -243,7 +249,7 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(10, 3);
                 Console.Write("PAUSED");
             }          
-            Console.ForegroundColor = MenuEntries.DefaultFG;
+            Console.ForegroundColor = MenuText.DefaultFG;
         }
  //------------------------------------------------------------------------------
     } // end class
