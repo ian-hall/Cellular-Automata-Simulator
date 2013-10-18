@@ -459,7 +459,7 @@ namespace GHGameOfLife
             }
 
             // Checks if the file is empty or too large ( > 256KB )
-            if (file.Length == 0 || file.Length > 32768)
+            if (file.Length == 0 || file.Length > 262144)
             {
                 errType = MenuText.FileError.SIZE;
             }
