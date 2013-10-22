@@ -230,15 +230,15 @@ namespace GHGameOfLife
                     go = false;
                 }
             }
-            MenuText.clearLine(printRow);
-            MenuText.clearLine(printRow + 1);
+            MenuText.ClearLine(printRow);
+            MenuText.ClearLine(printRow + 1);
             Console.CursorVisible = false;
         }
 //------------------------------------------------------------------------------
         private static void printStatus(bool running, bool paused)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            MenuText.clearLine(3);
+            MenuText.ClearLine(3);
             if (running)
             {
                 Console.SetCursorPosition(5, 3);

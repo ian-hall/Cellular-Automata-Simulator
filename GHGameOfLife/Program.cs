@@ -34,10 +34,18 @@ namespace GHGameOfLife
                                               initConsPosLeft, initConsPosTop };
 
             bool validWindowSize = InitializeConsole();
-            
-            MainMenu(validWindowSize);
-            //TODO Prompt to go again before resetting the console and closing
-            ResetConsole(initialValues);
+
+            if (!validWindowSize)
+            {
+                Console.WriteLine("Problem with console size");
+            }
+            else
+            {
+                MenuText.Initialize();
+                MainMenu();
+                //TODO Prompt to go again before resetting the console and closing
+                ResetConsole(initialValues);
+            }       
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -49,8 +57,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.DefaultFG;
             Console.Title = "Ian's Game of Life";
             /* Need to check the current window/buffer size before applying the
-             * new size. An exception is thrown if the buffer somehow stays 
-             * small and the window grows...
+             * new size. Exits if the sizes are off.
              */
             if (CONSOLE_WIDTH < MIN_WIDTH || CONSOLE_HEIGHT < MIN_HEIGHT)
                 return false;
@@ -113,35 +120,33 @@ namespace GHGameOfLife
         ///                                          is of adaquate size</param>
         ///                                          
         ///  TODO: Add menu to select preloaded populations
-        private static void MainMenu( bool validWindowSize )
+        private static void MainMenu()
         {
-            if (!validWindowSize)
-            {
-                Console.WriteLine("Problem with console size");
-                return;
-            }
-
             PopType pop = PopType.RANDOM;
-            int windowCenter = Console.WindowHeight / 2; //Vertical Position
-            int welcomeLeft = (Console.WindowWidth / 2) - 
-                                            (MenuText.Welcome.Length / 2);
-            Console.SetCursorPosition(welcomeLeft, 8);
+            LoadedPops? res = null;
+            //int windowCenter = Console.WindowHeight / 2; //Vertical Position
+            //int welcomeLeft = (Console.WindowWidth / 2) - 
+            //                                (MenuText.Welcome.Length / 2);
+
+            /*
+            Console.SetCursorPosition(MenuText.LeftAlign, 8);
             Console.Write(MenuText.Welcome);
 
-            Console.SetCursorPosition(welcomeLeft, windowCenter-4);
+            Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter - 4);
             Console.Write(MenuText.PlsChoose);
 
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 3);
+            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 3);
             Console.Write(MenuText.PopChoice1);
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 2);
+            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 2);
             Console.Write(MenuText.PopChoice2);
-            Console.SetCursorPosition(welcomeLeft + 4, windowCenter - 1);
-            Console.Write(MenuText.PopChoice3);
+            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 1);
+            Console.Write(MenuText.PopChoice3);*/
+            MenuText.PrintMainMenu();
 
-            Boolean validEntry = false;
+            bool validEntry = false;
             while (!validEntry)
             {
-                Console.SetCursorPosition(welcomeLeft, windowCenter + 2);
+                Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter + 2);
                 Console.Write(MenuText.Choice);
                 Console.CursorVisible = true;
                 int input = 
@@ -159,10 +164,14 @@ namespace GHGameOfLife
                         break;
                     case 3:
                         pop = PopType.PREMADE;
-                        validEntry = true;
+                        res = PromptForRes();
+                        if (res != null)
+                            validEntry = true;
+                        else
+                            MenuText.PrintMainMenu();
                         break;
                     default:
-                        Console.SetCursorPosition(welcomeLeft, windowCenter + 3);
+                        Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter + 3);
                         Console.Write(MenuText.Err);
                         break;
                 }
@@ -170,18 +179,18 @@ namespace GHGameOfLife
            
             //Clear the current options
             for (int i = -4; i <= 3; i++)
-                MenuText.clearWithinBorder(windowCenter + i);
-
-            RunGame(pop);
+                MenuText.ClearWithinBorder(MenuText.WindowCenter + i);
+            
+            RunGame(pop,res);
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// This starts the game going by getting the starting population loaded
         /// </summary>
-        /// <param name="pop"></param>
-        /// <param name="type"></param>
-        /// <param name="maxPop"></param>
-        private static void RunGame(PopType pop, LoadedPops res = LoadedPops.grow)
+        /// <param name="pop">The type of population to build</param>
+        /// <param name="res">Resource to load, if needed</param>
+        /// 
+        private static void RunGame(PopType pop, LoadedPops? res = null)
         {
             GoLBoard initial = new GoLBoard(CONSOLE_HEIGHT - 10, 
                                                             CONSOLE_WIDTH - 10);
@@ -194,7 +203,7 @@ namespace GHGameOfLife
                     initial.BuildFromFile();
                     break;
                 case PopType.PREMADE:
-                    initial.BuildFromResource(res);
+                    initial.BuildFromResource((LoadedPops)res);
                     break;
             }
 
@@ -202,6 +211,20 @@ namespace GHGameOfLife
 
             GoLRunner.NewRunStyle(initial);
 
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// TODO: Finish this
+        /// </summary>
+        /// <returns></returns>
+        private static LoadedPops? PromptForRes()
+        {
+            LoadedPops? retVal = null;
+            int windowCenter = Console.WindowHeight / 2;
+            for (int i = -4; i <= 3; i++)
+                MenuText.ClearWithinBorder(windowCenter + i);
+
+            return retVal;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -236,7 +259,7 @@ namespace GHGameOfLife
             int initConsolePosLeft = initValues[4];
             int initConsolePosTop = initValues[5];
 
-            MenuText.clearLine(CONSOLE_HEIGHT - 2);
+            MenuText.ClearLine(CONSOLE_HEIGHT - 2);
             Console.SetCursorPosition(0, CONSOLE_HEIGHT - 2);
             Console.Write("Press any key to exit...");
             while (!Console.KeyAvailable)

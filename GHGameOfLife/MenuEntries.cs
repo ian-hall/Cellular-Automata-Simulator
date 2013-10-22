@@ -31,18 +31,53 @@ namespace GHGameOfLife
                                                         "or pause if running.";
         public const String RunOptions2 = "Press R to toggle auto stepping.";
         public const String RunOptions3 = "Press ESC to exit";
+
+        public static int WindowCenter; // Vertical center of the console
+        public static int LeftAlign;    // Align text with the Welcome message
 //------------------------------------------------------------------------------
-        public static void clearLine(int row)
+        public static void Initialize()
+        {
+            WindowCenter = Console.WindowHeight / 2;
+            LeftAlign = (Console.WindowWidth/2) - (Welcome.Length/2);
+        }
+//------------------------------------------------------------------------------
+        public static void ClearLine(int row)
         {
             Console.SetCursorPosition(0, row);
             Console.Write("".PadRight(Console.WindowWidth));
         }
 //------------------------------------------------------------------------------
-        public static void clearWithinBorder(int row)
+        public static void ClearWithinBorder(int row)
         {
             Console.SetCursorPosition(5, row);
             Console.Write("".PadRight(Console.WindowWidth-10));
         }
+//------------------------------------------------------------------------------
+        public static void PrintMainMenu()
+        {
+            Console.SetCursorPosition(LeftAlign, 8);
+            Console.Write(Welcome);
+
+            Console.SetCursorPosition(LeftAlign, WindowCenter - 4);
+            Console.Write(PlsChoose);
+            Console.SetCursorPosition(LeftAlign + 4, WindowCenter - 3);
+            Console.Write(PopChoice1);
+            Console.SetCursorPosition(LeftAlign + 4, WindowCenter - 2);
+            Console.Write(PopChoice2);
+            Console.SetCursorPosition(LeftAlign + 4, WindowCenter - 1);
+            Console.Write(PopChoice3);
+        }
+//------------------------------------------------------------------------------
+        public static void PrintResourceMenu()
+        {
+
+        }
+//------------------------------------------------------------------------------
+        public static void PrintFileError()
+        {
+
+        }
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
     } // end class

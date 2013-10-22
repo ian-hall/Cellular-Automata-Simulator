@@ -87,7 +87,7 @@ namespace GHGameOfLife
                                             (MenuText.Welcome.Length / 2);
                 int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
 
-                MenuText.clearWithinBorder(windowCenter);
+                MenuText.ClearWithinBorder(windowCenter);
 
                 Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
                 Console.Write(MenuText.FileError1);
@@ -329,9 +329,12 @@ namespace GHGameOfLife
                 }
             }
             _Generation++;
+            /*
             for (int r = 0; r < _RowsUsed; r++)
                 for (int c = 0; c < _ColsUsed; c++)
                     _Board[r, c] = nextBoard[r, c];
+             */
+            _Board = nextBoard;
 
         }
 //------------------------------------------------------------------------------
@@ -385,6 +388,11 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;    
+        }
+//------------------------------------------------------------------------------
+        public void TestPrint()
+        {
+
         }
 //------------------------------------------------------------------------------
         /// <summary>
