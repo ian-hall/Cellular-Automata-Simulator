@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace GHGameOfLife
 {
-    enum LoadedPops { goose, grow, ship, spark, bees };
+    //enum LoadedPops { goose, grow, ship, spark, bees, wick };
     class Program
     {
         enum PopType { RANDOM, FILE, PREMADE };
@@ -17,7 +17,7 @@ namespace GHGameOfLife
         // Don't go below these values or the text will be screwy
 
         static int CONSOLE_WIDTH = 80; // Console width
-        static int CONSOLE_HEIGHT = 50; // Console height
+        static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -123,7 +123,7 @@ namespace GHGameOfLife
         private static void MainMenu()
         {
             PopType pop = PopType.RANDOM;
-            LoadedPops? res = null;
+            string res = null;
             //int windowCenter = Console.WindowHeight / 2; //Vertical Position
             //int welcomeLeft = (Console.WindowWidth / 2) - 
             //                                (MenuText.Welcome.Length / 2);
@@ -141,12 +141,12 @@ namespace GHGameOfLife
             Console.Write(MenuText.PopChoice2);
             Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 1);
             Console.Write(MenuText.PopChoice3);*/
-            MenuText.PrintMainMenu();
+            int promptRow = MenuText.PrintMainMenu();
 
             bool validEntry = false;
             while (!validEntry)
             {
-                Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter + 2);
+                Console.SetCursorPosition(MenuText.LeftAlign, promptRow);
                 Console.Write(MenuText.Choice);
                 Console.CursorVisible = true;
                 int input = 
@@ -171,15 +171,14 @@ namespace GHGameOfLife
                             MenuText.PrintMainMenu();
                         break;
                     default:
-                        Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter + 3);
+                        Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 1);
                         Console.Write(MenuText.Err);
                         break;
                 }
             }
            
             //Clear the current options
-            for (int i = -4; i <= 3; i++)
-                MenuText.ClearWithinBorder(MenuText.WindowCenter + i);
+            MenuText.ClearMenuOptions();
             
             RunGame(pop,res);
         }
@@ -190,7 +189,7 @@ namespace GHGameOfLife
         /// <param name="pop">The type of population to build</param>
         /// <param name="res">Resource to load, if needed</param>
         /// 
-        private static void RunGame(PopType pop, LoadedPops? res = null)
+        private static void RunGame(PopType pop, string res = null)
         {
             GoLBoard initial = new GoLBoard(CONSOLE_HEIGHT - 10, 
                                                             CONSOLE_WIDTH - 10);
@@ -203,7 +202,7 @@ namespace GHGameOfLife
                     initial.BuildFromFile();
                     break;
                 case PopType.PREMADE:
-                    initial.BuildFromResource((LoadedPops)res);
+                    initial.BuildFromResource(res);
                     break;
             }
 
@@ -214,31 +213,84 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// TODO: Finish this
+        /// 
         /// </summary>
-        /// <returns></returns>
-        private static LoadedPops? PromptForRes()
+        /// <returns>The string key value of the resource to load</returns>
+        private static string PromptForRes()
         {
-            LoadedPops? retVal = null;
-            int windowCenter = Console.WindowHeight / 2;
-            for (int i = -4; i <= 3; i++)
-                MenuText.ClearWithinBorder(windowCenter + i);
+            string retVal = null;
+            int numRes = MenuText.ResNames.Count;
+            int resToLoad = -1;
+
+            int numPrinted;
+            int promptRow = MenuText.PrintResourceMenu(out numPrinted);
+            
+            
+            bool validEntry = false;
+            while (!validEntry)
+            {
+                MenuText.ClearWithinBorder(promptRow);
+                Console.SetCursorPosition(MenuText.LeftAlign, promptRow);
+                Console.Write(MenuText.Choice);
+                Console.CursorVisible = true;
+
+                String input = "";
+                int maxLen = 2; // Wont display more than 99 choices...
+                while (true)
+                {
+                    char c = Console.ReadKey(true).KeyChar;
+                    if (c == '\r')
+                        break;
+                    if (c == '\b')
+                    {
+                        if (input != "")
+                        {
+                            input = input.Substring(0, input.Length - 1);
+                            Console.Write("\b \b");
+                        }
+                    }
+                    else if (input.Length < maxLen)
+                    {
+                        Console.Write(c);
+                        input += c;
+                    }
+                }
+
+                if (IsValidNumber(input,numPrinted))
+                {
+                    //Menu starts at 1, but resources start at 0
+                    resToLoad = Int32.Parse(input)-1;
+                    validEntry = true;
+                }
+                else
+                {
+                    Console.SetCursorPosition(MenuText.LeftAlign, promptRow+1);
+                    Console.Write(MenuText.Err);
+                    continue;
+                }
+
+            }
+
+            if (resToLoad < MenuText.ResNames.Count)
+            {
+                retVal = MenuText.ResNames[resToLoad].ToString();
+            }
 
             return retVal;
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.
-        /// This is used to get the generation to loop to.
+        /// Also makes sure it is in range of the number of resources
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        /*private static Boolean IsValidNumber(String s)
+        private static Boolean IsValidNumber(String s,int numPrinted)
         {
             try
             {
                 int val = Int32.Parse(s);
-                if (val >= 0)
+                if (val > 0 && val <= numPrinted)
                 {
                     return true;
                 }
@@ -248,7 +300,7 @@ namespace GHGameOfLife
             {
                 return false;
             }
-        }*/
+        }
 //------------------------------------------------------------------------------
         private static void ResetConsole( int[] initValues)
         {

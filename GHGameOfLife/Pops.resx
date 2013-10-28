@@ -118,19 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="bees" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\twinbees.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
-  <data name="goose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Canada_Goose" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\canadagoose.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="grow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Grow_By_One" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\growbyone.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="ship" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Ship_In_a_Bottle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\shipinbottle.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="spark" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Sparky" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\sparky.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Twin_Bees" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\twinbees.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Wickstretcher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\wickstretcher.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

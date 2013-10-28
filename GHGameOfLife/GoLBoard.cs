@@ -90,9 +90,9 @@ namespace GHGameOfLife
                 MenuText.ClearWithinBorder(windowCenter);
 
                 Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
-                Console.Write(MenuText.FileError1);
+                Console.Write(MenuText.FileErr1);
                 Console.SetCursorPosition(welcomeLeft, windowCenter);
-                Console.Write(MenuText.FileError2);
+                Console.Write(MenuText.FileErr2);
                 Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
                 Console.Write(MenuText.Enter);
 
@@ -199,11 +199,11 @@ namespace GHGameOfLife
         /// Builds the board from a resource
         /// </summary>
         /// <param name="pop"></param>
-        public void BuildFromResource(LoadedPops pop)
+        public void BuildFromResource(string pop)
         {
             
             var rm = GHGameOfLife.Pops.ResourceManager;
-            var startingPop = rm.GetString(pop.ToString());
+            var startingPop = rm.GetString(pop);
 
             fillBoard(startingPop);
 
