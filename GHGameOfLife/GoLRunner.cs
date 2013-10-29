@@ -53,6 +53,7 @@ namespace GHGameOfLife
                 while (!Console.KeyAvailable && continuous)
                 {
                     b.Next();
+                    //b.Print();
                     b.TestPrint();
                     System.Threading.Thread.Sleep(33);
                 }
@@ -61,6 +62,7 @@ namespace GHGameOfLife
                 if (pressed == ConsoleKey.Spacebar && !continuous)
                 {
                     b.Next();
+                    //b.Print();
                     b.TestPrint();
                 }
 

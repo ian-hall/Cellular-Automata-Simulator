@@ -18,13 +18,13 @@ namespace GHGameOfLife
     {
         public bool _Initialized { get; private set; }
 
-        //private int[,] _Board;
-        private BoardCell[,] _Board;
+        private int[,] _Board;
         private int _RowsUsed;
         private int _ColsUsed;
         private int _Generation;
         private const char _LiveCell = '☻';
         private const char _DeadCell = ' ';
+        private Random rand = new Random();
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -34,32 +34,31 @@ namespace GHGameOfLife
         /// <param name="colMax">Number of columns</param>
         public GoLBoard(int rowMax, int colMax)
         {
-            //_Board = new int[rowMax, colMax];
-            _Board = new BoardCell[rowMax, colMax];
+            _Board = new int[rowMax, colMax];
             
-            for (int r = 0; r < rowMax; r++)
+            /*for (int r = 0; r < rowMax; r++)
             {
                 for (int c = 0; c < colMax; c++)
-                    _Board[r, c] = new BoardCell();
-            }
+                    _Board[r, c] = rand.Next() % 2;
+            }*/
 
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
             _Initialized = false;
         }
 //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
         /// </summary>
         public void BuildDefaultPop() 
         {
-            Random rand = new Random();
             for (int r = 0; r < _RowsUsed; r++)
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    _Board[r, c].val = rand.Next()%2;
+                    _Board[r, c] = rand.Next()%2;
                 }
             }
             _Initialized = true;
@@ -189,7 +188,7 @@ namespace GHGameOfLife
                 {
                     int popRow = r - rowLow;
                     int popCol = c - colLow;
-                    _Board[r, c].val = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
                 }
             }
         }
@@ -200,43 +199,43 @@ namespace GHGameOfLife
         /// Need to enable wrapping here
         public void Next()
         {
-            //int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
-            BoardCell[,] nextBoard = new BoardCell[_RowsUsed,_ColsUsed];
+            int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
+            //BoardCell[,] nextBoard = new BoardCell[_RowsUsed,_ColsUsed];
 
 
             for (int r = 0; r < _RowsUsed; r++)
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    if (_Board[r, c].val == 0)
+                    if (_Board[r, c] == 0)
                     {
                         if (WillBeBorn(r, c))
                         {
-                            //nextBoard[r, c].val = 1;
+                            nextBoard[r, c] = 1;
                             //nextBoard[r, c].changed = true;
-                            nextBoard[r, c] = new BoardCell(1, true);
+                            //nextBoard[r, c] = new BoardCell(1, true);
                         }
                         else
                         {
-                            //nextBoard[r, c].val = 0;
+                            nextBoard[r, c] = 0;
                             //nextBoard[r, c].changed = false;
-                            nextBoard[r, c] = new BoardCell(0, false);
+                            //nextBoard[r, c] = new BoardCell(0, false);
                         } 
                     }
 
-                    if (_Board[r, c].val == 1)
+                    if (_Board[r, c] == 1)
                     {
                         if (WillDie(r, c))
                         {
-                            //nextBoard[r, c].val = 0;
+                            nextBoard[r, c] = 0;
                             //nextBoard[r, c].changed = true;
-                            nextBoard[r, c] = new BoardCell(0, true);
+                            //nextBoard[r, c] = new BoardCell(0, true);
                         }
                         else
                         {
-                            //nextBoard[r, c].val = 1;
+                            nextBoard[r, c] = 1;
                             //nextBoard[r, c].changed = false;
-                            nextBoard[r, c] = new BoardCell(1, false);
+                            //nextBoard[r, c] = new BoardCell(1, false);
                         }
                     }
                 }
@@ -251,8 +250,7 @@ namespace GHGameOfLife
             _Board = nextBoard;
 
         }
-//------------------------------------------------------------------------------
-        /*
+//------------------------------------------------------------------------------      
         /// <summary>
         /// Displays the board in the console. It is centered in the console
         /// with a space of 5 on all sides to compensate for the border
@@ -302,7 +300,7 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;    
-        }*/
+        }
 //------------------------------------------------------------------------------
         public void TestPrint()
         {
@@ -330,21 +328,21 @@ namespace GHGameOfLife
             Console.SetCursorPosition(space, row);
             for (int r = 0; r < _RowsUsed; r++)
             {
+                StringBuilder sb = new StringBuilder();
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    if (_Board[r, c].val == 0)
+                    if (_Board[r, c] == 0)
                     {
-                        Console.ForegroundColor = MenuText.DeadColor;
-                        if (_Board[r, c].changed == true) Console.Write(_DeadCell);
-                        else Console.CursorLeft += 1;
+                        //Console.ForegroundColor = MenuText.DeadColor;
+                        sb.Append(_DeadCell);
                     }
                     else
                     {
-                        Console.ForegroundColor = MenuText.PopColor;
-                        if (_Board[r, c].changed == true) Console.Write(_LiveCell);
-                        else Console.CursorLeft += 1;
+                        //Console.ForegroundColor = MenuText.PopColor;
+                        sb.Append(_LiveCell);
                     }
                 }
+                Console.Write(sb);
                 row++;
                 Console.SetCursorPosition(space, row);
             }
@@ -365,14 +363,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
 
             if (n < 2) return true;
             if (n > 3) return true;
@@ -391,14 +389,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
 
             if (n == 3) return true;
             else return false;

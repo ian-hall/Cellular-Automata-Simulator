@@ -15,7 +15,7 @@ namespace GHGameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 150; // Console width
+        static int CONSOLE_WIDTH = 180; // Console width
         static int CONSOLE_HEIGHT = 80; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
@@ -218,7 +218,7 @@ namespace GHGameOfLife
                                                             CONSOLE_WIDTH - 10);
             switch (pop)
             {
-                case PopType.RANDOM:
+                case PopType.RANDOM: //Nothing, random pop loads by default
                     initial.BuildDefaultPop();
                     break;
                 case PopType.FILE:
@@ -229,6 +229,7 @@ namespace GHGameOfLife
                     break;
             }
 
+            //initial.Print();
             initial.TestPrint();
 
             GoLRunner.NewRunStyle(initial);
