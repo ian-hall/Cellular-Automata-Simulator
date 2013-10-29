@@ -11,126 +11,6 @@ namespace GHGameOfLife
     {
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Goes through the board one generation at a time.
-        /// Asks the user if they want to continue or not after each generation.
-        /// Returns true when the user is done.
-        /// </summary>
-        /// <param name="b">The board to get the next generation of</param>
-        /*public static void NextGeneration(GoLBoard b)
-        {
-            Boolean getNext = true;
-
-            int printRow = (Console.WindowHeight) - 3;
-            int promoptLeft = (Console.WindowWidth / 2) -
-                                            (MenuEntries.NextPrompt.Length / 2);
-            int errLeft = (Console.WindowWidth / 2) -
-                                                   (MenuEntries.Err.Length / 2);
-
-            while (getNext)
-            {
-                Boolean validEntry = false;
-                while (!validEntry)
-                {
-                    MenuEntries.clearLine(printRow);
-                    Console.SetCursorPosition(promoptLeft, printRow);
-                    Console.Write(MenuEntries.NextPrompt);
-                    Console.CursorVisible = true;
-                    char input = Console.ReadKey().KeyChar;
-                    Console.CursorVisible = false;
-                    if (input == 'y' || input == 'Y')
-                    {
-                        getNext = true;
-                        validEntry = true;
-                    }
-                    else if (input == 'n' || input == 'N')
-                    {
-                        getNext = false;
-                        validEntry = true;
-                    }
-                    else
-                    {
-                        Console.SetCursorPosition(errLeft, printRow + 1);
-                        Console.Write(MenuEntries.Err);
-                        continue;
-                    }
-                }
-                MenuEntries.clearLine(printRow + 1);
-                if (getNext)
-                {
-                    b.Next();
-                    b.Print();
-                }
-            }
-            MenuEntries.clearLine(printRow);
-            MenuEntries.clearLine(printRow + 1);
-            Console.CursorVisible = false;
-        }*/
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Just loops through the board until it has done the supplied number
-        /// of loops or until it is stopped.
-        /// </summary>
-        /// <param name="b">The board to get the next generation of</param>
-        /// <param name="loops">Which generation to go to</param>
-        /*public static void JustLoop(GoLBoard b, int maxGen)
-        {
-            int printRow = (Console.WindowHeight) - 3;
-            int pauseLeft = (Console.WindowWidth / 2) -
-                                                 (MenuEntries.Pause.Length / 2);
-            int unpauseLeft = (Console.WindowWidth / 2) -
-                                               (MenuEntries.Unpause.Length / 2);
-
-            MenuEntries.clearLine(printRow);
-            Console.SetCursorPosition(pauseLeft, printRow);
-            Console.Write(MenuEntries.Pause);
-
-            for (int i = 0; i < maxGen; i++)
-            {
-                b.Next();
-                b.Print();
-                //If the user is pressing a button...
-                if (Console.KeyAvailable)
-                {
-                    //Check if it is the space bar...
-                    if (Console.ReadKey(true).Key == ConsoleKey.Spacebar)
-                    {
-                        //If it is, wait until the bar is pressed again
-                        //To start going again
-                        MenuEntries.clearLine(printRow);
-                        Console.SetCursorPosition(unpauseLeft, printRow);
-                        Console.Write(MenuEntries.Unpause);
-                        Boolean keyPressed = false;
-
-                        while (!keyPressed)
-                        {
-                            while (!Console.KeyAvailable)
-                            {
-                                System.Threading.Thread.Sleep(50);
-                            }
-
-                            ConsoleKey pressed = Console.ReadKey(true).Key;
-                            if (pressed == ConsoleKey.Spacebar)
-                            {
-                                keyPressed = true;
-                                MenuEntries.clearLine(printRow);
-                                Console.SetCursorPosition(pauseLeft, printRow);
-                                Console.Write(MenuEntries.Pause);
-                            }
-                            // Early Exit
-                            else if (pressed == ConsoleKey.Escape)
-                            {
-                                keyPressed = true;
-                                i = maxGen;
-                            }
-                        }
-                    }
-                }
-                System.Threading.Thread.Sleep(33);
-            }
-            MenuEntries.clearLine(printRow);
-        }*/
-//------------------------------------------------------------------------------
-        /// <summary>
         /// Runs the game
         /// </summary>
         /// <param name="b">The board to start with</param>
@@ -139,12 +19,13 @@ namespace GHGameOfLife
         {
             if (!b._Initialized)
             {
+                Console.ForegroundColor = MenuText.InfoColor;
                 Console.Write("ERROR");
                 return;
             }
-
-            int printRow = (Console.WindowHeight) - 4;
-            int opt1Left = (Console.WindowWidth / 2) -
+            
+            int printRow = MenuText.PrintControls();
+            /*int opt1Left = (Console.WindowWidth / 2) -
                                         (MenuText.RunOptions1.Length / 2);
             int opt2Left = (Console.WindowWidth / 2) -
                                         (MenuText.RunOptions2.Length / 2);
@@ -156,11 +37,11 @@ namespace GHGameOfLife
             Console.SetCursorPosition(opt2Left, printRow++);
             Console.Write(MenuText.RunOptions2);
             Console.SetCursorPosition(opt3Left, printRow);
-            Console.Write(MenuText.RunOptions3);
+            Console.Write(MenuText.RunOptions3);*/
             bool go = true;
             bool continuous = false;
             bool paused = true;
-            printStatus(continuous, paused);
+            MenuText.printStatus(continuous, paused);
             while (go)
             {
                 // If it isnt running, and no keys are pressed
@@ -172,7 +53,7 @@ namespace GHGameOfLife
                 while (!Console.KeyAvailable && continuous)
                 {
                     b.Next();
-                    b.Print();
+                    b.TestPrint();
                     System.Threading.Thread.Sleep(33);
                 }
                 //if PAUSE is pressed while it is not running
@@ -180,7 +61,7 @@ namespace GHGameOfLife
                 if (pressed == ConsoleKey.Spacebar && !continuous)
                 {
                     b.Next();
-                    b.Print();
+                    b.TestPrint();
                 }
 
                 /// if paused while running, wait until space
@@ -189,7 +70,7 @@ namespace GHGameOfLife
                 {
                     bool keyPressed = false;
                     paused = true;
-                    printStatus(continuous, paused);
+                    MenuText.printStatus(continuous, paused);
                     while (!keyPressed)
                     {
                         while (!Console.KeyAvailable)
@@ -202,7 +83,7 @@ namespace GHGameOfLife
                         {
                             keyPressed = true;
                             paused = false;
-                            printStatus(continuous, paused);
+                            MenuText.printStatus(continuous, paused);
                         }
                         else if (pauseEntry == ConsoleKey.Escape)
                         {
@@ -213,7 +94,7 @@ namespace GHGameOfLife
                         {
                             continuous = false;
                             keyPressed = true;
-                            printStatus(continuous, paused);
+                            MenuText.printStatus(continuous, paused);
                         }
                     }
                 }
@@ -222,7 +103,7 @@ namespace GHGameOfLife
                 {
                     continuous  = !continuous;
                     paused = !paused;
-                    printStatus(continuous, paused);
+                    MenuText.printStatus(continuous, paused);
                 }
 
                 if (pressed == ConsoleKey.Escape)
@@ -230,14 +111,14 @@ namespace GHGameOfLife
                     go = false;
                 }
             }
-            MenuText.ClearLine(printRow);
-            MenuText.ClearLine(printRow + 1);
+            //MenuText.ClearLine(printRow);
+            //MenuText.ClearLine(printRow + 1);
             Console.CursorVisible = false;
         }
 //------------------------------------------------------------------------------
-        private static void printStatus(bool running, bool paused)
+        /*private static void printStatus(bool running, bool paused)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = MenuText.InfoColor;
             MenuText.ClearLine(3);
             if (running)
             {
@@ -250,7 +131,7 @@ namespace GHGameOfLife
                 Console.Write("PAUSED");
             }          
             Console.ForegroundColor = MenuText.DefaultFG;
-        }
+        }*/
  //------------------------------------------------------------------------------
     } // end class
 }

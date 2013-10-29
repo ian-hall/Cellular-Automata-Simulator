@@ -15,8 +15,8 @@ namespace GHGameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 70; // Console width
-        static int CONSOLE_HEIGHT = 30; // Console height
+        static int CONSOLE_WIDTH = 150; // Console width
+        static int CONSOLE_HEIGHT = 80; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -129,9 +129,9 @@ namespace GHGameOfLife
             int choice = -1;
 
             bool validEntry = false;
-            Console.CursorVisible = true;
             while (!validEntry)
             {
+                Console.CursorVisible = true;
                 MenuText.ClearWithinBorder(promptRow);
                 Console.SetCursorPosition(MenuText.LeftAlign, promptRow);
                 Console.Write(MenuText.Choice);                     
@@ -188,8 +188,10 @@ namespace GHGameOfLife
                         if (res != null)
                             validEntry = true;
                         else
+                        {
                             MenuText.PrintMainMenu(out numChoices);
                             validEntry = false;
+                        }
                         break;
                     default:
                         Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 2);
@@ -227,7 +229,7 @@ namespace GHGameOfLife
                     break;
             }
 
-            initial.Print();
+            initial.TestPrint();
 
             GoLRunner.NewRunStyle(initial);
 

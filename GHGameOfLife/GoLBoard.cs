@@ -16,11 +16,13 @@ namespace GHGameOfLife
     /// </summary>
     class GoLBoard
     {
-        private int[,] _Board;
+        public bool _Initialized { get; private set; }
+
+        //private int[,] _Board;
+        private BoardCell[,] _Board;
         private int _RowsUsed;
         private int _ColsUsed;
         private int _Generation;
-        public bool _Initialized { get; private set; }
         private const char _LiveCell = '☻';
         private const char _DeadCell = ' ';
 //------------------------------------------------------------------------------
@@ -32,11 +34,13 @@ namespace GHGameOfLife
         /// <param name="colMax">Number of columns</param>
         public GoLBoard(int rowMax, int colMax)
         {
-            _Board = new int[rowMax, colMax];
+            //_Board = new int[rowMax, colMax];
+            _Board = new BoardCell[rowMax, colMax];
+            
             for (int r = 0; r < rowMax; r++)
             {
                 for (int c = 0; c < colMax; c++)
-                    _Board[r, c] = 0;
+                    _Board[r, c] = new BoardCell();
             }
 
             _RowsUsed = rowMax;
@@ -55,7 +59,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    _Board[r, c] = rand.Next()%2;
+                    _Board[r, c].val = rand.Next()%2;
                 }
             }
             _Initialized = true;
@@ -69,19 +73,17 @@ namespace GHGameOfLife
         public void BuildFromFile()
         {
             MenuText.FileError errType = MenuText.FileError.NOT_LOADED;
-            StreamReader reader = null;
 
             OpenFileDialog openWindow = new OpenFileDialog();          
             if (openWindow.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openWindow.FileName;
                 errType = ValidateFile(filePath);
-                reader = new StreamReader(openWindow.FileName);
+                //reader = new StreamReader(openWindow.FileName);
 
             }
             else
             {   // No File loaded
-                //errType = MenuText.FileError.CONTENTS;
                 int windowCenter = Console.WindowHeight / 2; //Vert position
                 int welcomeLeft = (Console.WindowWidth / 2) -
                                             (MenuText.Welcome.Length / 2);
@@ -112,8 +114,9 @@ namespace GHGameOfLife
             switch(errType)
             {
                 case MenuText.FileError.NONE:
-                    string startingPop = reader.ReadToEnd();
-                    reader.Close();
+                    string startingPop;
+                    using (StreamReader reader = new StreamReader(openWindow.FileName))
+                        startingPop = reader.ReadToEnd();
                     fillBoard(startingPop);
                     break;
                 default:
@@ -133,10 +136,8 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="pop"></param>
         public void BuildFromResource(string pop)
-        {
-            
-            var rm = GHGameOfLife.Pops.ResourceManager;
-            var startingPop = rm.GetString(pop);
+        {                  
+            var startingPop = GHGameOfLife.Pops.ResourceManager.GetString(pop);
 
             fillBoard(startingPop);
 
@@ -188,7 +189,7 @@ namespace GHGameOfLife
                 {
                     int popRow = r - rowLow;
                     int popCol = c - colLow;
-                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                    _Board[r, c].val = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
                 }
             }
         }
@@ -199,35 +200,59 @@ namespace GHGameOfLife
         /// Need to enable wrapping here
         public void Next()
         {
-            int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
+            //int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
+            BoardCell[,] nextBoard = new BoardCell[_RowsUsed,_ColsUsed];
+
 
             for (int r = 0; r < _RowsUsed; r++)
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    if (_Board[r, c] == 0)
+                    if (_Board[r, c].val == 0)
                     {
-                        if (WillBeBorn(r, c)) nextBoard[r, c] = 1;
-                        else nextBoard[r, c] = 0;
+                        if (WillBeBorn(r, c))
+                        {
+                            //nextBoard[r, c].val = 1;
+                            //nextBoard[r, c].changed = true;
+                            nextBoard[r, c] = new BoardCell(1, true);
+                        }
+                        else
+                        {
+                            //nextBoard[r, c].val = 0;
+                            //nextBoard[r, c].changed = false;
+                            nextBoard[r, c] = new BoardCell(0, false);
+                        } 
                     }
 
-                    if (_Board[r, c] == 1)
+                    if (_Board[r, c].val == 1)
                     {
-                        if (WillDie(r, c)) nextBoard[r, c] = 0;
-                        else nextBoard[r, c] = 1;
+                        if (WillDie(r, c))
+                        {
+                            //nextBoard[r, c].val = 0;
+                            //nextBoard[r, c].changed = true;
+                            nextBoard[r, c] = new BoardCell(0, true);
+                        }
+                        else
+                        {
+                            //nextBoard[r, c].val = 1;
+                            //nextBoard[r, c].changed = false;
+                            nextBoard[r, c] = new BoardCell(1, false);
+                        }
                     }
                 }
             }
             _Generation++;
+            
             /*
             for (int r = 0; r < _RowsUsed; r++)
                 for (int c = 0; c < _ColsUsed; c++)
                     _Board[r, c] = nextBoard[r, c];
-             */
+            */
             _Board = nextBoard;
 
         }
 //------------------------------------------------------------------------------
+        /*
         /// <summary>
         /// Displays the board in the console. It is centered in the console
         /// with a space of 5 on all sides to compensate for the border
@@ -260,8 +285,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    int check = _Board[r, c];
-                    if (check == 0)
+                    if (_Board[r, c] == 0)
                     {
                         Console.ForegroundColor = MenuText.DeadColor;
                         Console.Write(_DeadCell);
@@ -278,11 +302,55 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;    
-        }
+        }*/
 //------------------------------------------------------------------------------
         public void TestPrint()
         {
+            int space = 5;
+            if (_Generation == 0)
+            {
+                String write = "Starting population...";
+                int left = (Console.WindowWidth/2) - (write.Length/2);
+                Console.SetCursorPosition(left, 1);
+                Console.Write(write);
+            }
+            else
+            {
+                Console.SetCursorPosition(0, 1);
+                Console.Write(" ".PadRight(Console.WindowWidth));
+                String write = "Generation " + _Generation;
+                int left = (Console.WindowWidth/2) - (write.Length / 2);
+                Console.SetCursorPosition(left, 1);
+                Console.Write(write);
+            }
 
+            Console.BackgroundColor = MenuText.DefaultBG;         
+            int row = space;
+
+            Console.SetCursorPosition(space, row);
+            for (int r = 0; r < _RowsUsed; r++)
+            {
+                for (int c = 0; c < _ColsUsed; c++)
+                {
+                    if (_Board[r, c].val == 0)
+                    {
+                        Console.ForegroundColor = MenuText.DeadColor;
+                        if (_Board[r, c].changed == true) Console.Write(_DeadCell);
+                        else Console.CursorLeft += 1;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = MenuText.PopColor;
+                        if (_Board[r, c].changed == true) Console.Write(_LiveCell);
+                        else Console.CursorLeft += 1;
+                    }
+                }
+                row++;
+                Console.SetCursorPosition(space, row);
+            }
+
+            Console.BackgroundColor = MenuText.DefaultBG;
+            Console.ForegroundColor = MenuText.DefaultFG;    
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -297,14 +365,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
 
             if (n < 2) return true;
             if (n > 3) return true;
@@ -322,15 +390,15 @@ namespace GHGameOfLife
         private Boolean WillBeBorn(int r, int c)
         {
             int n = 0;
-            
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;       
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;         
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;       
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;      
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;    
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;           
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;           
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c].val == 1) n++;
+            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
+            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed].val == 1) n++;
 
             if (n == 3) return true;
             else return false;
@@ -358,37 +426,40 @@ namespace GHGameOfLife
                 return MenuText.FileError.SIZE;
             }
 
-            StreamReader reader = new StreamReader(filename);
-            string wholeFile = reader.ReadToEnd();
-            reader.Close();
-            string[] fileByLine = Regex.Split(wholeFile, "\r\n");
-
-
-            int rows = fileByLine.Length;
-            int cols = fileByLine[0].Length;
-
-            // Error if there are more lines than the board can hold
-            if (rows >= _RowsUsed) 
-                return MenuText.FileError.LENGTH;
-            // Error if the first line is too wide,
-            // 'cols' also used to check against all other lines
-            if (cols >= _ColsUsed) 
-                return MenuText.FileError.WIDTH;
-
-            foreach (string line in fileByLine)
+            using (StreamReader reader = new StreamReader(filename))
             {
-                //Error if all lines are not the same width
-                if (line.Length != cols)
-                {
+                string wholeFile = reader.ReadToEnd();
+                string[] fileByLine = Regex.Split(wholeFile, "\r\n");
+
+
+                int rows = fileByLine.Length;
+                int cols = fileByLine[0].Length;
+
+                // Error if there are more lines than the board can hold
+                if (rows >= _RowsUsed)
+                    return MenuText.FileError.LENGTH;
+                // Error if the first line is too wide,
+                // 'cols' also used to check against all other lines
+                if (cols >= _ColsUsed)
                     return MenuText.FileError.WIDTH;
-                }
-                //Error of the line is not all 0 and 1
-                if (!OnesAndZerosOnly(line))
+
+                foreach (string line in fileByLine)
                 {
-                    return MenuText.FileError.CONTENTS;
+                    //Error if all lines are not the same width
+                    if (line.Length != cols)
+                    {
+                        return MenuText.FileError.WIDTH;
+                    }
+                    //Error of the line is not all 0 and 1
+                    if (!OnesAndZerosOnly(line))
+                    {
+                        return MenuText.FileError.CONTENTS;
+                    }
+                    // Update cols to compare to the next line
+                    cols = line.Length;
                 }
             }
-
+            
             return MenuText.FileError.NONE;
        
         }
@@ -422,6 +493,27 @@ namespace GHGameOfLife
             }
             return true;
         }
+//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+        class BoardCell
+        {
+            public int val { get; set; }
+            public bool changed { get; set; }
+
+            public BoardCell()
+            {
+                this.val = 0;
+                this.changed = true;
+            }
+            public BoardCell(int val, bool changed)
+            {
+                this.val = val;
+                this.changed = changed;
+            }
+        }
+//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
     } // end class
 }

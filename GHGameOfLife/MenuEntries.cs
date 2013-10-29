@@ -9,6 +9,7 @@ namespace GHGameOfLife
     public static class MenuText
     {
         public enum FileError { NONE, LENGTH, WIDTH, CONTENTS, SIZE, NOT_LOADED };
+        public const ConsoleColor InfoColor = ConsoleColor.Red;
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
         public const ConsoleColor PopColor  = ConsoleColor.Cyan;
@@ -47,6 +48,7 @@ namespace GHGameOfLife
         public static int LeftAlign;    // Align text with the Welcome message
         public static List<String> ResNames;
 
+        private const int InfoLine = 3;
         private const int WelcomeRow = 6;
         private static int MenuStart;
 //------------------------------------------------------------------------------
@@ -120,15 +122,11 @@ namespace GHGameOfLife
 
             int curRow = MenuStart;
 
-            //ResourceManager rm = GHGameOfLife.Pops.ResourceManager;
-            //rm.IgnoreCase = true;
-            //ResourceSet set = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
             Console.SetCursorPosition(LeftAlign, curRow);
             Console.Write(PlsChoose);
             Console.SetCursorPosition(LeftAlign, ++curRow);
             Console.Write(Enter);
 
-            //int currLine = MenuStart + 2;
             int count = 1;
             
             foreach (String res in ResNames)
@@ -137,15 +135,15 @@ namespace GHGameOfLife
                 string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");
                 Console.Write(option);
                 count += 1;
-                //currLine += 1;
             }
 
             resCount = count;
 
             Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.ForegroundColor = InfoColor;
             string cancel = String.Format("{0,3}) {1}", count, "Cancel");
             Console.Write(cancel);
-            //curRow += 1;
+            Console.ForegroundColor = DefaultFG;
 
             /* USED FOR FINDING SPACING AT MIN WINDOW HEIGHT
             for (int i = 0; i < 10; i++)
@@ -160,9 +158,41 @@ namespace GHGameOfLife
             return (++curRow);
         }
 //------------------------------------------------------------------------------
-        public static void PrintFileError()
+        public static int PrintControls()
         {
+            int printRow = (Console.WindowHeight) - 4;
+            int opt1Left = (Console.WindowWidth / 2) -
+                                        (RunOptions1.Length / 2);
+            int opt2Left = (Console.WindowWidth / 2) -
+                                        (RunOptions2.Length / 2);
+            int opt3Left = (Console.WindowWidth / 2) -
+                                        (RunOptions3.Length / 2);
 
+            Console.SetCursorPosition(opt1Left, printRow++);
+            Console.Write(RunOptions1);
+            Console.SetCursorPosition(opt2Left, printRow++);
+            Console.Write(RunOptions2);
+            Console.SetCursorPosition(opt3Left, printRow);
+            Console.Write(RunOptions3);
+
+            return printRow;
+        }
+//------------------------------------------------------------------------------
+        public static void printStatus(bool running, bool paused)
+        {
+            Console.ForegroundColor = MenuText.InfoColor;
+            ClearLine(InfoLine);
+            if (running)
+            {
+                Console.SetCursorPosition(5, InfoLine);
+                Console.Write("AUTO");
+            }
+            if (paused)
+            {
+                Console.SetCursorPosition(10, InfoLine);
+                Console.Write("PAUSED");
+            }
+            Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
