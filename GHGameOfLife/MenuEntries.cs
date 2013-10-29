@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 
@@ -7,7 +8,7 @@ namespace GHGameOfLife
 {
     public static class MenuText
     {
-        public enum FileError { NONE, LENGTH, WIDTH, CONTENTS, SIZE };
+        public enum FileError { NONE, LENGTH, WIDTH, CONTENTS, SIZE, NOT_LOADED };
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
         public const ConsoleColor PopColor  = ConsoleColor.Cyan;
@@ -44,7 +45,7 @@ namespace GHGameOfLife
 
         public static int WindowCenter; // Vertical center of the console
         public static int LeftAlign;    // Align text with the Welcome message
-        public static ArrayList ResNames;
+        public static List<String> ResNames;
 
         private const int WelcomeRow = 6;
         private static int MenuStart;
@@ -54,10 +55,9 @@ namespace GHGameOfLife
             WindowCenter = Console.WindowHeight / 2;
             LeftAlign = (Console.WindowWidth/2) - (Welcome.Length/2);
             
-            // Start the menus halfway between the Welcome Message and 1/4 the height of the console
-            //MenuStart = ((WindowCenter / 2 + WelcomeRow) / 2) + 1;
+            // Start the menus at 1/3 of the window
             MenuStart = Console.WindowHeight/3 + 1;
-            ResNames = new ArrayList();
+            ResNames = new List<String>();
 
             ResourceManager rm = GHGameOfLife.Pops.ResourceManager;
             rm.IgnoreCase = true;
@@ -65,7 +65,7 @@ namespace GHGameOfLife
 
             foreach (DictionaryEntry res in all)
             {
-                ResNames.Add(res.Key);
+                ResNames.Add(res.Key.ToString());
             }
 
             Console.SetCursorPosition(LeftAlign, WelcomeRow);
@@ -89,20 +89,24 @@ namespace GHGameOfLife
         /// Prints the main menu
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintMainMenu()
+        public static int PrintMainMenu(out int numChoices)
         {
             ClearMenuOptions();
 
-            Console.SetCursorPosition(LeftAlign, MenuStart);
-            Console.Write(PlsChoose);
-            Console.SetCursorPosition(LeftAlign + 4, MenuStart+1);
-            Console.Write(MenuChoice1);
-            Console.SetCursorPosition(LeftAlign + 4, MenuStart+2);
-            Console.Write(MenuChoice2);
-            Console.SetCursorPosition(LeftAlign + 4, MenuStart+3);
-            Console.Write(MenuChoice3);
+            int curRow = MenuStart;
 
-            return (MenuStart+4);
+            Console.SetCursorPosition(LeftAlign, curRow);
+            Console.Write(PlsChoose);
+            Console.SetCursorPosition(LeftAlign, ++curRow);
+            Console.Write(Enter);
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.Write(MenuChoice1);
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.Write(MenuChoice2);
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.Write(MenuChoice3);
+            numChoices = 3;
+            return (++curRow);
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -114,30 +118,34 @@ namespace GHGameOfLife
         {
             ClearMenuOptions();
 
+            int curRow = MenuStart;
+
             //ResourceManager rm = GHGameOfLife.Pops.ResourceManager;
             //rm.IgnoreCase = true;
             //ResourceSet set = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
-            Console.SetCursorPosition(LeftAlign, MenuStart);
+            Console.SetCursorPosition(LeftAlign, curRow);
             Console.Write(PlsChoose);
+            Console.SetCursorPosition(LeftAlign, ++curRow);
+            Console.Write(Enter);
 
-            int currLine = MenuStart + 1;
+            //int currLine = MenuStart + 2;
             int count = 1;
             
             foreach (String res in ResNames)
             {
-                Console.SetCursorPosition(LeftAlign + 4, currLine);
+                Console.SetCursorPosition(LeftAlign + 4, ++curRow);
                 string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");
                 Console.Write(option);
                 count += 1;
-                currLine += 1;
+                //currLine += 1;
             }
 
             resCount = count;
 
-            Console.SetCursorPosition(LeftAlign + 4, currLine);
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
             string cancel = String.Format("{0,3}) {1}", count, "Cancel");
             Console.Write(cancel);
-            currLine += 1;
+            //curRow += 1;
 
             /* USED FOR FINDING SPACING AT MIN WINDOW HEIGHT
             for (int i = 0; i < 10; i++)
@@ -149,7 +157,7 @@ namespace GHGameOfLife
                 currLine += 1;
             }*/
 
-            return (currLine);
+            return (++curRow);
         }
 //------------------------------------------------------------------------------
         public static void PrintFileError()

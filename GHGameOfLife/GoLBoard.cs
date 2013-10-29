@@ -68,20 +68,20 @@ namespace GHGameOfLife
         /// </summary>
         public void BuildFromFile()
         {
-            MenuText.FileError errType = MenuText.FileError.NONE;
+            MenuText.FileError errType = MenuText.FileError.NOT_LOADED;
             StreamReader reader = null;
 
             OpenFileDialog openWindow = new OpenFileDialog();          
             if (openWindow.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openWindow.FileName;
-                ValidateFile(filePath, out errType);
+                errType = ValidateFile(filePath);
                 reader = new StreamReader(openWindow.FileName);
 
             }
             else
             {   // No File loaded
-                errType = MenuText.FileError.CONTENTS;
+                //errType = MenuText.FileError.CONTENTS;
                 int windowCenter = Console.WindowHeight / 2; //Vert position
                 int welcomeLeft = (Console.WindowWidth / 2) -
                                             (MenuText.Welcome.Length / 2);
@@ -123,80 +123,13 @@ namespace GHGameOfLife
 
             _Initialized = true;
             
-            
-            /*
-            int rows = 0;
-            while (!reader.EndOfStream)
-            {
-                reader.ReadLine();
-                rows++;
-            }
-            reader.BaseStream.Position = 0;
-
-            int[][] startingPop = new int[rows][];
-
-            int currRow = 0;
-            while (!reader.EndOfStream)
-            {
-                String currLine = reader.ReadLine();
-                int[] temp = new int[currLine.Length];
-                for (int i = 0; i < temp.Length; i++)
-                {
-                    temp[i] = (int)char.GetNumericValue(currLine[i]);
-                }
-                startingPop[currRow] = temp;
-                currRow++;
-            }
-
-            /* Because the loaded population is centered we need
-             * to do some math to keep it centered relative to the
-             * total size of the board.
-             *//*
-            int midRow = _RowsUsed / 2;
-            int midCol = _ColsUsed / 2;
-
-            int rowsNum = startingPop.Length;
-            int colNum = startingPop[0].Length;
-            int rowLow, rowHigh, colLow, colHigh;
-
-            if (rowsNum % 2 == 0)
-            {
-                rowLow = midRow - rowsNum / 2;
-                rowHigh = midRow + rowsNum / 2;
-            }
-            else
-            {
-                rowLow = midRow - rowsNum / 2;
-                rowHigh = (midRow + rowsNum / 2) + 1;
-            }
-
-
-            if (colNum % 2 == 0)
-            {
-                colLow = midCol - colNum / 2;
-                colHigh = midCol + colNum / 2;
-            }
-            else
-            {
-                colLow = midCol - colNum / 2;
-                colHigh = (midCol + colNum / 2) + 1;
-            }
-
-
-            for (int r = rowLow; r < rowHigh; r++)
-            {
-                for (int c = colLow; c < colHigh; c++)
-                {
-                    int popRow = r - rowLow;
-                    int popCol = c - colLow;
-                    _Board[r, c] = startingPop[popRow][popCol];
-                }
-            }*/
-
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from a resource
+        /// TODO: Don't really need to validate built in stuff, but probably 
+        /// need to add the ability to resize the window if for some reason
+        /// it is set smaller than a preloaded population can display in.
         /// </summary>
         /// <param name="pop"></param>
         public void BuildFromResource(string pop)
@@ -208,49 +141,6 @@ namespace GHGameOfLife
             fillBoard(startingPop);
 
             _Initialized = true;
-            /*
-            string[] popByLine = Regex.Split(startingPop, "\r\n");
-
-            int midRow = _RowsUsed / 2;
-            int midCol = _ColsUsed / 2;
-
-            int rowsNum = popByLine.Count();
-            int colNum = popByLine[0].Length;
-            int rowLow, rowHigh, colLow, colHigh;
-
-            if (rowsNum % 2 == 0)
-            {
-                rowLow = midRow - rowsNum / 2;
-                rowHigh = midRow + rowsNum / 2;
-            }
-            else
-            {
-                rowLow = midRow - rowsNum / 2;
-                rowHigh = (midRow + rowsNum / 2) + 1;
-            }
-
-
-            if (colNum % 2 == 0)
-            {
-                colLow = midCol - colNum / 2;
-                colHigh = midCol + colNum / 2;
-            }
-            else
-            {
-                colLow = midCol - colNum / 2;
-                colHigh = (midCol + colNum / 2) + 1;
-            }
-
-
-            for (int r = rowLow; r < rowHigh; r++)
-            {
-                for (int c = colLow; c < colHigh; c++)
-                {
-                    int popRow = r - rowLow;
-                    int popCol = c - colLow;
-                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
-                }
-            }*/
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -453,23 +343,19 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="filename">Path to a file to be checked</param>
         /// <param name="errType">The type of error returned</param>
-        private void ValidateFile(String filename, 
-                                        out MenuText.FileError errType)
+        private MenuText.FileError ValidateFile(String filename)
         {
-            errType = MenuText.FileError.NONE;
-
             // File should exist, but its good to make sure.
             FileInfo file = new FileInfo(filename);
             if (!file.Exists)
             {
-                errType = MenuText.FileError.CONTENTS;
-                return;
+                return MenuText.FileError.CONTENTS;
             }
 
             // Checks if the file is empty or too large ( > 256KB )
             if (file.Length == 0 || file.Length > 262144)
             {
-                errType = MenuText.FileError.SIZE;
+                return MenuText.FileError.SIZE;
             }
 
             StreamReader reader = new StreamReader(filename);
@@ -483,58 +369,28 @@ namespace GHGameOfLife
 
             // Error if there are more lines than the board can hold
             if (rows >= _RowsUsed) 
-                errType = MenuText.FileError.LENGTH;
+                return MenuText.FileError.LENGTH;
             // Error if the first line is too wide,
             // 'cols' also used to check against all other lines
             if (cols >= _ColsUsed) 
-                errType = MenuText.FileError.WIDTH;
+                return MenuText.FileError.WIDTH;
 
             foreach (string line in fileByLine)
             {
                 //Error if all lines are not the same width
                 if (line.Length != cols)
                 {
-                    errType = MenuText.FileError.WIDTH;
-                    break;
+                    return MenuText.FileError.WIDTH;
                 }
+                //Error of the line is not all 0 and 1
                 if (!OnesAndZerosOnly(line))
                 {
-                    errType = MenuText.FileError.CONTENTS;
-                    break;
+                    return MenuText.FileError.CONTENTS;
                 }
-                // No reason to continue after the first error
             }
 
-            /*
-            var rows = File.ReadLines(filename).Count();         
-            if (rows >= _RowsUsed)
-            {
-                errType = MenuText.FileError.LENGTH;
-                //return false;
-            }
-            reader.BaseStream.Position = 0;
-            int lastLineLen = reader.ReadLine().Length;
-            reader.BaseStream.Position = 0;
-            while (!reader.EndOfStream)
-            {
-                String currLine = reader.ReadLine();
-                if (currLine.Length >= _ColsUsed)
-                {
-                    errType = MenuText.FileError.WIDTH;
-                    reader.Close();
-                    //return false;
-                }
-                if (!OnesAndZerosOnly(currLine))
-                {
-                    errType = MenuText.FileError.CONTENTS;
-                    reader.Close();
-                    //return false;
-                }
-                lastLineLen = currLine.Length;
-            }
-            reader.Close();
-            errType = MenuText.FileError.NONE;
-            //return true;*/
+            return MenuText.FileError.NONE;
+       
         }
 //------------------------------------------------------------------------------
         /// <summary>

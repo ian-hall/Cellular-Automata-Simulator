@@ -6,17 +6,16 @@ using System.Reflection;
 
 namespace GHGameOfLife
 {
-    //enum LoadedPops { goose, grow, ship, spark, bees, wick };
     class Program
     {
         enum PopType { RANDOM, FILE, PREMADE };
 
         // Don't go below these values or the text will be screwy
-        const int MIN_WIDTH = 50;
+        const int MIN_WIDTH = 70;
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 80; // Console width
+        static int CONSOLE_WIDTH = 70; // Console width
         static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
@@ -124,35 +123,56 @@ namespace GHGameOfLife
         {
             PopType pop = PopType.RANDOM;
             string res = null;
-            //int windowCenter = Console.WindowHeight / 2; //Vertical Position
-            //int welcomeLeft = (Console.WindowWidth / 2) - 
-            //                                (MenuText.Welcome.Length / 2);
 
-            /*
-            Console.SetCursorPosition(MenuText.LeftAlign, 8);
-            Console.Write(MenuText.Welcome);
-
-            Console.SetCursorPosition(MenuText.LeftAlign, MenuText.WindowCenter - 4);
-            Console.Write(MenuText.PlsChoose);
-
-            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 3);
-            Console.Write(MenuText.PopChoice1);
-            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 2);
-            Console.Write(MenuText.PopChoice2);
-            Console.SetCursorPosition(MenuText.LeftAlign + 4, MenuText.WindowCenter - 1);
-            Console.Write(MenuText.PopChoice3);*/
-            int promptRow = MenuText.PrintMainMenu();
+            int numChoices;
+            int promptRow = MenuText.PrintMainMenu(out numChoices);
+            int choice = -1;
 
             bool validEntry = false;
+            Console.CursorVisible = true;
             while (!validEntry)
             {
+                MenuText.ClearWithinBorder(promptRow);
                 Console.SetCursorPosition(MenuText.LeftAlign, promptRow);
-                Console.Write(MenuText.Choice);
-                Console.CursorVisible = true;
-                int input = 
-                        (int)Char.GetNumericValue(Console.ReadKey().KeyChar);
+                Console.Write(MenuText.Choice);                     
+
+                String input = "";
+                int maxLen = 1;
+                while (true)
+                {
+                    char c = Console.ReadKey(true).KeyChar;
+                    if (c == '\r')
+                        break;
+                    if (c == '\b')
+                    {
+                        if (input != "")
+                        {
+                            input = input.Substring(0, input.Length - 1);
+                            Console.Write("\b \b");
+                        }
+                    }
+                    else if (input.Length < maxLen)
+                    {
+                        Console.Write(c);
+                        input += c;
+                    }
+                }
+
+                if (IsValidNumber(input, numChoices))
+                {
+                    choice = Int32.Parse(input);
+                    validEntry = true;
+                }
+                else
+                {
+                    Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 1);
+                    Console.Write(MenuText.Err);
+                    continue;
+                }
+
                 Console.CursorVisible = false;
-                switch (input)
+                
+                switch (choice)
                 {
                     case 1:
                         pop = PopType.RANDOM;
@@ -168,10 +188,11 @@ namespace GHGameOfLife
                         if (res != null)
                             validEntry = true;
                         else
-                            MenuText.PrintMainMenu();
+                            MenuText.PrintMainMenu(out numChoices);
+                            validEntry = false;
                         break;
                     default:
-                        Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 1);
+                        Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 2);
                         Console.Write(MenuText.Err);
                         break;
                 }
@@ -276,12 +297,13 @@ namespace GHGameOfLife
                 retVal = MenuText.ResNames[resToLoad].ToString();
             }
 
+            Console.CursorVisible = false;
             return retVal;
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.
-        /// Also makes sure it is in range of the number of resources
+        /// Also makes sure it is in range of the number of choices presnted
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
