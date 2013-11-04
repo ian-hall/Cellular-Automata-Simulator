@@ -15,12 +15,13 @@ namespace GHGameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 180; // Console width
-        static int CONSOLE_HEIGHT = 80; // Console height
+        static int CONSOLE_WIDTH = 100; // Console width
+        static int CONSOLE_HEIGHT = 50; // Console height
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
         {
+            
             int initBuffWidth = Console.BufferWidth;
             int initBuffHeight = Console.BufferHeight;
             int initConsWidth = Console.WindowWidth;
@@ -42,9 +43,9 @@ namespace GHGameOfLife
             {
                 MenuText.Initialize();
                 MainMenu();
-                //TODO Prompt to go again before resetting the console and closing
-                ResetConsole(initialValues);
-            }       
+                //TODO Prompt to go again before resetting the console and closing               
+            }
+            ResetConsole(initialValues);
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -55,8 +56,11 @@ namespace GHGameOfLife
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;
             Console.Title = "Ian's Game of Life";
+            
             /* Need to check the current window/buffer size before applying the
              * new size. Exits if the sizes are off.
+             * TODO: Probably make it resize instead of exiting if there is a
+             * problem here.
              */
             if (CONSOLE_WIDTH < MIN_WIDTH || CONSOLE_HEIGHT < MIN_HEIGHT)
                 return false;
@@ -218,7 +222,7 @@ namespace GHGameOfLife
                                                             CONSOLE_WIDTH - 10);
             switch (pop)
             {
-                case PopType.RANDOM: //Nothing, random pop loads by default
+                case PopType.RANDOM:
                     initial.BuildDefaultPop();
                     break;
                 case PopType.FILE:

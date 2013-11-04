@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace GHGameOfLife
 {
@@ -22,8 +23,8 @@ namespace GHGameOfLife
         private int _RowsUsed;
         private int _ColsUsed;
         private int _Generation;
-        private const char _LiveCell = '☻';
-        private const char _DeadCell = ' ';
+        private const char _LiveCell = '█';
+        //private const char _DeadCell = ' ';
         private Random rand = new Random();
 //------------------------------------------------------------------------------
         /// <summary>
@@ -41,7 +42,7 @@ namespace GHGameOfLife
                 for (int c = 0; c < colMax; c++)
                     _Board[r, c] = rand.Next() % 2;
             }*/
-
+            
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
             _Initialized = false;
@@ -255,7 +256,7 @@ namespace GHGameOfLife
         /// Displays the board in the console. It is centered in the console
         /// with a space of 5 on all sides to compensate for the border
         /// </summary>
-        public void Print()
+        /*public void Print()
         {
             int space = 5;
             if (_Generation == 0)
@@ -275,7 +276,8 @@ namespace GHGameOfLife
                 Console.Write(write);
             }
 
-            Console.BackgroundColor = MenuText.DefaultBG;         
+            Console.BackgroundColor = MenuText.DefaultBG;
+            Console.ForegroundColor = MenuText.PopColor;
             int row = space;
 
             Console.SetCursorPosition(space, row);
@@ -285,12 +287,12 @@ namespace GHGameOfLife
                 {
                     if (_Board[r, c] == 0)
                     {
-                        Console.ForegroundColor = MenuText.DeadColor;
-                        Console.Write(_DeadCell);
+                        //Console.ForegroundColor = MenuText.DeadColor;
+                        Console.Write(' ');
                     }
                     else
                     {
-                        Console.ForegroundColor = MenuText.PopColor;
+                        //Console.ForegroundColor = MenuText.PopColor;
                         Console.Write(_LiveCell);
                     }
                 }
@@ -300,7 +302,7 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;    
-        }
+        }*/
 //------------------------------------------------------------------------------
         public void TestPrint()
         {
@@ -322,7 +324,8 @@ namespace GHGameOfLife
                 Console.Write(write);
             }
 
-            Console.BackgroundColor = MenuText.DefaultBG;         
+            Console.BackgroundColor = MenuText.DefaultBG;
+            Console.ForegroundColor = MenuText.PopColor;
             int row = space;
 
             Console.SetCursorPosition(space, row);
@@ -334,7 +337,7 @@ namespace GHGameOfLife
                     if (_Board[r, c] == 0)
                     {
                         //Console.ForegroundColor = MenuText.DeadColor;
-                        sb.Append(_DeadCell);
+                        sb.Append(' ');
                     }
                     else
                     {
