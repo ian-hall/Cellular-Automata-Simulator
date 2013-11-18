@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
+using System.Text;
 
 namespace GHGameOfLife
 {
@@ -178,9 +179,30 @@ namespace GHGameOfLife
             return printRow;
         }
 //------------------------------------------------------------------------------
-        public static void printStatus(bool running, bool paused)
+        public static void printStatus(bool running, bool paused, int speed)
         {
             Console.ForegroundColor = MenuText.InfoColor;
+            StringBuilder sb = new StringBuilder();
+            string runStr = (running) ? "AUTO" : " ";
+            string pauseStr = (paused) ? "PAUSED" : " ";
+
+            // █
+            string speedStr = "SPEED - ";
+            for (int i = 0; i < 5; i++)
+            {
+                if (i <= speed)
+                    speedStr += "█ ";
+                else
+                    speedStr += "  ";
+            }
+            speedStr += "+";
+            
+
+            sb.AppendFormat("{0,-15}{1,-15}{2,-20}", runStr, pauseStr, speedStr);
+            ClearLine(InfoLine);
+            Console.SetCursorPosition(5, InfoLine);
+            Console.Write(sb);
+            /*
             ClearLine(InfoLine);
             if (running)
             {
@@ -192,6 +214,8 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(10, InfoLine);
                 Console.Write("PAUSED");
             }
+            Console.SetCursorPosition(20, InfoLine);
+            Console.Write("Speed [█ █ █ █ █]");*/
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------

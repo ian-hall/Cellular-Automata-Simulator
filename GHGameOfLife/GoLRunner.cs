@@ -9,6 +9,8 @@ namespace GHGameOfLife
     /// </summary>
     static class GoLRunner
     {
+        private static int[] _Speeds = {132,100,66,50,33};
+        private static int _SpeedIndex = 2; //Start at a 66ms wait
 //------------------------------------------------------------------------------
         /// <summary>
         /// Runs the game
@@ -23,25 +25,13 @@ namespace GHGameOfLife
                 Console.Write("ERROR");
                 return;
             }
-            
-            int printRow = MenuText.PrintControls();
-            /*int opt1Left = (Console.WindowWidth / 2) -
-                                        (MenuText.RunOptions1.Length / 2);
-            int opt2Left = (Console.WindowWidth / 2) -
-                                        (MenuText.RunOptions2.Length / 2);
-            int opt3Left = (Console.WindowWidth / 2) -
-                                        (MenuText.RunOptions3.Length / 2);
 
-            Console.SetCursorPosition(opt1Left, printRow++);
-            Console.Write(MenuText.RunOptions1);
-            Console.SetCursorPosition(opt2Left, printRow++);
-            Console.Write(MenuText.RunOptions2);
-            Console.SetCursorPosition(opt3Left, printRow);
-            Console.Write(MenuText.RunOptions3);*/
+            int printRow = MenuText.PrintControls();
+
             bool go = true;
             bool continuous = false;
             bool paused = true;
-            MenuText.printStatus(continuous, paused);
+            MenuText.printStatus(continuous, paused, _SpeedIndex);
             while (go)
             {
                 // If it isnt running, and no keys are pressed
@@ -53,16 +43,14 @@ namespace GHGameOfLife
                 while (!Console.KeyAvailable && continuous)
                 {
                     b.Next();
-                    //b.Print();
                     b.TestPrint();
-                    System.Threading.Thread.Sleep(33);
+                    System.Threading.Thread.Sleep(_Speeds[_SpeedIndex]);
                 }
                 //if PAUSE is pressed while it is not running
                 ConsoleKey pressed = Console.ReadKey(true).Key;
                 if (pressed == ConsoleKey.Spacebar && !continuous)
                 {
                     b.Next();
-                    //b.Print();
                     b.TestPrint();
                 }
 
@@ -72,7 +60,7 @@ namespace GHGameOfLife
                 {
                     bool keyPressed = false;
                     paused = true;
-                    MenuText.printStatus(continuous, paused);
+                    MenuText.printStatus(continuous, paused, _SpeedIndex);
                     while (!keyPressed)
                     {
                         while (!Console.KeyAvailable)
@@ -85,7 +73,7 @@ namespace GHGameOfLife
                         {
                             keyPressed = true;
                             paused = false;
-                            MenuText.printStatus(continuous, paused);
+                            MenuText.printStatus(continuous, paused, _SpeedIndex);
                         }
                         else if (pauseEntry == ConsoleKey.Escape)
                         {
@@ -96,16 +84,42 @@ namespace GHGameOfLife
                         {
                             continuous = false;
                             keyPressed = true;
-                            MenuText.printStatus(continuous, paused);
+                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                        }
+                        else if (pauseEntry == ConsoleKey.OemMinus || pauseEntry == ConsoleKey.Subtract)
+                        {
+                            if (_SpeedIndex >= 1)
+                                _SpeedIndex -= 1;
+                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                        }
+                        else if (pauseEntry == ConsoleKey.OemPlus || pauseEntry == ConsoleKey.Add)
+                        {
+                            if (_SpeedIndex <= 3)
+                                _SpeedIndex += 1;
+                            MenuText.printStatus(continuous, paused, _SpeedIndex);
                         }
                     }
                 }
-
+               
+                if (pressed == ConsoleKey.OemMinus || pressed == ConsoleKey.Subtract)
+                {
+                    if (_SpeedIndex >= 1)
+                        _SpeedIndex -= 1;
+                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                }
+                
+                if (pressed == ConsoleKey.OemPlus || pressed == ConsoleKey.Add)
+                {
+                    if (_SpeedIndex <= 3)
+                        _SpeedIndex += 1;
+                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                }
+                
                 if (pressed == ConsoleKey.R)
                 {
                     continuous  = !continuous;
                     paused = !paused;
-                    MenuText.printStatus(continuous, paused);
+                    MenuText.printStatus(continuous, paused, _SpeedIndex);
                 }
 
                 if (pressed == ConsoleKey.Escape)

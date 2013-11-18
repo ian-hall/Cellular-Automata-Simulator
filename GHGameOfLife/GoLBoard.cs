@@ -23,7 +23,7 @@ namespace GHGameOfLife
         private int _RowsUsed;
         private int _ColsUsed;
         private int _Generation;
-        private const char _LiveCell = '█';
+        private const char _LiveCell = '☺';
         //private const char _DeadCell = ' ';
         private Random rand = new Random();
 //------------------------------------------------------------------------------
@@ -494,27 +494,6 @@ namespace GHGameOfLife
             }
             return true;
         }
-//------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------------------
-        class BoardCell
-        {
-            public int val { get; set; }
-            public bool changed { get; set; }
-
-            public BoardCell()
-            {
-                this.val = 0;
-                this.changed = true;
-            }
-            public BoardCell(int val, bool changed)
-            {
-                this.val = val;
-                this.changed = changed;
-            }
-        }
-//------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
     } // end class
 }
