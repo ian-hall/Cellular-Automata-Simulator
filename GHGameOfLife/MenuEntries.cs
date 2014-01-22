@@ -181,10 +181,12 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void printStatus(bool running, bool paused, int speed)
         {
+            //TODO: Maybe only show the PAUSED text while it is set to AUTO
             Console.ForegroundColor = MenuText.InfoColor;
             StringBuilder sb = new StringBuilder();
-            string runStr = (running) ? "AUTO" : " ";
-            string pauseStr = (paused) ? "PAUSED" : " ";
+            string runStr = (running) ? "LOOPING" : "STEPPING";
+            //string pauseStr = (paused) ? "PAUSED" : " ";
+            string pauseStr = (running && paused) ? "PAUSED" : " ";
 
             // █
             string speedStr = "SPEED - ";
@@ -198,7 +200,9 @@ namespace GHGameOfLife
             speedStr += "+";
             
 
-            sb.AppendFormat("{0,-15}{1,-15}{2,-20}", runStr, pauseStr, speedStr);
+            //sb.AppendFormat("{0,-15}{1,-15}{2,-20}", runStr, pauseStr, speedStr);
+
+            sb.AppendFormat("{0,-10}{1,-10}{2,51}", runStr, pauseStr, speedStr);
             ClearLine(InfoLine);
             Console.SetCursorPosition(5, InfoLine);
             Console.Write(sb);
