@@ -202,7 +202,7 @@ namespace GHGameOfLife
             int colOne = 10;
             int colTwo = 10;
             int speedCol = Console.WindowWidth - colOne - colTwo - 10;
-            //Hardcode 9 because of the spaces on each side of the game board 
+            //Hardcode 10 because of the spaces on each side of the game board 
             //when it is displayed, so its like space*2
             string testFormat = "{0,-" + colOne + "}{1,-" + colTwo + 
                                                         "}{2," + speedCol + "}";
