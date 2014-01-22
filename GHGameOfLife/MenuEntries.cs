@@ -35,15 +35,9 @@ namespace GHGameOfLife
         public const String FileErr2    = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
-        //public const String NextPrompt  = "Get next generation (y/n)? ";
-        //public const String Pause       = "Press SPACE to pause";
-        //public const String Unpause     = "Press SPACE to continue " + 
-        //                                                    "or ESC to exit";
-
-        public const String RunOptions1 = "Press SPACE to step through, " +
-                                                        "or pause if running.";
-        public const String RunOptions2 = "Press R to toggle auto stepping.";
-        public const String RunOptions3 = "Press ESC to exit";
+        public const String RunOptions1 = "[SPACE] Get next/Pause";
+        public const String RunOptions2 = "[R] Toggle running";
+        public const String RunOptions3 = "[ESC] Exit";
 
         public static int WindowCenter; // Vertical center of the console
         public static int LeftAlign;    // Align text with the Welcome message
@@ -130,7 +124,7 @@ namespace GHGameOfLife
 
             int count = 1;
             
-            foreach (String res in ResNames)
+            foreach (String res in MenuText.ResNames)
             {
                 Console.SetCursorPosition(LeftAlign + 4, ++curRow);
                 string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");
@@ -161,20 +155,24 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static int PrintControls()
         {
+            Console.ForegroundColor = MenuText.InfoColor;
             int printRow = (Console.WindowHeight) - 4;
+            /*
             int opt1Left = (Console.WindowWidth / 2) -
                                         (RunOptions1.Length / 2);
             int opt2Left = (Console.WindowWidth / 2) -
                                         (RunOptions2.Length / 2);
             int opt3Left = (Console.WindowWidth / 2) -
                                         (RunOptions3.Length / 2);
+             */
 
-            Console.SetCursorPosition(opt1Left, printRow++);
+            Console.SetCursorPosition(5, printRow++);
             Console.Write(RunOptions1);
-            Console.SetCursorPosition(opt2Left, printRow++);
+            Console.SetCursorPosition(5, printRow++);
             Console.Write(RunOptions2);
-            Console.SetCursorPosition(opt3Left, printRow);
+            Console.SetCursorPosition(5, printRow);
             Console.Write(RunOptions3);
+            Console.ForegroundColor = MenuText.DefaultFG;
 
             return printRow;
         }
@@ -200,9 +198,15 @@ namespace GHGameOfLife
             speedStr += "+";
             
 
-            //sb.AppendFormat("{0,-15}{1,-15}{2,-20}", runStr, pauseStr, speedStr);
-
-            sb.AppendFormat("{0,-10}{1,-10}{2,51}", runStr, pauseStr, speedStr);
+            //sb.AppendFormat("{0,-15}{1,-15}{2,51}", runStr, pauseStr, speedStr);
+            int colOne = 10;
+            int colTwo = 10;
+            int speedCol = Console.WindowWidth - colOne - colTwo - 10;
+            //Hardcode 9 because of the spaces on each side of the game board 
+            //when it is displayed, so its like space*2
+            string testFormat = "{0,-" + colOne + "}{1,-" + colTwo + 
+                                                        "}{2," + speedCol + "}";
+            sb.AppendFormat(testFormat, runStr, pauseStr, speedStr);
             ClearLine(InfoLine);
             Console.SetCursorPosition(5, InfoLine);
             Console.Write(sb);
