@@ -17,7 +17,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="b">The board to start with</param>
         /// TODO: Add a status display
-        public static void NewRunStyle(GoLBoard b)
+        public static void RunIt(GoLBoard b)
         {
             if (!b._Initialized)
             {
@@ -131,23 +131,6 @@ namespace GHGameOfLife
             //MenuText.ClearLine(printRow + 1);
             Console.CursorVisible = false;
         }
-//------------------------------------------------------------------------------
-        /*private static void printStatus(bool running, bool paused)
-        {
-            Console.ForegroundColor = MenuText.InfoColor;
-            MenuText.ClearLine(3);
-            if (running)
-            {
-                Console.SetCursorPosition(5, 3);
-                Console.Write("AUTO");
-            }
-            if (paused)
-            {
-                Console.SetCursorPosition(10, 3);
-                Console.Write("PAUSED");
-            }          
-            Console.ForegroundColor = MenuText.DefaultFG;
-        }*/
  //------------------------------------------------------------------------------
     } // end class
 }

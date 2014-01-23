@@ -122,7 +122,6 @@ namespace GHGameOfLife
         /// <param name="validWindowSize">Makes sure the console window
         ///                                          is of adaquate size</param>
         ///                                          
-        ///  TODO: Add menu to select preloaded populations
         private static void MainMenu()
         {
             PopType pop = PopType.RANDOM;
@@ -236,12 +235,13 @@ namespace GHGameOfLife
             //initial.Print();
             initial.Print();
 
-            GoLRunner.NewRunStyle(initial);
+            GoLRunner.RunIt(initial);
 
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// 
+        /// Display a list of all resources built in to the program
+        /// TODO: Probably make this better support more resources or something
         /// </summary>
         /// <returns>The string key value of the resource to load</returns>
         private static string PromptForRes()

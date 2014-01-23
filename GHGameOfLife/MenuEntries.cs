@@ -24,17 +24,7 @@ namespace GHGameOfLife
         public const String Choice      = "Your choice: ";
         public const String Err         = "**Invalid entry**";
 
-        /*
-        public const String PopChoice1  = "1) Canada Goose";
-        public const String PopChoice2  = "2) Grow-By-One";
-        public const String PopChoice3  = "3) Ship in a bottle";
-        public const String PopChoice4  = "4) Sparky";
-        public const String PopChoice5  = "5) Twin Bees";
-        public const String PopChoice6  = "6) Wickstretcher";
-        */
-
-        public const String FileErr1    = "Error loading file...";
-        public const String FileErr2    = "Loading random pop.";
+        public const String LoadRandom  = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
         public const String Controls1 = "[SPACE] Get next/Pause";
@@ -160,14 +150,6 @@ namespace GHGameOfLife
         {
             Console.ForegroundColor = MenuText.InfoColor;
             int printRow = (Console.WindowHeight) - 4;
-            /*
-            int opt1Left = (Console.WindowWidth / 2) -
-                                        (RunOptions1.Length / 2);
-            int opt2Left = (Console.WindowWidth / 2) -
-                                        (RunOptions2.Length / 2);
-            int opt3Left = (Console.WindowWidth / 2) -
-                                        (RunOptions3.Length / 2);
-             */
 
             Console.SetCursorPosition(5, printRow++);
             Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
@@ -201,7 +183,6 @@ namespace GHGameOfLife
             speedStr += "+";
             
 
-            //sb.AppendFormat("{0,-15}{1,-15}{2,51}", runStr, pauseStr, speedStr);
             int colOne = 10;
             int colTwo = 10;
             int speedCol = Console.WindowWidth - colOne - colTwo - 10;
@@ -213,20 +194,6 @@ namespace GHGameOfLife
             ClearLine(InfoLine);
             Console.SetCursorPosition(5, InfoLine);
             Console.Write(sb);
-            /*
-            ClearLine(InfoLine);
-            if (running)
-            {
-                Console.SetCursorPosition(5, InfoLine);
-                Console.Write("AUTO");
-            }
-            if (paused)
-            {
-                Console.SetCursorPosition(10, InfoLine);
-                Console.Write("PAUSED");
-            }
-            Console.SetCursorPosition(20, InfoLine);
-            Console.Write("Speed [█ █ █ █ █]");*/
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
@@ -240,6 +207,32 @@ namespace GHGameOfLife
                 ClearWithinBorder(i);
         }
 //------------------------------------------------------------------------------
+        public static string GetReadableError(MenuText.FileError err)
+        {
+            string errorStr;
+            switch (err)
+            {
+                case FileError.CONTENTS:
+                    errorStr = "File not all 0s and 1s";
+                    break;
+                case FileError.LENGTH:
+                    errorStr = "File too long for current window";
+                    break;
+                case FileError.NOT_LOADED:
+                    errorStr = "No file loaded";
+                    break;
+                case FileError.SIZE:
+                    errorStr = "File larger than 10KB";
+                    break;
+                case FileError.WIDTH:
+                    errorStr = "File too wide for current window";
+                    break;
+                default:
+                    errorStr = "Generic error...";
+                    break;
+            }
+            return errorStr;
+        }
 //------------------------------------------------------------------------------
     } // end class
 }

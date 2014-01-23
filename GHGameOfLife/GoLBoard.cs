@@ -80,7 +80,7 @@ namespace GHGameOfLife
                 string filePath = openWindow.FileName;
                 errType = ValidateFile(filePath);
             }
-            else
+            /*else
             {   // No File loaded
                 int windowCenter = Console.WindowHeight / 2; //Vert position
                 int welcomeLeft = (Console.WindowWidth / 2) -
@@ -107,9 +107,9 @@ namespace GHGameOfLife
                             keyPressed = true;
                     }
                 }
-            }
+            }*/
 
-            switch(errType)
+            switch (errType)
             {
                 case MenuText.FileError.NONE:
                     string startingPop;
@@ -118,6 +118,30 @@ namespace GHGameOfLife
                     fillBoard(startingPop);
                     break;
                 default:
+                    int windowCenter = Console.WindowHeight / 2; //Vert position
+                    int welcomeLeft = (Console.WindowWidth / 2) -
+                        (MenuText.Welcome.Length / 2);
+                    int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
+
+                    MenuText.ClearWithinBorder(windowCenter);
+                    Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
+                    Console.Write(MenuText.GetReadableError(errType));
+                    Console.SetCursorPosition(welcomeLeft, windowCenter);
+                    Console.Write(MenuText.LoadRandom);
+                    Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
+                    Console.Write(MenuText.Enter);
+
+                    bool keyPressed = false;
+                    while (!keyPressed)
+                    {
+                        if (!Console.KeyAvailable)
+                            System.Threading.Thread.Sleep(50);
+                        else
+                        {
+                            if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                                keyPressed = true;
+                        }
+                    }
                     BuildDefaultPop();
                     break;
             }
@@ -349,8 +373,8 @@ namespace GHGameOfLife
                 return MenuText.FileError.CONTENTS;
             }
 
-            // Checks if the file is empty or too large ( > 256KB )
-            if (file.Length == 0 || file.Length > 262144)
+            // Checks if the file is empty or too large ( > 10KB )
+            if (file.Length == 0 || file.Length > 10240)
             {
                 return MenuText.FileError.SIZE;
             }
