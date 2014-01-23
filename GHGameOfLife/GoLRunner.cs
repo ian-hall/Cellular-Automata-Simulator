@@ -43,7 +43,7 @@ namespace GHGameOfLife
                 while (!Console.KeyAvailable && continuous)
                 {
                     b.Next();
-                    b.TestPrint();
+                    b.Print();
                     System.Threading.Thread.Sleep(_Speeds[_SpeedIndex]);
                 }
                 //if PAUSE is pressed while it is not running
@@ -51,7 +51,7 @@ namespace GHGameOfLife
                 if (pressed == ConsoleKey.Spacebar && !continuous)
                 {
                     b.Next();
-                    b.TestPrint();
+                    b.Print();
                 }
 
                 /// if paused while running, wait until space

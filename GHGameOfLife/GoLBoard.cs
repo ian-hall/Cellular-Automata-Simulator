@@ -79,8 +79,6 @@ namespace GHGameOfLife
             {
                 string filePath = openWindow.FileName;
                 errType = ValidateFile(filePath);
-                //reader = new StreamReader(openWindow.FileName);
-
             }
             else
             {   // No File loaded
@@ -201,8 +199,6 @@ namespace GHGameOfLife
         public void Next()
         {
             int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
-            //BoardCell[,] nextBoard = new BoardCell[_RowsUsed,_ColsUsed];
-
 
             for (int r = 0; r < _RowsUsed; r++)
             {
@@ -213,14 +209,10 @@ namespace GHGameOfLife
                         if (WillBeBorn(r, c))
                         {
                             nextBoard[r, c] = 1;
-                            //nextBoard[r, c].changed = true;
-                            //nextBoard[r, c] = new BoardCell(1, true);
                         }
                         else
                         {
                             nextBoard[r, c] = 0;
-                            //nextBoard[r, c].changed = false;
-                            //nextBoard[r, c] = new BoardCell(0, false);
                         } 
                     }
 
@@ -229,82 +221,20 @@ namespace GHGameOfLife
                         if (WillDie(r, c))
                         {
                             nextBoard[r, c] = 0;
-                            //nextBoard[r, c].changed = true;
-                            //nextBoard[r, c] = new BoardCell(0, true);
                         }
                         else
                         {
                             nextBoard[r, c] = 1;
-                            //nextBoard[r, c].changed = false;
-                            //nextBoard[r, c] = new BoardCell(1, false);
                         }
                     }
                 }
             }
-            _Generation++;
-            
-            /*
-            for (int r = 0; r < _RowsUsed; r++)
-                for (int c = 0; c < _ColsUsed; c++)
-                    _Board[r, c] = nextBoard[r, c];
-            */
+            _Generation++;          
             _Board = nextBoard;
 
         }
-//------------------------------------------------------------------------------      
-        /// <summary>
-        /// Displays the board in the console. It is centered in the console
-        /// with a space of 5 on all sides to compensate for the border
-        /// </summary>
-        /*public void Print()
-        {
-            int space = 5;
-            if (_Generation == 0)
-            {
-                String write = "Starting population...";
-                int left = (Console.WindowWidth/2) - (write.Length/2);
-                Console.SetCursorPosition(left, 1);
-                Console.Write(write);
-            }
-            else
-            {
-                Console.SetCursorPosition(0, 1);
-                Console.Write(" ".PadRight(Console.WindowWidth));
-                String write = "Generation " + _Generation;
-                int left = (Console.WindowWidth/2) - (write.Length / 2);
-                Console.SetCursorPosition(left, 1);
-                Console.Write(write);
-            }
-
-            Console.BackgroundColor = MenuText.DefaultBG;
-            Console.ForegroundColor = MenuText.PopColor;
-            int row = space;
-
-            Console.SetCursorPosition(space, row);
-            for (int r = 0; r < _RowsUsed; r++)
-            {
-                for (int c = 0; c < _ColsUsed; c++)
-                {
-                    if (_Board[r, c] == 0)
-                    {
-                        //Console.ForegroundColor = MenuText.DeadColor;
-                        Console.Write(' ');
-                    }
-                    else
-                    {
-                        //Console.ForegroundColor = MenuText.PopColor;
-                        Console.Write(_LiveCell);
-                    }
-                }
-                row++;
-                Console.SetCursorPosition(space, row);
-            }
-
-            Console.BackgroundColor = MenuText.DefaultBG;
-            Console.ForegroundColor = MenuText.DefaultFG;    
-        }*/
 //------------------------------------------------------------------------------
-        public void TestPrint()
+        public void Print()
         {
             int space = 5;
             if (_Generation == 0)
@@ -336,12 +266,10 @@ namespace GHGameOfLife
                 {
                     if (_Board[r, c] == 0)
                     {
-                        //Console.ForegroundColor = MenuText.DeadColor;
                         sb.Append(' ');
                     }
                     else
                     {
-                        //Console.ForegroundColor = MenuText.PopColor;
                         sb.Append(_LiveCell);
                     }
                 }

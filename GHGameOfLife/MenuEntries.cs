@@ -24,20 +24,23 @@ namespace GHGameOfLife
         public const String Choice      = "Your choice: ";
         public const String Err         = "**Invalid entry**";
 
-        public const String PopChoice1  = "1)  Canada Goose";
+        /*
+        public const String PopChoice1  = "1) Canada Goose";
         public const String PopChoice2  = "2) Grow-By-One";
         public const String PopChoice3  = "3) Ship in a bottle";
         public const String PopChoice4  = "4) Sparky";
         public const String PopChoice5  = "5) Twin Bees";
         public const String PopChoice6  = "6) Wickstretcher";
+        */
 
         public const String FileErr1    = "Error loading file...";
         public const String FileErr2    = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
-        public const String RunOptions1 = "[SPACE] Get next/Pause";
-        public const String RunOptions2 = "[R] Toggle running";
-        public const String RunOptions3 = "[ESC] Exit";
+        public const String Controls1 = "[SPACE] Get next/Pause";
+        public const String Controls2 = "[R] Toggle running";
+        public const String Controls3 = "[ESC] Exit";
+        public const String Controls4 = "[+/-] Speed adjust";
 
         public static int WindowCenter; // Vertical center of the console
         public static int LeftAlign;    // Align text with the Welcome message
@@ -167,11 +170,11 @@ namespace GHGameOfLife
              */
 
             Console.SetCursorPosition(5, printRow++);
-            Console.Write(RunOptions1);
+            Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
             Console.SetCursorPosition(5, printRow++);
-            Console.Write(RunOptions2);
+            Console.Write(Controls2);
             Console.SetCursorPosition(5, printRow);
-            Console.Write(RunOptions3);
+            Console.Write(Controls3);
             Console.ForegroundColor = MenuText.DefaultFG;
 
             return printRow;
@@ -202,7 +205,7 @@ namespace GHGameOfLife
             int colOne = 10;
             int colTwo = 10;
             int speedCol = Console.WindowWidth - colOne - colTwo - 10;
-            //Hardcode 10 because of the spaces on each side of the game board 
+            //Hardcode 10 because of the border around the game board
             //when it is displayed, so its like space*2
             string testFormat = "{0,-" + colOne + "}{1,-" + colTwo + 
                                                         "}{2," + speedCol + "}";
