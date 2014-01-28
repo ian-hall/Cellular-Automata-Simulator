@@ -26,6 +26,7 @@ namespace GHGameOfLife
         private const char _LiveCell = '☺';
         //private const char _DeadCell = ' ';
         private Random rand = new Random();
+        private int _Space = 5;
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -80,34 +81,7 @@ namespace GHGameOfLife
                 string filePath = openWindow.FileName;
                 errType = ValidateFile(filePath);
             }
-            /*else
-            {   // No File loaded
-                int windowCenter = Console.WindowHeight / 2; //Vert position
-                int welcomeLeft = (Console.WindowWidth / 2) -
-                                            (MenuText.Welcome.Length / 2);
-                int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
-
-                MenuText.ClearWithinBorder(windowCenter);
-
-                Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
-                Console.Write(MenuText.FileErr1);
-                Console.SetCursorPosition(welcomeLeft, windowCenter);
-                Console.Write(MenuText.FileErr2);
-                Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                Console.Write(MenuText.Enter);
-
-                bool keyPressed = false;
-                while (!keyPressed)
-                {
-                    if (!Console.KeyAvailable)
-                        System.Threading.Thread.Sleep(50);
-                    else
-                    {
-                        if (Console.ReadKey(true).Key == ConsoleKey.Enter)
-                            keyPressed = true;
-                    }
-                }
-            }*/
+            //no ELSE because it defaults to a file not loaded error
 
             switch (errType)
             {
@@ -151,6 +125,137 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
+        /// Builds the board from user input. This is going to be ugly...
+        /// 
+        /// </summary>
+        public void BuildFromUser()
+        {
+            int origWidth = Console.WindowWidth;
+            int origHeight = Console.WindowHeight;
+
+            Console.SetBufferSize(origWidth * 2, origHeight);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            IEnumerable<int> validLeft = Enumerable.Range(_Space, origWidth - 2 * _Space );
+            IEnumerable<int> validTop = Enumerable.Range(_Space, origHeight - 2 * _Space );
+            bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
+
+            for (int i = 0; i < validTop.Count(); i++)
+            {
+                for (int j = 0; j < validLeft.Count(); j++)
+                {
+                    Console.SetCursorPosition(validLeft.ElementAt(j), validTop.ElementAt(i));
+                    Console.Write('*');
+                    tempBoard[i, j] = false;
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            foreach (int top in validTop)
+            {
+                foreach (int left in validLeft)
+                {
+                    Console.SetCursorPosition(left + origWidth, top);
+                    Console.Write('█');
+                }
+            }
+
+
+            int curLeft = _Space;
+            int curTop = _Space;
+            int nextLeft;
+            int nextTop;
+            bool exit = false;
+            Console.CursorVisible = false;
+
+
+            while (!exit)
+            {
+                Console.SetCursorPosition(0, 0);
+                while (!Console.KeyAvailable)
+                {
+                    System.Threading.Thread.Sleep(10);
+                }
+
+                ConsoleKey pressed = Console.ReadKey().Key;
+
+                if (pressed == ConsoleKey.Escape)
+                {
+                    exit = true;
+                    break;
+                }
+
+                if (pressed == ConsoleKey.RightArrow)
+                {
+                    nextLeft = ++curLeft;
+                    if (!validLeft.Contains(nextLeft))
+                        nextLeft = validLeft.Min();
+
+                    curLeft = nextLeft;
+                }
+
+                if (pressed == ConsoleKey.LeftArrow)
+                {
+                    nextLeft = --curLeft;
+                    if (!validLeft.Contains(nextLeft))
+                        nextLeft = validLeft.Max();
+
+                    curLeft = nextLeft;
+                }
+
+                if (pressed == ConsoleKey.UpArrow)
+                {
+                    nextTop = --curTop;
+                    if (!validTop.Contains(nextTop))
+                        nextTop = validTop.Max();
+
+                    curTop = nextTop;
+                }
+
+                if (pressed == ConsoleKey.DownArrow)
+                {
+                    nextTop = ++curTop;
+                    if (!validTop.Contains(nextTop))
+                        nextTop = validTop.Min();
+
+                    curTop = nextTop;
+                }
+
+                if (pressed == ConsoleKey.Spacebar)
+                {
+                    Console.SetCursorPosition(0, 0);
+                    bool boardVal = !tempBoard[curTop - _Space, curLeft - _Space];
+
+                    if (boardVal)
+                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', ConsoleColor.Cyan, ConsoleColor.Black);
+                    else
+                        Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + origWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
+
+                    tempBoard[curTop - _Space, curLeft - _Space] = boardVal;
+                }
+            }
+
+            StringBuilder popString = new StringBuilder();
+            for (int r = 0; r < validTop.Count(); r++)
+            {
+                for (int c = 0; c < validLeft.Count(); c++)
+                {
+                    if (tempBoard[r, c])
+                        popString.Append(1);
+                    else
+                        popString.Append(0);
+                }
+                if( r != validTop.Count() -1 )
+                    popString.AppendLine();
+            }
+
+            fillBoard(popString.ToString());
+            Console.SetWindowSize(origWidth, origHeight);
+            Console.SetBufferSize(origWidth, origHeight);
+            _Initialized = true;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
         /// Builds the board from a resource
         /// TODO: Don't really need to validate built in stuff, but probably 
         /// need to add the ability to resize the window if for some reason
@@ -158,7 +263,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="pop"></param>
         public void BuildFromResource(string pop)
-        {                  
+        {
             var startingPop = GHGameOfLife.Pops.ResourceManager.GetString(pop);
 
             fillBoard(startingPop);
@@ -260,7 +365,6 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public void Print()
         {
-            int space = 5;
             if (_Generation == 0)
             {
                 String write = "Starting population...";
@@ -280,9 +384,9 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.PopColor;
-            int row = space;
+            int row = _Space;
 
-            Console.SetCursorPosition(space, row);
+            Console.SetCursorPosition(_Space, row);
             for (int r = 0; r < _RowsUsed; r++)
             {
                 StringBuilder sb = new StringBuilder();
@@ -299,7 +403,7 @@ namespace GHGameOfLife
                 }
                 Console.Write(sb);
                 row++;
-                Console.SetCursorPosition(space, row);
+                Console.SetCursorPosition(_Space, row);
             }
 
             Console.BackgroundColor = MenuText.DefaultBG;

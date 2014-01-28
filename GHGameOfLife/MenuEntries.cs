@@ -21,6 +21,7 @@ namespace GHGameOfLife
         public const String MenuChoice1 = "1) Random population";
         public const String MenuChoice2 = "2) Load population from a file";
         public const String MenuChoice3 = "3) Load a premade population";
+        public const String MenuChoice4 = "4) Create your own population";
         public const String Choice      = "Your choice: ";
         public const String Err         = "**Invalid entry**";
 
@@ -95,7 +96,9 @@ namespace GHGameOfLife
             Console.Write(MenuChoice2);
             Console.SetCursorPosition(LeftAlign + 4, ++curRow);
             Console.Write(MenuChoice3);
-            numChoices = 3;
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.Write(MenuChoice4);
+            numChoices = 4;
             return (++curRow);
         }
 //------------------------------------------------------------------------------
@@ -182,7 +185,6 @@ namespace GHGameOfLife
             }
             speedStr += "+";
             
-
             int colOne = 10;
             int colTwo = 10;
             int speedCol = Console.WindowWidth - colOne - colTwo - 10;

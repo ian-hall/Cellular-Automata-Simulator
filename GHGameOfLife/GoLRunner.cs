@@ -37,7 +37,7 @@ namespace GHGameOfLife
                 // If it isnt running, and no keys are pressed
                 while (!Console.KeyAvailable && !continuous)
                 {
-                    System.Threading.Thread.Sleep(50);
+                    System.Threading.Thread.Sleep(10);
                 }
                 // if it IS running, and no keys are pressed
                 while (!Console.KeyAvailable && continuous)

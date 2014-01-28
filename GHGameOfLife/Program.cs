@@ -8,7 +8,7 @@ namespace GHGameOfLife
 {
     class Program
     {
-        enum PopType { RANDOM, FILE, PREMADE };
+        enum PopType { RANDOM, FILE, PREMADE, BUILD };
 
         // Don't go below these values or the text will be screwy
         const int MIN_WIDTH = 70;
@@ -196,6 +196,10 @@ namespace GHGameOfLife
                             validEntry = false;
                         }
                         break;
+                    case 4:
+                        pop = PopType.BUILD;
+                        validEntry = true;
+                        break;
                     default:
                         Console.SetCursorPosition(MenuText.LeftAlign, promptRow + 2);
                         Console.Write(MenuText.Err);
@@ -230,9 +234,11 @@ namespace GHGameOfLife
                 case PopType.PREMADE:
                     initial.BuildFromResource(res);
                     break;
+                case PopType.BUILD:
+                    initial.BuildFromUser();
+                    break;
             }
 
-            //initial.Print();
             initial.Print();
 
             GoLRunner.RunIt(initial);
