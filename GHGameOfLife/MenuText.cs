@@ -33,6 +33,11 @@ namespace GHGameOfLife
         public const String Controls3 = "[ESC] Exit";
         public const String Controls4 = "[+/-] Speed adjust";
 
+        public const String CreationControls1 = "Arrow keys to move cursor";
+        public const String CreationControls2 = "[SPACE] Add/Remove cell";
+        public const String CreationControls3 = "[ESC] Finish";
+        
+
         public static int WindowCenter; // Vertical center of the console
         public static int LeftAlign;    // Align text with the Welcome message
         public static List<String> ResNames;
@@ -149,20 +154,20 @@ namespace GHGameOfLife
             return (++curRow);
         }
 //------------------------------------------------------------------------------
-        public static int PrintControls()
+        public static /*int*/ void PrintRunControls()
         {
             Console.ForegroundColor = MenuText.InfoColor;
             int printRow = (Console.WindowHeight) - 4;
 
-            Console.SetCursorPosition(5, printRow++);
-            Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
-            Console.SetCursorPosition(5, printRow++);
-            Console.Write(Controls2);
             Console.SetCursorPosition(5, printRow);
+            Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
+            Console.SetCursorPosition(5, ++printRow);
+            Console.Write(Controls2);
+            Console.SetCursorPosition(5, ++printRow);
             Console.Write(Controls3);
             Console.ForegroundColor = MenuText.DefaultFG;
 
-            return printRow;
+            //return printRow;
         }
 //------------------------------------------------------------------------------
         public static void printStatus(bool running, bool paused, int speed)
@@ -196,9 +201,18 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
-        public static void PrintCreationMenu()
+        public static void PrintCreationControls()
         {
+            Console.ForegroundColor = MenuText.InfoColor;
+            int printRow = (Console.WindowHeight) - 4;
 
+            Console.SetCursorPosition(5, printRow);
+            Console.Write(CreationControls1);
+            Console.SetCursorPosition(5, ++printRow);
+            Console.Write(CreationControls2);
+            Console.SetCursorPosition(5, ++printRow);
+            Console.Write(CreationControls3);
+            Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
         /// <summary>

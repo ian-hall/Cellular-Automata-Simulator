@@ -26,7 +26,7 @@ namespace GHGameOfLife
                 return;
             }
 
-            int printRow = MenuText.PrintControls();
+            MenuText.PrintRunControls();
 
             bool go = true;
             bool continuous = false;

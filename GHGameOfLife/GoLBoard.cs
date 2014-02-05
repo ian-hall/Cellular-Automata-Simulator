@@ -150,7 +150,7 @@ namespace GHGameOfLife
                 }
             }
 
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = MenuText.PopColor;
             foreach (int top in validTop)
             {
                 foreach (int left in validLeft)
@@ -160,15 +160,25 @@ namespace GHGameOfLife
                 }
             }
 
+            Console.ForegroundColor = MenuText.InfoColor;
+            string colFirst = (validLeft.First() - _Space).ToString();
+            string colLast = (validLeft.Last() - _Space).ToString();
+            string rowFirst = (validLeft.First() - _Space).ToString();
+            string rowLast = (validTop.Last() - _Space).ToString();
 
+            int positionPrintRow = _Space - 3;
+           
             Console.SetCursorPosition(_Space, _Space-2);
-            Console.Write(validLeft.First() - _Space);
-            Console.SetCursorPosition(origWidth - _Space-2, _Space - 2);
-            Console.Write(validLeft.Last() - _Space);
+            Console.Write(colFirst);
+            Console.SetCursorPosition(origWidth - _Space-colLast.Length, _Space - 2);
+            Console.Write(colLast);
+            
             Console.SetCursorPosition(_Space-2, _Space);
-            Console.Write(validTop.First() - _Space);
-            Console.SetCursorPosition(_Space - 3, origHeight - _Space - 1);
-            Console.Write(validTop.Last() - _Space);
+            Console.Write(rowFirst);
+            Console.SetCursorPosition(_Space - rowLast.Length-1, origHeight - _Space - 1);
+            Console.Write(rowLast);
+
+            MenuText.PrintCreationControls();
 
             int curLeft = _Space;
             int curTop = _Space;
@@ -181,8 +191,9 @@ namespace GHGameOfLife
             while (!exit)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
+                MenuText.ClearLine(_Space - 3);
                 string positionStr = String.Format("Current position: ({0},{1})", curTop - _Space, curLeft - _Space);
-                Console.SetCursorPosition(origWidth / 2 - positionStr.Length/2, _Space - 2);
+                Console.SetCursorPosition(origWidth / 2 - positionStr.Length/2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
                 while (!Console.KeyAvailable)
@@ -190,7 +201,7 @@ namespace GHGameOfLife
                     System.Threading.Thread.Sleep(10);
                 }
 
-                ConsoleKey pressed = Console.ReadKey().Key;
+                ConsoleKey pressed = Console.ReadKey(true).Key;
 
                 if (pressed == ConsoleKey.Escape)
                 {
@@ -265,6 +276,25 @@ namespace GHGameOfLife
             fillBoard(popString.ToString());
             Console.SetWindowSize(origWidth, origHeight);
             Console.SetBufferSize(origWidth, origHeight);
+
+            Console.SetCursorPosition(_Space, _Space - 2);
+            Console.Write(" ");          
+            Console.SetCursorPosition(origWidth - _Space - colLast.Length, _Space - 2);            
+            StringBuilder clear = new StringBuilder();
+            for (int i = 0; i < colLast.Length; i++)
+                clear.Append(" ");
+            Console.Write(clear);
+
+            Console.SetCursorPosition(_Space - 2, _Space);
+            Console.Write(" ");
+            Console.SetCursorPosition(_Space - rowLast.Length - 1, origHeight - _Space - 1);
+            clear = new StringBuilder();
+            for (int i = 0; i < rowLast.Length; i++)
+                clear.Append(" ");
+            Console.Write(clear);
+
+            Console.ForegroundColor = MenuText.DefaultFG;
+            MenuText.ClearLine(positionPrintRow);
             _Initialized = true;
         }
 //------------------------------------------------------------------------------
