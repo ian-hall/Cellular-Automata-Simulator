@@ -126,7 +126,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
-        /// 
+        /// TODO: Need to add some text to tell the user what to do
         /// </summary>
         public void BuildFromUser()
         {
@@ -161,6 +161,15 @@ namespace GHGameOfLife
             }
 
 
+            Console.SetCursorPosition(_Space, _Space-2);
+            Console.Write(validLeft.First() - _Space);
+            Console.SetCursorPosition(origWidth - _Space-2, _Space - 2);
+            Console.Write(validLeft.Last() - _Space);
+            Console.SetCursorPosition(_Space-2, _Space);
+            Console.Write(validTop.First() - _Space);
+            Console.SetCursorPosition(_Space - 3, origHeight - _Space - 1);
+            Console.Write(validTop.Last() - _Space);
+
             int curLeft = _Space;
             int curTop = _Space;
             int nextLeft;
@@ -171,6 +180,10 @@ namespace GHGameOfLife
 
             while (!exit)
             {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                string positionStr = String.Format("Current position: ({0},{1})", curTop - _Space, curLeft - _Space);
+                Console.SetCursorPosition(origWidth / 2 - positionStr.Length/2, _Space - 2);
+                Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
                 while (!Console.KeyAvailable)
                 {

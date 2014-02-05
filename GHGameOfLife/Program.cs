@@ -15,7 +15,7 @@ namespace GHGameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 70; // Console width
+        static int CONSOLE_WIDTH = 80; // Console width
         static int CONSOLE_HEIGHT = 30; // Console height
 //------------------------------------------------------------------------------
         [STAThread]

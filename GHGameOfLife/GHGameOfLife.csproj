@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="GoLBoard.cs" />
     <Compile Include="GoLRunner.cs" />
-    <Compile Include="MenuEntries.cs" />
+    <Compile Include="MenuText.cs" />
     <Compile Include="Pops.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

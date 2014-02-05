@@ -167,14 +167,11 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void printStatus(bool running, bool paused, int speed)
         {
-            //TODO: Maybe only show the PAUSED text while it is set to AUTO
             Console.ForegroundColor = MenuText.InfoColor;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
-            //string pauseStr = (paused) ? "PAUSED" : " ";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
 
-            // █
             string speedStr = "SPEED - ";
             for (int i = 0; i < 5; i++)
             {
@@ -190,13 +187,18 @@ namespace GHGameOfLife
             int speedCol = Console.WindowWidth - colOne - colTwo - 10;
             //Hardcode 10 because of the border around the game board
             //when it is displayed, so its like space*2
-            string testFormat = "{0,-" + colOne + "}{1,-" + colTwo + 
+            string formatStr = "{0,-" + colOne + "}{1,-" + colTwo + 
                                                         "}{2," + speedCol + "}";
-            sb.AppendFormat(testFormat, runStr, pauseStr, speedStr);
+            sb.AppendFormat(formatStr, runStr, pauseStr, speedStr);
             ClearLine(InfoLine);
             Console.SetCursorPosition(5, InfoLine);
             Console.Write(sb);
             Console.ForegroundColor = MenuText.DefaultFG;
+        }
+//------------------------------------------------------------------------------
+        public static void PrintCreationMenu()
+        {
+
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -218,7 +220,7 @@ namespace GHGameOfLife
                     errorStr = "File not all 0s and 1s";
                     break;
                 case FileError.LENGTH:
-                    errorStr = "File too long for current window";
+                    errorStr = "File has too many lines for current window";
                     break;
                 case FileError.NOT_LOADED:
                     errorStr = "No file loaded";
@@ -227,10 +229,10 @@ namespace GHGameOfLife
                     errorStr = "File larger than 10KB";
                     break;
                 case FileError.WIDTH:
-                    errorStr = "File too wide for current window";
+                    errorStr = "File's lines are too wide for current window";
                     break;
                 default:
-                    errorStr = "Generic error...";
+                    errorStr = "Generic file error...";
                     break;
             }
             return errorStr;
