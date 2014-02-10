@@ -293,6 +293,8 @@ namespace GHGameOfLife
                 clear.Append(" ");
             Console.Write(clear);
 
+            MenuText.ClearUnderBoard();
+
             Console.ForegroundColor = MenuText.DefaultFG;
             MenuText.ClearLine(positionPrintRow);
             _Initialized = true;
@@ -427,8 +429,10 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.PopColor;
+            /*
             int row = _Space;
-
+            //Board is accessed by [row,col], console is printed according to [col,row];
+            
             Console.SetCursorPosition(_Space, row);
             for (int r = 0; r < _RowsUsed; r++)
             {
@@ -447,7 +451,26 @@ namespace GHGameOfLife
                 Console.Write(sb);
                 row++;
                 Console.SetCursorPosition(_Space, row);
+             */
+            Console.SetCursorPosition(0, _Space);
+            StringBuilder sb = new StringBuilder();
+            for (int r = 0; r < _RowsUsed; r++)
+            {
+                sb.Append("    ║");
+                for (int c = 0; c < _ColsUsed; c++)
+                {
+                    if (_Board[r, c] == 0)
+                    {
+                        sb.Append(" ");
+                    }
+                    else
+                    {
+                        sb.Append(_LiveCell);
+                    }
+                }
+                sb.AppendLine("║");
             }
+            Console.Write(sb);
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;    

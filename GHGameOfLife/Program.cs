@@ -75,7 +75,6 @@ namespace GHGameOfLife
             Console.CursorVisible = false;
             Console.Clear();
 
-            //hurr unicode
             char vert =     '║'; // '\u2551'
             char horiz =    '═'; // '\u2550'
             char topLeft =  '╔'; // '\u2554'
@@ -88,8 +87,6 @@ namespace GHGameOfLife
             int borderLeft = 4;
             int borderRight = CONSOLE_WIDTH - 5;
 
-            /* TODO: Add some pretty color to this
-             */ 
 
             // This draws the nice little border on the screen...
             Console.SetCursorPosition(borderLeft, borderTop);

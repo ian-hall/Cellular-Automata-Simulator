@@ -154,7 +154,7 @@ namespace GHGameOfLife
             return (++curRow);
         }
 //------------------------------------------------------------------------------
-        public static /*int*/ void PrintRunControls()
+        public static void PrintRunControls()
         {
             Console.ForegroundColor = MenuText.InfoColor;
             int printRow = (Console.WindowHeight) - 4;
@@ -166,8 +166,6 @@ namespace GHGameOfLife
             Console.SetCursorPosition(5, ++printRow);
             Console.Write(Controls3);
             Console.ForegroundColor = MenuText.DefaultFG;
-
-            //return printRow;
         }
 //------------------------------------------------------------------------------
         public static void printStatus(bool running, bool paused, int speed)
@@ -213,6 +211,14 @@ namespace GHGameOfLife
             Console.SetCursorPosition(5, ++printRow);
             Console.Write(CreationControls3);
             Console.ForegroundColor = MenuText.DefaultFG;
+        }
+//------------------------------------------------------------------------------
+        public static void ClearUnderBoard()
+        {
+            for (int i = Console.WindowHeight - 4; i < Console.WindowHeight-1; ++i)
+            {
+                ClearLine(i);
+            }
         }
 //------------------------------------------------------------------------------
         /// <summary>
