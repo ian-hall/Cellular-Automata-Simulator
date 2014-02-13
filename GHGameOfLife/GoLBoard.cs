@@ -126,7 +126,6 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
-        /// TODO: Need to add some text to tell the user what to do
         /// </summary>
         public void BuildFromUser()
         {
@@ -150,7 +149,7 @@ namespace GHGameOfLife
                 }
             }
 
-            Console.ForegroundColor = MenuText.PopColor;
+            Console.ForegroundColor = MenuText.BuildColor;
             foreach (int top in validTop)
             {
                 foreach (int left in validLeft)
@@ -180,6 +179,10 @@ namespace GHGameOfLife
 
             MenuText.PrintCreationControls();
 
+            int blinkLeft = origWidth + 5;
+            int charLeft = blinkLeft + 1;
+            int extraTop = 2;
+
             int curLeft = _Space;
             int curTop = _Space;
             int nextLeft;
@@ -198,7 +201,12 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(0, 0);
                 while (!Console.KeyAvailable)
                 {
-                    System.Threading.Thread.Sleep(10);
+                    Console.MoveBufferArea(curLeft, curTop, 1, 1, charLeft, extraTop);
+                    Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, curLeft, curTop);
+                    System.Threading.Thread.Sleep(100);
+                    Console.MoveBufferArea(curLeft, curTop, 1, 1, blinkLeft, extraTop);
+                    Console.MoveBufferArea(charLeft, extraTop, 1, 1, curLeft, curTop);
+                    System.Threading.Thread.Sleep(100);
                 }
 
                 ConsoleKey pressed = Console.ReadKey(true).Key;
@@ -251,7 +259,7 @@ namespace GHGameOfLife
                     bool boardVal = !tempBoard[curTop - _Space, curLeft - _Space];
 
                     if (boardVal)
-                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', ConsoleColor.Cyan, ConsoleColor.Black);
+                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.BuildColor, ConsoleColor.Black);
                     else
                         Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + origWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
 

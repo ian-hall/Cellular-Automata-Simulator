@@ -13,8 +13,8 @@ namespace GHGameOfLife
         public const ConsoleColor InfoColor = ConsoleColor.Red;
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
-        public const ConsoleColor PopColor  = ConsoleColor.Cyan;
-        public const ConsoleColor DeadColor = ConsoleColor.Gray;
+        public const ConsoleColor PopColor  = ConsoleColor.White;
+        public const ConsoleColor BuildColor = ConsoleColor.Cyan;
         
         public const String Welcome     = "Welcome to the GAME OF LIFE!!!!";
         public const String PlsChoose   = "Please choose an option!";
