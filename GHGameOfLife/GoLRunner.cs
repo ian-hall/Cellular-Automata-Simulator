@@ -31,7 +31,7 @@ namespace GHGameOfLife
             bool go = true;
             bool continuous = false;
             bool paused = true;
-            MenuText.printStatus(continuous, paused, _SpeedIndex);
+            MenuText.PrintStatus(continuous, paused, _SpeedIndex);
             while (go)
             {
                 // If it isnt running, and no keys are pressed
@@ -60,7 +60,7 @@ namespace GHGameOfLife
                 {
                     bool keyPressed = false;
                     paused = true;
-                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                    MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                     while (!keyPressed)
                     {
                         while (!Console.KeyAvailable)
@@ -73,7 +73,7 @@ namespace GHGameOfLife
                         {
                             keyPressed = true;
                             paused = false;
-                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                            MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                         }
                         else if (pauseEntry == ConsoleKey.Escape)
                         {
@@ -84,19 +84,19 @@ namespace GHGameOfLife
                         {
                             continuous = false;
                             keyPressed = true;
-                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                            MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                         }
                         else if (pauseEntry == ConsoleKey.OemMinus || pauseEntry == ConsoleKey.Subtract)
                         {
                             if (_SpeedIndex >= 1)
                                 _SpeedIndex -= 1;
-                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                            MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                         }
                         else if (pauseEntry == ConsoleKey.OemPlus || pauseEntry == ConsoleKey.Add)
                         {
                             if (_SpeedIndex <= 3)
                                 _SpeedIndex += 1;
-                            MenuText.printStatus(continuous, paused, _SpeedIndex);
+                            MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                         }
                     }
                 }
@@ -105,21 +105,21 @@ namespace GHGameOfLife
                 {
                     if (_SpeedIndex >= 1)
                         _SpeedIndex -= 1;
-                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                    MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                 }
                 
                 if (pressed == ConsoleKey.OemPlus || pressed == ConsoleKey.Add)
                 {
                     if (_SpeedIndex <= 3)
                         _SpeedIndex += 1;
-                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                    MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                 }
                 
                 if (pressed == ConsoleKey.R)
                 {
                     continuous  = !continuous;
                     paused = !paused;
-                    MenuText.printStatus(continuous, paused, _SpeedIndex);
+                    MenuText.PrintStatus(continuous, paused, _SpeedIndex);
                 }
 
                 if (pressed == ConsoleKey.Escape)

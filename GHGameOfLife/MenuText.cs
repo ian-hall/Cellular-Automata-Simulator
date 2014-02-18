@@ -168,7 +168,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
-        public static void printStatus(bool running, bool paused, int speed)
+        public static void PrintStatus(bool running, bool paused, int speed)
         {
             Console.ForegroundColor = MenuText.InfoColor;
             StringBuilder sb = new StringBuilder();
@@ -213,6 +213,23 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
+        public static void PromptForAnother()
+        {
+            ClearMenuOptions();
+            ClearUnderBoard();
+            ClearLine(InfoLine);
+
+            int printRow = MenuStart + 1;
+            Console.SetCursorPosition(LeftAlign, printRow);
+            Console.Write("Another?");
+            Console.SetCursorPosition(LeftAlign, ++printRow);
+            Console.ForegroundColor = InfoColor;
+            Console.Write("[ENTER] Yes");
+            Console.SetCursorPosition(LeftAlign, ++printRow);
+            Console.Write("[ESC] No");
+            Console.ForegroundColor = DefaultFG;
+        }
+//------------------------------------------------------------------------------
         public static void ClearUnderBoard()
         {
             for (int i = Console.WindowHeight - 4; i < Console.WindowHeight-1; ++i)
@@ -227,7 +244,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void ClearMenuOptions()
         {
-            for (int i = WelcomeRow+1; i < Console.WindowHeight-5; i++)
+            for (int i = WelcomeRow - 1; i < Console.WindowHeight-5; i++)
                 ClearWithinBorder(i);
         }
 //------------------------------------------------------------------------------

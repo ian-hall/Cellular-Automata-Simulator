@@ -15,8 +15,8 @@ namespace GHGameOfLife
         const int MIN_HEIGHT = 30;
         // Don't go below these values or the text will be screwy
 
-        static int CONSOLE_WIDTH = 70; // Console width
-        static int CONSOLE_HEIGHT = 30; // Console height
+        static int CONSOLE_WIDTH = 0; 
+        static int CONSOLE_HEIGHT =  0; 
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -33,40 +33,59 @@ namespace GHGameOfLife
                                               initConsWidth, initConsHeight, 
                                               initConsPosLeft, initConsPosTop };
 
-            bool validWindowSize = InitializeConsole();
-
-            if (!validWindowSize)
-            {
-                Console.WriteLine("Problem with console size");
-            }
-            else
+            InitializeConsole();
+            bool exit = false;
+            do
             {
                 MenuText.Initialize();
                 MainMenu();
-                //TODO Prompt to go again before resetting the console and closing               
-            }
+
+                MenuText.PromptForAnother();
+                bool validKey = false;             
+                while (!validKey)
+                {
+                    while (!Console.KeyAvailable)
+                        System.Threading.Thread.Sleep(50);
+
+                    ConsoleKey pressed = Console.ReadKey(false).Key;
+                    if (pressed == ConsoleKey.Escape)
+                    {
+                        exit = true;
+                        validKey = true;
+                    }
+                    if (pressed == ConsoleKey.Enter)
+                    {
+                        validKey = true;
+                    }
+
+                }
+                
+
+            } while (!exit);
+            
             ResetConsole(initialValues);
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Initializes the console for display. 
         /// </summary>
-        private static bool InitializeConsole()
+        private static void InitializeConsole()
         {
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.DefaultFG;
             Console.Title = "Ian's Game of Life";
             
-            /* Need to check the current window/buffer size before applying the
-             * new size. Exits if the sizes are off.
-             * TODO: Probably make it resize instead of exiting if there is a
-             * problem here.
+            /* Checks to see if the window can change to the indicated size.
+             * If it is too small or too large it will be adjusted.
              */
-            if (CONSOLE_WIDTH < MIN_WIDTH || CONSOLE_HEIGHT < MIN_HEIGHT)
-                return false;
-            if (CONSOLE_WIDTH > Console.LargestWindowWidth ||
-                                CONSOLE_HEIGHT > Console.LargestWindowHeight)
-                return false;
+
+            CONSOLE_WIDTH = (CONSOLE_WIDTH < MIN_WIDTH) ? MIN_WIDTH : CONSOLE_WIDTH;
+            CONSOLE_WIDTH = (CONSOLE_WIDTH > Console.LargestWindowWidth - 10) ? Console.LargestWindowWidth - 10 : CONSOLE_WIDTH;
+
+            CONSOLE_HEIGHT = (CONSOLE_HEIGHT < MIN_HEIGHT) ? MIN_HEIGHT : CONSOLE_HEIGHT;
+            CONSOLE_HEIGHT = (CONSOLE_HEIGHT > Console.LargestWindowHeight - 5) ? Console.LargestWindowHeight - 5 : CONSOLE_HEIGHT;
+
+
 
 
             Console.SetWindowSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);
@@ -107,8 +126,6 @@ namespace GHGameOfLife
             for (int i = 5; i < borderRight; i++)
                 Console.Write(horiz);
             Console.Write(botRight);
-
-            return true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -116,8 +133,6 @@ namespace GHGameOfLife
         /// you want to individually go through generations or just let it go
         /// for a certain number of generations.
         /// </summary>
-        /// <param name="validWindowSize">Makes sure the console window
-        ///                                          is of adaquate size</param>
         ///                                          
         private static void MainMenu()
         {
