@@ -25,8 +25,9 @@ namespace GHGameOfLife
         private int _Generation;
         private const char _LiveCell = '☺';
         //private const char _DeadCell = ' ';
-        private Random rand = new Random();
+        private Random Rand = new Random();
         private int _Space = 5;
+        public bool Wrap { get; set; }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -47,6 +48,7 @@ namespace GHGameOfLife
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
             _Initialized = false;
+            Wrap = true;
         }
 //------------------------------------------------------------------------------
         
@@ -60,7 +62,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    _Board[r, c] = rand.Next()%2;
+                    _Board[r, c] = Rand.Next()%2;
                 }
             }
             _Initialized = true;
@@ -166,16 +168,6 @@ namespace GHGameOfLife
             string rowLast = (validTop.Last() - _Space).ToString();
 
             int positionPrintRow = _Space - 3;
-           
-            Console.SetCursorPosition(_Space, _Space-2);
-            Console.Write(colFirst);
-            Console.SetCursorPosition(origWidth - _Space-colLast.Length, _Space - 2);
-            Console.Write(colLast);
-            
-            Console.SetCursorPosition(_Space-2, _Space);
-            Console.Write(rowFirst);
-            Console.SetCursorPosition(_Space - rowLast.Length-1, origHeight - _Space - 1);
-            Console.Write(rowLast);
 
             MenuText.PrintCreationControls();
 
@@ -388,26 +380,56 @@ namespace GHGameOfLife
                 {
                     if (_Board[r, c] == 0)
                     {
-                        if (WillBeBorn(r, c))
+                        if (Wrap)
                         {
-                            nextBoard[r, c] = 1;
+                            if (WillBeBornWrap(r, c))
+                            {
+                                nextBoard[r, c] = 1;
+                            }
+                            else
+                            {
+                                nextBoard[r, c] = 0;
+                            }
                         }
                         else
                         {
-                            nextBoard[r, c] = 0;
-                        } 
+                            if (WillBeBornNoWrap(r, c))
+                            {
+                                nextBoard[r, c] = 1;
+                            }
+                            else
+                            {
+                                nextBoard[r, c] = 0;
+                            }
+                        }
+                        
                     }
 
                     if (_Board[r, c] == 1)
                     {
-                        if (WillDie(r, c))
+                        if (Wrap)
                         {
-                            nextBoard[r, c] = 0;
+                            if (WillDieWrap(r, c))
+                            {
+                                nextBoard[r, c] = 0;
+                            }
+                            else
+                            {
+                                nextBoard[r, c] = 1;
+                            }
                         }
                         else
                         {
-                            nextBoard[r, c] = 1;
+                            if (WillDieNoWrap(r, c))
+                            {
+                                nextBoard[r, c] = 0;
+                            }
+                            else
+                            {
+                                nextBoard[r, c] = 1;
+                            }
                         }
+                        
                     }
                 }
             }
@@ -437,29 +459,7 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.DefaultBG;
             Console.ForegroundColor = MenuText.PopColor;
-            /*
-            int row = _Space;
-            //Board is accessed by [row,col], console is printed according to [col,row];
-            
-            Console.SetCursorPosition(_Space, row);
-            for (int r = 0; r < _RowsUsed; r++)
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int c = 0; c < _ColsUsed; c++)
-                {
-                    if (_Board[r, c] == 0)
-                    {
-                        sb.Append(' ');
-                    }
-                    else
-                    {
-                        sb.Append(_LiveCell);
-                    }
-                }
-                Console.Write(sb);
-                row++;
-                Console.SetCursorPosition(_Space, row);
-             */
+
             Console.SetCursorPosition(0, _Space);
             StringBuilder sb = new StringBuilder();
             for (int r = 0; r < _RowsUsed; r++)
@@ -492,7 +492,7 @@ namespace GHGameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the current dude dies.</returns>
-        private Boolean WillDie(int r, int c)
+        private Boolean WillDieWrap(int r, int c)
         {
             int n = 0;
 
@@ -518,7 +518,7 @@ namespace GHGameOfLife
         /// <param name="r"></param>
         /// <param name="c"></param>
         /// <returns>True if the miracle of life occurs.</returns>
-        private Boolean WillBeBorn(int r, int c)
+        private Boolean WillBeBornWrap(int r, int c)
         {
             int n = 0;
 
@@ -530,6 +530,105 @@ namespace GHGameOfLife
             if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
             if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
             if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+
+            if (n == 3) return true;
+            else return false;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Calculates if the current dude at _Board[r,c] will die or not.
+        /// If a dude has less than 2, or more than 3 neighbors that dude
+        /// is dead next generation.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="c"></param>
+        /// <returns>True if the current dude dies.</returns>
+        public Boolean WillDieNoWrap(int r, int c)
+        {
+            int n = 0;
+
+            if (r != 0 && c != 0)
+            {
+                if (_Board[r - 1, c - 1] == 1) n++;
+            }
+            if (r != 0 && c != _ColsUsed - 1)
+            {
+                if (_Board[r - 1, c + 1] == 1) n++;
+            }
+            if (r != 0)
+            {
+                if (_Board[r - 1, c] == 1) n++;
+            }
+            if (r != _RowsUsed - 1 && c != 0)
+            {
+                if (_Board[r + 1, c - 1] == 1) n++;
+            }
+            if (c != 0)
+            {
+                if (_Board[r, c - 1] == 1) n++;
+            }
+            if (r != _RowsUsed - 1)
+            {
+                if (_Board[r + 1, c] == 1) n++;
+            }
+            if (c != _ColsUsed - 1)
+            {
+                if (_Board[r, c + 1] == 1) n++;
+            }
+            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
+            {
+                if (_Board[r + 1, c + 1] == 1) n++;
+            }
+
+            if (n < 2) return true;
+            if (n > 3) return true;
+            else return false;
+        }
+//------------------------------------------------------------------------------
+    /// <summary>
+    /// Calculates if the current space at _Board[r,c] will become alive
+    /// or not. If nothingness has exactly 3 neighbors it will become
+    /// living next generation.
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="c"></param>
+    /// <returns>True if the miracle of life occurs.</returns>
+        public Boolean WillBeBornNoWrap(int r, int c)
+        {
+            int n = 0;
+
+            if (r != 0 && c != 0)
+            {
+                if (_Board[r - 1, c - 1] == 1) n++;
+            }
+            if (r != 0 && c != _ColsUsed - 1)
+            {
+                if (_Board[r - 1, c + 1] == 1) n++;
+            }
+            if (r != 0)
+            {
+                if (_Board[r - 1, c] == 1) n++;
+            }
+            if (r != _RowsUsed - 1 && c != 0)
+            {
+                if (_Board[r + 1, c - 1] == 1) n++;
+            }
+            if (c != 0)
+            {
+                if (_Board[r, c - 1] == 1) n++;
+            }
+            if (r != _RowsUsed - 1)
+            {
+                if (_Board[r + 1, c] == 1) n++;
+            }
+            if (c != _ColsUsed - 1)
+            {
+                if (_Board[r, c + 1] == 1) n++;
+            }
+            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
+            {
+                if (_Board[r + 1, c + 1] == 1) n++;
+            }
 
             if (n == 3) return true;
             else return false;

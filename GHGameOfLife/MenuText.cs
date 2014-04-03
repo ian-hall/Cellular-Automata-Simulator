@@ -32,6 +32,7 @@ namespace GHGameOfLife
         public const String Controls2 = "[R] Toggle running";
         public const String Controls3 = "[ESC] Exit";
         public const String Controls4 = "[+/-] Speed adjust";
+        public const String Controls5 = "[W] Toggle wrapping";
 
         public const String CreationControls1 = "Arrow keys to move cursor";
         public const String CreationControls2 = "[SPACE] Add/Remove cell";
@@ -162,18 +163,20 @@ namespace GHGameOfLife
             Console.SetCursorPosition(5, printRow);
             Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(Controls2);
+            Console.Write(String.Format("{0,-25}{1,-20}",Controls2,Controls5));
             Console.SetCursorPosition(5, ++printRow);
             Console.Write(Controls3);
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
-        public static void PrintStatus(bool running, bool paused, int speed)
+        public static void PrintStatus(bool running, bool paused,
+                                        bool wrapping, int speed)
         {
             Console.ForegroundColor = MenuText.InfoColor;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
+            string wrapStr = (wrapping) ? "WRAPPING" : " ";
 
             string speedStr = "SPEED - ";
             for (int i = 0; i < 5; i++)
@@ -187,12 +190,13 @@ namespace GHGameOfLife
             
             int colOne = 10;
             int colTwo = 10;
-            int speedCol = Console.WindowWidth - colOne - colTwo - 10;
+            int colThree = 10;
+            int speedCol = Console.WindowWidth - colOne - colTwo - colThree- 10;
             //Hardcode 10 because of the border around the game board
             //when it is displayed, so its like space*2
             string formatStr = "{0,-" + colOne + "}{1,-" + colTwo + 
-                                                        "}{2," + speedCol + "}";
-            sb.AppendFormat(formatStr, runStr, pauseStr, speedStr);
+                                                        "}{2,-" + colThree + "}{3," + speedCol + "}";
+            sb.AppendFormat(formatStr, runStr, pauseStr, wrapStr, speedStr);
             ClearLine(InfoLine);
             Console.SetCursorPosition(5, InfoLine);
             Console.Write(sb);
