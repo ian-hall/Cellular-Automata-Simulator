@@ -9,7 +9,7 @@ namespace GHGameOfLife
 {
     public static class MenuText
     {
-        public enum FileError { NONE, LENGTH, WIDTH, CONTENTS, SIZE, NOT_LOADED };
+        public enum FileError { NONE, LENGTH, WIDTH, UNEVEN, CONTENTS, SIZE, NOT_LOADED };
         public const ConsoleColor InfoColor = ConsoleColor.Red;
         public const ConsoleColor DefaultBG = ConsoleColor.Black;
         public const ConsoleColor DefaultFG = ConsoleColor.White;
@@ -270,7 +270,10 @@ namespace GHGameOfLife
                     errorStr = "File larger than 10KB";
                     break;
                 case FileError.WIDTH:
-                    errorStr = "File's lines are too wide for current window";
+                    errorStr = "Lines are too long";
+                    break;
+                case FileError.UNEVEN:
+                    errorStr = "Lines are not of even length";
                     break;
                 default:
                     errorStr = "Generic file error...";

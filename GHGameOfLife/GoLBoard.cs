@@ -641,6 +641,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="filename">Path to a file to be checked</param>
         /// <param name="errType">The type of error returned</param>
+        /// TODO: Need to do something about newlines at the end of a file...
         private MenuText.FileError ValidateFile(String filename)
         {
             // File should exist, but its good to make sure.
@@ -678,7 +679,7 @@ namespace GHGameOfLife
                     //Error if all lines are not the same width
                     if (line.Length != cols)
                     {
-                        return MenuText.FileError.WIDTH;
+                        return MenuText.FileError.UNEVEN;
                     }
                     //Error of the line is not all 0 and 1
                     if (!OnesAndZerosOnly(line))
