@@ -131,6 +131,9 @@ namespace GHGameOfLife
         /// </summary>
         public void BuildFromUser()
         {
+            SaveFileDialog saveDia = new SaveFileDialog();
+            saveDia.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
+
             int origWidth = Console.WindowWidth;
             int origHeight = Console.WindowHeight;
 
@@ -256,6 +259,64 @@ namespace GHGameOfLife
                         Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + origWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
 
                     tempBoard[curTop - _Space, curLeft - _Space] = boardVal;
+                }
+
+                if (pressed == ConsoleKey.S)
+                {
+                    if (saveDia.ShowDialog() == DialogResult.OK)
+                    {
+                        bool[][] testThing = new bool[validTop.Count()][];
+                        for (int i = 0; i < validTop.Count(); i++)
+                            testThing[i] = new bool[validLeft.Count()];
+
+                        for (int i = 0; i < validTop.Count(); i++)
+                        {
+                            for (int j = 0; j < validLeft.Count(); j++)
+                            {
+                                testThing[i][j] = tempBoard[i, j];
+                            }
+                        }
+                        int top = int.MaxValue;
+                        int bottom = int.MinValue;
+                        int left = int.MaxValue;
+                        int right = int.MinValue;
+
+                        // make a box that only includes only the minimum needed lines
+                        // to make the save file valid to be loaded
+                        for (int i = 0; i < validTop.Count(); i++)
+                        {
+                            for (int j = 0; j < validLeft.Count(); j++)
+                            {
+                                if (tempBoard[i, j])
+                                {
+                                    if (i < top)
+                                        top = i;
+                                    if (i > bottom)
+                                        bottom = i;
+                                    if (j < left)
+                                        left = j;
+                                    if (j > right)
+                                        right = j;
+                                }
+                            }
+                        }
+
+                        StringBuilder sb = new StringBuilder();
+                        for (int i = top; i <= bottom; i++)
+                        {
+                            for (int j = left; j <= right; j++)
+                            {
+                                if (tempBoard[i, j])
+                                    sb.Append('1');
+                                else
+                                    sb.Append('0');
+                            }
+                            if (i != bottom)
+                                sb.AppendLine();
+                        }
+                        File.WriteAllText(saveDia.FileName, sb.ToString());
+                    }
+
                 }
             }
 
@@ -641,7 +702,6 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="filename">Path to a file to be checked</param>
         /// <param name="errType">The type of error returned</param>
-        /// TODO: Need to do something about newlines at the end of a file...
         private MenuText.FileError ValidateFile(String filename)
         {
             // File should exist, but its good to make sure.
