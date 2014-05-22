@@ -265,24 +265,14 @@ namespace GHGameOfLife
                 {
                     if (saveDia.ShowDialog() == DialogResult.OK)
                     {
-                        bool[][] testThing = new bool[validTop.Count()][];
-                        for (int i = 0; i < validTop.Count(); i++)
-                            testThing[i] = new bool[validLeft.Count()];
-
-                        for (int i = 0; i < validTop.Count(); i++)
-                        {
-                            for (int j = 0; j < validLeft.Count(); j++)
-                            {
-                                testThing[i][j] = tempBoard[i, j];
-                            }
-                        }
+                        
                         int top = int.MaxValue;
                         int bottom = int.MinValue;
                         int left = int.MaxValue;
                         int right = int.MinValue;
 
-                        // make a box that only includes only the minimum needed lines
-                        // to make the save file valid to be loaded
+                        // make a box that only includes the minimum needed lines
+                        // to save the board
                         for (int i = 0; i < validTop.Count(); i++)
                         {
                             for (int j = 0; j < validLeft.Count(); j++)
