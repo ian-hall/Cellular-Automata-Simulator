@@ -206,7 +206,7 @@ namespace GHGameOfLife
 
                 ConsoleKey pressed = Console.ReadKey(true).Key;
 
-                if (pressed == ConsoleKey.Escape)
+                if (pressed == ConsoleKey.Enter)
                 {
                     exit = true;
                     break;

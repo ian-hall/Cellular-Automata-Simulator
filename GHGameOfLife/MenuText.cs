@@ -22,21 +22,23 @@ namespace GHGameOfLife
         public const String MenuChoice2 = "2) Load population from a file";
         public const String MenuChoice3 = "3) Load a premade population";
         public const String MenuChoice4 = "4) Create your own population";
+        public const String MenuChoice5 = "5) Exit";
         public const String Choice      = "Your choice: ";
         public const String Err         = "**Invalid entry**";
 
         public const String LoadRandom  = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
-        public const String Controls1 = "[SPACE] Get next/Pause";
-        public const String Controls2 = "[R] Toggle running";
-        public const String Controls3 = "[ESC] Exit";
-        public const String Controls4 = "[+/-] Speed adjust";
-        public const String Controls5 = "[W] Toggle wrapping";
+        public const String RunCtrl1 = "[SPACE] Get next/Pause";
+        public const String RunCtrl2 = "[R] Toggle running";
+        public const String RunCtrl3 = "[ESC] Exit";
+        public const String RunCtrl4 = "[+/-] Speed adjust";
+        public const String RunCtrl5 = "[W] Toggle wrapping";
 
-        public const String CreationControls1 = "Arrow keys to move cursor";
-        public const String CreationControls2 = "[SPACE] Add/Remove cell";
-        public const String CreationControls3 = "[ESC] Finish";
+        public const String CreateCtrl1 = "Arrow keys to move cursor";
+        public const String CreateCtrl2 = "[SPACE] Add/Remove cell";
+        public const String CreateCtrl3 = "[ENTER] Start Game";
+        public const String CreateCtrl4 = "[S] Save board";
         
 
         public static int WindowCenter; // Vertical center of the console
@@ -104,7 +106,9 @@ namespace GHGameOfLife
             Console.Write(MenuChoice3);
             Console.SetCursorPosition(LeftAlign + 4, ++curRow);
             Console.Write(MenuChoice4);
-            numChoices = 4;
+            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+            Console.Write(MenuChoice5);
+            numChoices = 5;
             return (++curRow);
         }
 //------------------------------------------------------------------------------
@@ -161,11 +165,11 @@ namespace GHGameOfLife
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Controls1,Controls4));
+            Console.Write(String.Format("{0,-25}{1,-20}",RunCtrl1,RunCtrl4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Controls2,Controls5));
+            Console.Write(String.Format("{0,-25}{1,-20}",RunCtrl2,RunCtrl5));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(Controls3);
+            Console.Write(RunCtrl3);
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
@@ -209,11 +213,11 @@ namespace GHGameOfLife
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(CreationControls1);
+            Console.Write(CreateCtrl1);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(CreationControls2);
+            Console.Write(String.Format("{0,-25}{1,-20}", CreateCtrl2, CreateCtrl4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(CreationControls3);
+            Console.Write(CreateCtrl3);
             Console.ForegroundColor = MenuText.DefaultFG;
         }
 //------------------------------------------------------------------------------
