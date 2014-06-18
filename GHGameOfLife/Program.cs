@@ -2,12 +2,53 @@
 using System.IO;
 using System.Text;
 using System.Reflection;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 
 namespace GHGameOfLife
 {
     class Program
     {
+
+        // Imports and junk for resizing the window
+        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
+        public static extern IntPtr SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
+
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;        
+            public int Top;         
+            public int Right;       
+            public int Bottom;     
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RESOLUTION
+        {
+            public int vertical, horizontal;
+
+            public RESOLUTION(int w, int h)
+            {
+                vertical = h;
+                horizontal = w;
+            }
+        }
+
+        const short SWP_NOSIZE = 0x0001;
+        const short SWP_NOZORDER = 0x0004;
+        const int SWP_SHOWWINDOW = 0x0040;
+        const int HWND_TOP = 0x0000;
+        // garbage
+
+
         enum PopType { RANDOM, FILE, PREMADE, BUILD };
 
         // Don't go below these values or the text will be screwy
@@ -376,5 +417,65 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
+        public static void ajustWindowSize(Process current, RESOLUTION primaryRes, ConsSize[] sizes, int sizeIndex)
+        {
+            RECT consRect;
+            //Set to upper left corner
+            SetWindowPos(current.MainWindowHandle, HWND_TOP, 0, 0, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+            //Resize the console window
+            Console.SetWindowSize(1, 1);
+            Console.SetBufferSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
+            Console.SetWindowSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
+            Console.WriteLine(sizes[sizeIndex]);
+
+            //Center on the screen
+            GetWindowRect(current.MainWindowHandle, out consRect);
+            int widthOffset = (primaryRes.horizontal / 2) - (consRect.Right / 2);
+            int heightOffset = (primaryRes.vertical / 2) - (consRect.Bottom / 2);
+            SetWindowPos(current.MainWindowHandle, HWND_TOP, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+            Console.WriteLine("Top Left: {0,-10} Top Right: {1,-10}", widthOffset, heightOffset);
+        }
+//------------------------------------------------------------------------------
     } // end class
+//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+    class ConsSize
+    {
+        public int rows { get; private set; }
+        public int cols { get; private set; }
+        public double ratio;
+
+        public ConsSize(int w, int h)
+        {
+            cols = w;
+            rows = h;
+            calcRatio();
+        }
+
+        public void SetWidth(int w)
+        {
+            cols = w;
+            calcRatio();
+        }
+
+        public void SetHeight(int h)
+        {
+            rows = h;
+            calcRatio();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", cols, rows, ratio);
+        }
+
+        private void calcRatio()
+        {
+            ratio = 1.0 * cols / rows;
+        }
+
+    }
+////////////////////////////////////////////////////////////////////////////////
 }

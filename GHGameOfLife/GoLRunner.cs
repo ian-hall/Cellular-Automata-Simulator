@@ -20,7 +20,7 @@ namespace GHGameOfLife
         /// TODO: Add a status display
         public static void RunIt(GoLBoard b)
         {
-            if (!b._Initialized)
+            if (!b.IsInitialized)
             {
                 Console.ForegroundColor = MenuText.InfoColor;
                 Console.Write("ERROR");

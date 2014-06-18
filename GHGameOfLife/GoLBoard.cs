@@ -17,7 +17,7 @@ namespace GHGameOfLife
     /// </summary>
     class GoLBoard
     {
-        public bool _Initialized { get; private set; }
+        public bool IsInitialized { get; private set; }
 
         private int[,] _Board;
         private int _RowsUsed;
@@ -25,7 +25,7 @@ namespace GHGameOfLife
         private int _Generation;
         private const char _LiveCell = '☺';
         //private const char _DeadCell = ' ';
-        private Random Rand = new Random();
+        private Random _Rand = new Random();
         private int _Space = 5;
         public bool Wrap { get; set; }
 //------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ namespace GHGameOfLife
             
             _RowsUsed = rowMax;
             _ColsUsed = colMax;
-            _Initialized = false;
+            IsInitialized = false;
             Wrap = true;
         }
 //------------------------------------------------------------------------------
@@ -62,10 +62,10 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < _ColsUsed; c++)
                 {
-                    _Board[r, c] = Rand.Next()%2;
+                    _Board[r, c] = _Rand.Next()%2;
                 }
             }
-            _Initialized = true;
+            IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -122,7 +122,7 @@ namespace GHGameOfLife
                     break;
             }
 
-            _Initialized = true;
+            IsInitialized = true;
             
         }
 //------------------------------------------------------------------------------
@@ -348,7 +348,7 @@ namespace GHGameOfLife
 
             Console.ForegroundColor = MenuText.DefaultFG;
             MenuText.ClearLine(positionPrintRow);
-            _Initialized = true;
+            IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -364,7 +364,7 @@ namespace GHGameOfLife
 
             fillBoard(startingPop);
 
-            _Initialized = true;
+            IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
