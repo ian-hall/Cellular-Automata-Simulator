@@ -502,7 +502,7 @@ namespace GHGameOfLife
             Console.SetWindowSize(1, 1);
             Console.SetBufferSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
             Console.SetWindowSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
-            //Console.WriteLine(sizes[sizeIndex]);
+            Console.WriteLine("");
 
             //Center on the screen
             GetWindowRect(current.MainWindowHandle, out consRect);
