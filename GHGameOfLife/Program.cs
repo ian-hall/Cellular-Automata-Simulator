@@ -29,7 +29,12 @@ namespace GHGameOfLife
             public int Left;        
             public int Top;         
             public int Right;       
-            public int Bottom;     
+            public int Bottom;
+
+            public override string ToString()
+            {
+                return String.Format("T:{0,-5} B:{1,-5} L:{2,-5} R:{3,-5}", Top, Bottom, Left, Right);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -47,7 +52,7 @@ namespace GHGameOfLife
         const short SWP_NOSIZE = 0x0001;
         const short SWP_NOZORDER = 0x0004;
         const int SWP_SHOWWINDOW = 0x0040;
-        static IntPtr HWND_TOP = new IntPtr(0);
+        static IntPtr HWND_TOPMOST = new IntPtr(-1);
         // garbage
 
 
@@ -67,7 +72,7 @@ namespace GHGameOfLife
 
         const int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
         static ConsSize[] Cons_Sizes = new ConsSize[DIFFERENT_SIZES];
-        static int Current_Size_Index = 1; // Which size to default to, 2 is med
+        static int Current_Size_Index = 2; // Which size to default to, 2 is med
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -170,7 +175,7 @@ namespace GHGameOfLife
                 Cons_Sizes[i] = new ConsSize(Cons_Sizes[i - 1].cols + difWid, Cons_Sizes[i - 1].rows + difHeight);
                 while (Cons_Sizes[i].ratio > (1.0 * 10 / 3))
                 {
-                    Cons_Sizes[i].SetWidth(Cons_Sizes[i].cols - 1);
+                    Cons_Sizes[i].SetCols(Cons_Sizes[i].cols - 1);
                 }
             }
 
@@ -178,7 +183,7 @@ namespace GHGameOfLife
             {
                 while (r.ratio < (1.0 * 10 / 3))
                 {
-                    r.SetWidth(r.cols + 1);
+                    r.SetCols(r.cols + 1);
                 }
             }
 
@@ -260,12 +265,22 @@ namespace GHGameOfLife
                             Console.Write("\b \b");
                         }
                     }
+                    //Need to reinitialize the console after calling changing the size
                     else if ((cki.Key == ConsoleKey.OemPlus || cki.Key == ConsoleKey.Add) && cki.Modifiers == ConsoleModifiers.Control)
                     {
                         if (Current_Size_Index < Cons_Sizes.Count() - 1)
                         {
                             Current_Size_Index++;
                         }
+                        ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Current_Size_Index);
+                    }
+                    else if ((cki.Key == ConsoleKey.OemMinus || cki.Key == ConsoleKey.Subtract) && cki.Modifiers == ConsoleModifiers.Control)
+                    {
+                        if (Current_Size_Index > 0)
+                        {
+                            Current_Size_Index--;
+                        }
+                        ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Current_Size_Index);
                     }
                     else if (input.Length < maxLen)
                     {
@@ -487,7 +502,7 @@ namespace GHGameOfLife
             Console.SetWindowSize(1, 1);
             Console.SetBufferSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
             Console.SetWindowSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
-            Console.WriteLine(sizes[sizeIndex]);
+            //Console.WriteLine(sizes[sizeIndex]);
 
             //Center on the screen
             GetWindowRect(current.MainWindowHandle, out consRect);
@@ -497,8 +512,10 @@ namespace GHGameOfLife
             //int heightOffset = (primaryRes.vertical / 2) - (consRect.Bottom / 2);
             int widthOffset = (primaryRes.width / 2) - (consWidth / 2);
             int heightOffset = (primaryRes.height / 2) - (consHeight / 2);
-            SetWindowPos(current.MainWindowHandle, HWND_TOP, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-            Debugger.Log(0,"Window Info",String.Format("Top Left: {0,-10} Top Right: {1,-10}", widthOffset, heightOffset));
+            SetWindowPos(current.MainWindowHandle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+            ConsoleTraceListener ctl = new ConsoleTraceListener(true);
+            ctl.WriteLine(String.Format("Top Left: {0,-5} Top Right: {1,-5} Window Rect:{2}", widthOffset, heightOffset,consRect));
         }
 //------------------------------------------------------------------------------
     } // end class
@@ -511,22 +528,22 @@ namespace GHGameOfLife
         public int cols { get; private set; }
         public double ratio;
 
-        public ConsSize(int w, int h)
+        public ConsSize(int c, int r)
         {
-            cols = w;
-            rows = h;
+            cols = c;
+            rows = r;
             calcRatio();
         }
 
-        public void SetWidth(int w)
+        public void SetCols(int c)
         {
-            cols = w;
+            cols = c;
             calcRatio();
         }
 
-        public void SetHeight(int h)
+        public void SetRows(int r)
         {
-            rows = h;
+            rows = r;
             calcRatio();
         }
 
@@ -542,4 +559,4 @@ namespace GHGameOfLife
 
     }
 ////////////////////////////////////////////////////////////////////////////////
-}
+} // End CLass
