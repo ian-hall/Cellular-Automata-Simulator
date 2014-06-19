@@ -229,12 +229,12 @@ namespace GHGameOfLife
 
             int printRow = MenuStart + 1;
             Console.SetCursorPosition(LeftAlign, printRow);
-            Console.Write("Another?");
+            Console.Write("Do you really want to exit?");
             Console.SetCursorPosition(LeftAlign, ++printRow);
             Console.ForegroundColor = InfoColor;
-            Console.Write("[ENTER] Yes");
+            Console.Write("[ENTER] No, keep playing.");
             Console.SetCursorPosition(LeftAlign, ++printRow);
-            Console.Write("[ESC] No");
+            Console.Write("[ESC] Yes, let me out.");
             Console.ForegroundColor = DefaultFG;
         }
 //------------------------------------------------------------------------------
