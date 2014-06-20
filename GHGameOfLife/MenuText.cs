@@ -9,54 +9,56 @@ namespace GHGameOfLife
 {
     public static class MenuText
     {
-        public enum FileError { NONE, LENGTH, WIDTH, UNEVEN, CONTENTS, SIZE, NOT_LOADED };
-        public const ConsoleColor InfoColor = ConsoleColor.Red;
-        public const ConsoleColor DefaultBG = ConsoleColor.Black;
-        public const ConsoleColor DefaultFG = ConsoleColor.White;
-        public const ConsoleColor PopColor  = ConsoleColor.White;
-        public const ConsoleColor BuildColor = ConsoleColor.Cyan;
+        public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
+        public const ConsoleColor Info_Color    = ConsoleColor.Red;
+        public const ConsoleColor Default_BG    = ConsoleColor.Black;
+        public const ConsoleColor Default_FG    = ConsoleColor.White;
+        public const ConsoleColor Board_Color   = ConsoleColor.White;
+        public const ConsoleColor Builder_Color = ConsoleColor.Cyan;
         
-        public const String Welcome     = "Welcome to the GAME OF LIFE!!!!";
-        public const String PlsChoose   = "Please choose an option!";
-        public const String MenuChoice1 = "1) Random population";
-        public const String MenuChoice2 = "2) Load population from a file";
-        public const String MenuChoice3 = "3) Load a premade population";
-        public const String MenuChoice4 = "4) Create your own population";
-        public const String MenuChoice5 = "5) Exit";
-        public const String Choice      = "Your choice: ";
-        public const String Err         = "**Invalid entry**";
+        public const String Welcome      = "Welcome to the GAME OF LIFE!!!!";
+        public const String Choose_Msg   = "Please choose an option!";
+        public const String Menu_Choice1 = "1) Random population";
+        public const String Menu_Choice2 = "2) Load population from a file";
+        public const String Menu_Choice3 = "3) Load a premade population";
+        public const String Menu_Choice4 = "4) Create your own population";
+        public const String Menu_Choice5 = "5) Exit";
+        public const String Prompt       = "Your choice: ";
+        public const String Err          = "**Invalid entry**";
 
-        public const String LoadRandom  = "Loading random pop.";
+        public const String Load_Rand   = "Loading random pop.";
         public const String Enter       = "Press ENTER to confirm";
 
-        public const String RunCtrl1 = "[SPACE] Get next/Pause";
-        public const String RunCtrl2 = "[R] Toggle running";
-        public const String RunCtrl3 = "[ESC] Exit";
-        public const String RunCtrl4 = "[+/-] Speed adjust";
-        public const String RunCtrl5 = "[W] Toggle wrapping";
+        public const String Run_Ctrl1 = "[SPACE] Get next/Pause";
+        public const String Run_Ctrl2 = "[R] Toggle running";
+        public const String Run_Ctrl3 = "[ESC] Exit";
+        public const String Run_Ctrl4 = "[+/-] Speed adjust";
+        public const String Run_Ctrl5 = "[W] Toggle wrapping";
 
-        public const String CreateCtrl1 = "Arrow keys to move cursor";
-        public const String CreateCtrl2 = "[SPACE] Add/Remove cell";
-        public const String CreateCtrl3 = "[ENTER] Start Game";
-        public const String CreateCtrl4 = "[S] Save board";
+        public const String Create_Ctrl1 = "Arrow keys to move cursor";
+        public const String Create_Ctrl2 = "[SPACE] Add/Remove cell";
+        public const String Create_Ctrl3 = "[ENTER] Start Game";
+        public const String Create_Ctrl4 = "[S] Save board";
         
 
-        public static int WindowCenter; // Vertical center of the console
-        public static int LeftAlign;    // Align text with the Welcome message
-        public static List<String> ResNames;
+        public static int Window_Center; // Vertical center of the console
+        public static int Left_Align;    // Align text with the Welcome message
+        public static List<String> Res_Names;
 
-        private const int InfoLine = 3;
-        private const int WelcomeRow = 6;
-        private static int MenuStart;
+        private const int Info_Row = 3;
+        private const int Welcome_Row = 6;
+        private static int Menu_Start_Row;
+
+        //public static bool Initialized {get; private set;}
 //------------------------------------------------------------------------------
         public static void Initialize()
         {
-            WindowCenter = Console.WindowHeight / 2;
-            LeftAlign = (Console.WindowWidth/2) - (Welcome.Length/2);
+            Window_Center = Console.WindowHeight / 2;
+            Left_Align = (Console.WindowWidth/2) - (Welcome.Length/2);
             
             // Start the menus at 1/3 of the window
-            MenuStart = Console.WindowHeight/3 + 1;
-            ResNames = new List<String>();
+            Menu_Start_Row = Console.WindowHeight/3 + 1;
+            Res_Names = new List<String>();
 
             ResourceManager rm = GHGameOfLife.Pops.ResourceManager;
             rm.IgnoreCase = true;
@@ -64,12 +66,29 @@ namespace GHGameOfLife
 
             foreach (DictionaryEntry res in all)
             {
-                ResNames.Add(res.Key.ToString());
+                Res_Names.Add(res.Key.ToString());
             }
 
-            Console.SetCursorPosition(LeftAlign, WelcomeRow);
-            Console.Write(Welcome);
+            /*
+            Console.SetCursorPosition(Left_Align, Welcome_Row);
+            Console.Write(Welcome);*/
 
+            //Initialized = true;
+        }
+//------------------------------------------------------------------------------
+        public static void ReInitialize()
+        {
+            Window_Center = Console.WindowHeight / 2;
+            Left_Align = (Console.WindowWidth / 2) - (Welcome.Length / 2);
+
+            // Start the menus at 1/3 of the window
+            Menu_Start_Row = Console.WindowHeight / 3 + 1;
+        }
+//------------------------------------------------------------------------------
+        public static void PrintWelcome()
+        {
+            Console.SetCursorPosition(Left_Align, Welcome_Row);
+            Console.Write(Welcome);
         }
 //------------------------------------------------------------------------------
         public static void ClearLine(int row)
@@ -92,22 +111,22 @@ namespace GHGameOfLife
         {
             ClearMenuOptions();
 
-            int curRow = MenuStart;
+            int curRow = Menu_Start_Row;
 
-            Console.SetCursorPosition(LeftAlign, curRow);
-            Console.Write(PlsChoose);
-            Console.SetCursorPosition(LeftAlign, ++curRow);
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Choose_Msg);
+            Console.SetCursorPosition(Left_Align, ++curRow);
             Console.Write(Enter);
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.Write(MenuChoice1);
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.Write(MenuChoice2);
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.Write(MenuChoice3);
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.Write(MenuChoice4);
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.Write(MenuChoice5);
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.Write(Menu_Choice1);
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.Write(Menu_Choice2);
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.Write(Menu_Choice3);
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.Write(Menu_Choice4);
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.Write(Menu_Choice5);
             numChoices = 5;
             return (++curRow);
         }
@@ -116,23 +135,23 @@ namespace GHGameOfLife
         /// Prints the resource menu
         /// </summary>
         /// <param name="resCount">Outputs the number of resources printed</param>
-        /// <returns>Returns the line to put the choice prompt on</returns>
+        /// <returns>Returns the line to print the choice prompt on</returns>
         public static int PrintResourceMenu(out int resCount)
         {
             ClearMenuOptions();
 
-            int curRow = MenuStart;
+            int curRow = Menu_Start_Row;
 
-            Console.SetCursorPosition(LeftAlign, curRow);
-            Console.Write(PlsChoose);
-            Console.SetCursorPosition(LeftAlign, ++curRow);
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Choose_Msg);
+            Console.SetCursorPosition(Left_Align, ++curRow);
             Console.Write(Enter);
 
             int count = 1;
             
-            foreach (String res in MenuText.ResNames)
+            foreach (String res in MenuText.Res_Names)
             {
-                Console.SetCursorPosition(LeftAlign + 4, ++curRow);
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
                 string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");
                 Console.Write(option);
                 count += 1;
@@ -140,11 +159,11 @@ namespace GHGameOfLife
 
             resCount = count;
 
-            Console.SetCursorPosition(LeftAlign + 4, ++curRow);
-            Console.ForegroundColor = InfoColor;
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.ForegroundColor = Info_Color;
             string cancel = String.Format("{0,3}) {1}", count, "Cancel");
             Console.Write(cancel);
-            Console.ForegroundColor = DefaultFG;
+            Console.ForegroundColor = Default_FG;
 
             /* USED FOR FINDING SPACING AT MIN WINDOW HEIGHT
             for (int i = 0; i < 10; i++)
@@ -161,22 +180,22 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void PrintRunControls()
         {
-            Console.ForegroundColor = MenuText.InfoColor;
+            Console.ForegroundColor = MenuText.Info_Color;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",RunCtrl1,RunCtrl4));
+            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl1,Run_Ctrl4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",RunCtrl2,RunCtrl5));
+            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl2,Run_Ctrl5));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(RunCtrl3);
-            Console.ForegroundColor = MenuText.DefaultFG;
+            Console.Write(Run_Ctrl3);
+            Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
-            Console.ForegroundColor = MenuText.InfoColor;
+            Console.ForegroundColor = MenuText.Info_Color;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
@@ -201,41 +220,41 @@ namespace GHGameOfLife
             string formatStr = "{0,-" + colOne + "}{1,-" + colTwo + 
                                                         "}{2,-" + colThree + "}{3," + speedCol + "}";
             sb.AppendFormat(formatStr, runStr, pauseStr, wrapStr, speedStr);
-            ClearLine(InfoLine);
-            Console.SetCursorPosition(5, InfoLine);
+            ClearLine(Info_Row);
+            Console.SetCursorPosition(5, Info_Row);
             Console.Write(sb);
-            Console.ForegroundColor = MenuText.DefaultFG;
+            Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
         public static void PrintCreationControls()
         {
-            Console.ForegroundColor = MenuText.InfoColor;
+            Console.ForegroundColor = MenuText.Info_Color;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(CreateCtrl1);
+            Console.Write(Create_Ctrl1);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}", CreateCtrl2, CreateCtrl4));
+            Console.Write(String.Format("{0,-25}{1,-20}", Create_Ctrl2, Create_Ctrl4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(CreateCtrl3);
-            Console.ForegroundColor = MenuText.DefaultFG;
+            Console.Write(Create_Ctrl3);
+            Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
         public static void PromptForAnother()
         {
             ClearMenuOptions();
             ClearUnderBoard();
-            ClearLine(InfoLine);
+            ClearLine(Info_Row);
 
-            int printRow = MenuStart + 1;
-            Console.SetCursorPosition(LeftAlign, printRow);
+            int printRow = Menu_Start_Row + 1;
+            Console.SetCursorPosition(Left_Align, printRow);
             Console.Write("Do you really want to exit?");
-            Console.SetCursorPosition(LeftAlign, ++printRow);
-            Console.ForegroundColor = InfoColor;
+            Console.SetCursorPosition(Left_Align, ++printRow);
+            Console.ForegroundColor = Info_Color;
             Console.Write("[ENTER] No, keep playing.");
-            Console.SetCursorPosition(LeftAlign, ++printRow);
+            Console.SetCursorPosition(Left_Align, ++printRow);
             Console.Write("[ESC] Yes, let me out.");
-            Console.ForegroundColor = DefaultFG;
+            Console.ForegroundColor = Default_FG;
         }
 //------------------------------------------------------------------------------
         public static void ClearUnderBoard()
@@ -252,7 +271,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void ClearMenuOptions()
         {
-            for (int i = WelcomeRow - 1; i < Console.WindowHeight-5; i++)
+            for (int i = Welcome_Row + 1; i < Console.WindowHeight-5; i++)
                 ClearWithinBorder(i);
         }
 //------------------------------------------------------------------------------
@@ -261,22 +280,22 @@ namespace GHGameOfLife
             string errorStr;
             switch (err)
             {
-                case FileError.CONTENTS:
+                case FileError.Contents:
                     errorStr = "File not all 0s and 1s";
                     break;
-                case FileError.LENGTH:
+                case FileError.Length:
                     errorStr = "File has too many lines for current window";
                     break;
-                case FileError.NOT_LOADED:
+                case FileError.Not_Loaded:
                     errorStr = "No file loaded";
                     break;
-                case FileError.SIZE:
+                case FileError.Size:
                     errorStr = "File larger than 10KB";
                     break;
-                case FileError.WIDTH:
+                case FileError.Width:
                     errorStr = "Lines are too long";
                     break;
-                case FileError.UNEVEN:
+                case FileError.Uneven:
                     errorStr = "Lines are not of even length";
                     break;
                 default:

@@ -19,14 +19,14 @@ namespace GHGameOfLife
     {
         public bool IsInitialized { get; private set; }
 
-        private int[,] _Board;
-        private int _RowsUsed;
-        private int _ColsUsed;
-        private int _Generation;
-        private const char _LiveCell = '☺';
+        private int[,] Board;
+        private int Used_Rows;
+        private int Used_Cols;
+        private int Generation;
+        private const char Live_Cell = '☺';
         //private const char _DeadCell = ' ';
-        private Random _Rand = new Random();
-        private int _Space = 5;
+        private Random Rand = new Random();
+        private int Space = 5;
         public bool Wrap { get; set; }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -37,7 +37,7 @@ namespace GHGameOfLife
         /// <param name="colMax">Number of columns</param>
         public GoLBoard(int rowMax, int colMax)
         {
-            _Board = new int[rowMax, colMax];
+            Board = new int[rowMax, colMax];
             
             /*for (int r = 0; r < rowMax; r++)
             {
@@ -45,8 +45,8 @@ namespace GHGameOfLife
                     _Board[r, c] = rand.Next() % 2;
             }*/
             
-            _RowsUsed = rowMax;
-            _ColsUsed = colMax;
+            Used_Rows = rowMax;
+            Used_Cols = colMax;
             IsInitialized = false;
             Wrap = true;
         }
@@ -58,11 +58,11 @@ namespace GHGameOfLife
         /// </summary>
         public void BuildDefaultPop() 
         {
-            for (int r = 0; r < _RowsUsed; r++)
+            for (int r = 0; r < Used_Rows; r++)
             {
-                for (int c = 0; c < _ColsUsed; c++)
+                for (int c = 0; c < Used_Cols; c++)
                 {
-                    _Board[r, c] = _Rand.Next()%2;
+                    Board[r, c] = Rand.Next()%2;
                 }
             }
             IsInitialized = true;
@@ -75,7 +75,7 @@ namespace GHGameOfLife
         /// </summary>
         public void BuildFromFile()
         {
-            MenuText.FileError errType = MenuText.FileError.NOT_LOADED;
+            MenuText.FileError errType = MenuText.FileError.Not_Loaded;
 
             OpenFileDialog openWindow = new OpenFileDialog();          
             if (openWindow.ShowDialog() == DialogResult.OK)
@@ -87,7 +87,7 @@ namespace GHGameOfLife
 
             switch (errType)
             {
-                case MenuText.FileError.NONE:
+                case MenuText.FileError.None:
                     string startingPop;
                     using (StreamReader reader = new StreamReader(openWindow.FileName))
                         startingPop = reader.ReadToEnd();
@@ -103,7 +103,7 @@ namespace GHGameOfLife
                     Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
                     Console.Write(MenuText.GetReadableError(errType));
                     Console.SetCursorPosition(welcomeLeft, windowCenter);
-                    Console.Write(MenuText.LoadRandom);
+                    Console.Write(MenuText.Load_Rand);
                     Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
                     Console.Write(MenuText.Enter);
 
@@ -140,8 +140,8 @@ namespace GHGameOfLife
             Console.SetBufferSize(origWidth * 2, origHeight);
             Console.ForegroundColor = ConsoleColor.White;
 
-            IEnumerable<int> validLeft = Enumerable.Range(_Space, origWidth - 2 * _Space );
-            IEnumerable<int> validTop = Enumerable.Range(_Space, origHeight - 2 * _Space );
+            IEnumerable<int> validLeft = Enumerable.Range(Space, origWidth - 2 * Space );
+            IEnumerable<int> validTop = Enumerable.Range(Space, origHeight - 2 * Space );
             bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
 
             for (int i = 0; i < validTop.Count(); i++)
@@ -154,7 +154,7 @@ namespace GHGameOfLife
                 }
             }
 
-            Console.ForegroundColor = MenuText.BuildColor;
+            Console.ForegroundColor = MenuText.Builder_Color;
             foreach (int top in validTop)
             {
                 foreach (int left in validLeft)
@@ -164,13 +164,13 @@ namespace GHGameOfLife
                 }
             }
 
-            Console.ForegroundColor = MenuText.InfoColor;
-            string colFirst = (validLeft.First() - _Space).ToString();
-            string colLast = (validLeft.Last() - _Space).ToString();
-            string rowFirst = (validLeft.First() - _Space).ToString();
-            string rowLast = (validTop.Last() - _Space).ToString();
+            Console.ForegroundColor = MenuText.Info_Color;
+            string colFirst = (validLeft.First() - Space).ToString();
+            string colLast = (validLeft.Last() - Space).ToString();
+            string rowFirst = (validLeft.First() - Space).ToString();
+            string rowLast = (validTop.Last() - Space).ToString();
 
-            int positionPrintRow = _Space - 3;
+            int positionPrintRow = Space - 3;
 
             MenuText.PrintCreationControls();
 
@@ -178,8 +178,8 @@ namespace GHGameOfLife
             int charLeft = blinkLeft + 1;
             int extraTop = 2;
 
-            int curLeft = _Space;
-            int curTop = _Space;
+            int curLeft = Space;
+            int curTop = Space;
             int nextLeft;
             int nextTop;
             bool exit = false;
@@ -189,8 +189,8 @@ namespace GHGameOfLife
             while (!exit)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                MenuText.ClearLine(_Space - 3);
-                string positionStr = String.Format("Current position: ({0},{1})", curTop - _Space, curLeft - _Space);
+                MenuText.ClearLine(Space - 3);
+                string positionStr = String.Format("Current position: ({0},{1})", curTop - Space, curLeft - Space);
                 Console.SetCursorPosition(origWidth / 2 - positionStr.Length/2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
@@ -251,14 +251,14 @@ namespace GHGameOfLife
                 if (pressed == ConsoleKey.Spacebar)
                 {
                     Console.SetCursorPosition(0, 0);
-                    bool boardVal = !tempBoard[curTop - _Space, curLeft - _Space];
+                    bool boardVal = !tempBoard[curTop - Space, curLeft - Space];
 
                     if (boardVal)
-                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.BuildColor, ConsoleColor.Black);
+                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
                     else
                         Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + origWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
 
-                    tempBoard[curTop - _Space, curLeft - _Space] = boardVal;
+                    tempBoard[curTop - Space, curLeft - Space] = boardVal;
                 }
 
                 if (pressed == ConsoleKey.S)
@@ -328,17 +328,17 @@ namespace GHGameOfLife
             Console.SetWindowSize(origWidth, origHeight);
             Console.SetBufferSize(origWidth, origHeight);
 
-            Console.SetCursorPosition(_Space, _Space - 2);
+            Console.SetCursorPosition(Space, Space - 2);
             Console.Write(" ");          
-            Console.SetCursorPosition(origWidth - _Space - colLast.Length, _Space - 2);            
+            Console.SetCursorPosition(origWidth - Space - colLast.Length, Space - 2);            
             StringBuilder clear = new StringBuilder();
             for (int i = 0; i < colLast.Length; i++)
                 clear.Append(" ");
             Console.Write(clear);
 
-            Console.SetCursorPosition(_Space - 2, _Space);
+            Console.SetCursorPosition(Space - 2, Space);
             Console.Write(" ");
-            Console.SetCursorPosition(_Space - rowLast.Length - 1, origHeight - _Space - 1);
+            Console.SetCursorPosition(Space - rowLast.Length - 1, origHeight - Space - 1);
             clear = new StringBuilder();
             for (int i = 0; i < rowLast.Length; i++)
                 clear.Append(" ");
@@ -346,7 +346,7 @@ namespace GHGameOfLife
 
             MenuText.ClearUnderBoard();
 
-            Console.ForegroundColor = MenuText.DefaultFG;
+            Console.ForegroundColor = MenuText.Default_FG;
             MenuText.ClearLine(positionPrintRow);
             IsInitialized = true;
         }
@@ -375,8 +375,8 @@ namespace GHGameOfLife
         {
             string[] popByLine = Regex.Split(startingPop, "\r\n");
 
-            int midRow = _RowsUsed / 2;
-            int midCol = _ColsUsed / 2;
+            int midRow = Used_Rows / 2;
+            int midCol = Used_Cols / 2;
 
             int rowsNum = popByLine.Count();
             int colNum = popByLine[0].Length;
@@ -412,7 +412,7 @@ namespace GHGameOfLife
                 {
                     int popRow = r - rowLow;
                     int popCol = c - colLow;
-                    _Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                    Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
                 }
             }
         }
@@ -423,13 +423,13 @@ namespace GHGameOfLife
         /// Need to enable wrapping here
         public void Next()
         {
-            int[,] nextBoard = new int[_RowsUsed, _ColsUsed];
+            int[,] nextBoard = new int[Used_Rows, Used_Cols];
 
-            for (int r = 0; r < _RowsUsed; r++)
+            for (int r = 0; r < Used_Rows; r++)
             {
-                for (int c = 0; c < _ColsUsed; c++)
+                for (int c = 0; c < Used_Cols; c++)
                 {
-                    if (_Board[r, c] == 0)
+                    if (Board[r, c] == 0)
                     {
                         if (Wrap)
                         {
@@ -456,7 +456,7 @@ namespace GHGameOfLife
                         
                     }
 
-                    if (_Board[r, c] == 1)
+                    if (Board[r, c] == 1)
                     {
                         if (Wrap)
                         {
@@ -484,14 +484,14 @@ namespace GHGameOfLife
                     }
                 }
             }
-            _Generation++;          
-            _Board = nextBoard;
+            Generation++;          
+            Board = nextBoard;
 
         }
 //------------------------------------------------------------------------------
         public void Print()
         {
-            if (_Generation == 0)
+            if (Generation == 0)
             {
                 String write = "Starting population...";
                 int left = (Console.WindowWidth/2) - (write.Length/2);
@@ -502,37 +502,37 @@ namespace GHGameOfLife
             {
                 Console.SetCursorPosition(0, 1);
                 Console.Write(" ".PadRight(Console.WindowWidth));
-                String write = "Generation " + _Generation;
+                String write = "Generation " + Generation;
                 int left = (Console.WindowWidth/2) - (write.Length / 2);
                 Console.SetCursorPosition(left, 1);
                 Console.Write(write);
             }
 
-            Console.BackgroundColor = MenuText.DefaultBG;
-            Console.ForegroundColor = MenuText.PopColor;
+            Console.BackgroundColor = MenuText.Default_BG;
+            Console.ForegroundColor = MenuText.Board_Color;
 
-            Console.SetCursorPosition(0, _Space);
+            Console.SetCursorPosition(0, Space);
             StringBuilder sb = new StringBuilder();
-            for (int r = 0; r < _RowsUsed; r++)
+            for (int r = 0; r < Used_Rows; r++)
             {
                 sb.Append("    ║");
-                for (int c = 0; c < _ColsUsed; c++)
+                for (int c = 0; c < Used_Cols; c++)
                 {
-                    if (_Board[r, c] == 0)
+                    if (Board[r, c] == 0)
                     {
                         sb.Append(" ");
                     }
                     else
                     {
-                        sb.Append(_LiveCell);
+                        sb.Append(Live_Cell);
                     }
                 }
                 sb.AppendLine("║");
             }
             Console.Write(sb);
 
-            Console.BackgroundColor = MenuText.DefaultBG;
-            Console.ForegroundColor = MenuText.DefaultFG;    
+            Console.BackgroundColor = MenuText.Default_BG;
+            Console.ForegroundColor = MenuText.Default_FG;    
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -547,14 +547,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, c] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[r, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, c] == 1) n++;
+            if (Board[r, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
 
             if (n < 2) return true;
             if (n > 3) return true;
@@ -573,14 +573,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r - 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[r, (c - 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, c] == 1) n++;
-            if (_Board[r, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
-            if (_Board[(r + 1 + _RowsUsed) % _RowsUsed, (c + 1 + _ColsUsed) % _ColsUsed] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r - 1 + Used_Rows) % Used_Rows, c] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[r, (c - 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, c] == 1) n++;
+            if (Board[r, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
+            if (Board[(r + 1 + Used_Rows) % Used_Rows, (c + 1 + Used_Cols) % Used_Cols] == 1) n++;
 
             if (n == 3) return true;
             else return false;
@@ -600,35 +600,35 @@ namespace GHGameOfLife
 
             if (r != 0 && c != 0)
             {
-                if (_Board[r - 1, c - 1] == 1) n++;
+                if (Board[r - 1, c - 1] == 1) n++;
             }
-            if (r != 0 && c != _ColsUsed - 1)
+            if (r != 0 && c != Used_Cols - 1)
             {
-                if (_Board[r - 1, c + 1] == 1) n++;
+                if (Board[r - 1, c + 1] == 1) n++;
             }
             if (r != 0)
             {
-                if (_Board[r - 1, c] == 1) n++;
+                if (Board[r - 1, c] == 1) n++;
             }
-            if (r != _RowsUsed - 1 && c != 0)
+            if (r != Used_Rows - 1 && c != 0)
             {
-                if (_Board[r + 1, c - 1] == 1) n++;
+                if (Board[r + 1, c - 1] == 1) n++;
             }
             if (c != 0)
             {
-                if (_Board[r, c - 1] == 1) n++;
+                if (Board[r, c - 1] == 1) n++;
             }
-            if (r != _RowsUsed - 1)
+            if (r != Used_Rows - 1)
             {
-                if (_Board[r + 1, c] == 1) n++;
+                if (Board[r + 1, c] == 1) n++;
             }
-            if (c != _ColsUsed - 1)
+            if (c != Used_Cols - 1)
             {
-                if (_Board[r, c + 1] == 1) n++;
+                if (Board[r, c + 1] == 1) n++;
             }
-            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
+            if (r != Used_Rows - 1 && c != Used_Cols - 1)
             {
-                if (_Board[r + 1, c + 1] == 1) n++;
+                if (Board[r + 1, c + 1] == 1) n++;
             }
 
             if (n < 2) return true;
@@ -650,35 +650,35 @@ namespace GHGameOfLife
 
             if (r != 0 && c != 0)
             {
-                if (_Board[r - 1, c - 1] == 1) n++;
+                if (Board[r - 1, c - 1] == 1) n++;
             }
-            if (r != 0 && c != _ColsUsed - 1)
+            if (r != 0 && c != Used_Cols - 1)
             {
-                if (_Board[r - 1, c + 1] == 1) n++;
+                if (Board[r - 1, c + 1] == 1) n++;
             }
             if (r != 0)
             {
-                if (_Board[r - 1, c] == 1) n++;
+                if (Board[r - 1, c] == 1) n++;
             }
-            if (r != _RowsUsed - 1 && c != 0)
+            if (r != Used_Rows - 1 && c != 0)
             {
-                if (_Board[r + 1, c - 1] == 1) n++;
+                if (Board[r + 1, c - 1] == 1) n++;
             }
             if (c != 0)
             {
-                if (_Board[r, c - 1] == 1) n++;
+                if (Board[r, c - 1] == 1) n++;
             }
-            if (r != _RowsUsed - 1)
+            if (r != Used_Rows - 1)
             {
-                if (_Board[r + 1, c] == 1) n++;
+                if (Board[r + 1, c] == 1) n++;
             }
-            if (c != _ColsUsed - 1)
+            if (c != Used_Cols - 1)
             {
-                if (_Board[r, c + 1] == 1) n++;
+                if (Board[r, c + 1] == 1) n++;
             }
-            if (r != _RowsUsed - 1 && c != _ColsUsed - 1)
+            if (r != Used_Rows - 1 && c != Used_Cols - 1)
             {
-                if (_Board[r + 1, c + 1] == 1) n++;
+                if (Board[r + 1, c + 1] == 1) n++;
             }
 
             if (n == 3) return true;
@@ -698,13 +698,13 @@ namespace GHGameOfLife
             FileInfo file = new FileInfo(filename);
             if (!file.Exists)
             {
-                return MenuText.FileError.CONTENTS;
+                return MenuText.FileError.Contents;
             }
 
             // Checks if the file is empty or too large ( > 10KB )
             if (file.Length == 0 || file.Length > 10240)
             {
-                return MenuText.FileError.SIZE;
+                return MenuText.FileError.Size;
             }
 
             using (StreamReader reader = new StreamReader(filename))
@@ -717,31 +717,31 @@ namespace GHGameOfLife
                 int cols = fileByLine[0].Length;
 
                 // Error if there are more lines than the board can hold
-                if (rows >= _RowsUsed)
-                    return MenuText.FileError.LENGTH;
+                if (rows >= Used_Rows)
+                    return MenuText.FileError.Length;
                 // Error if the first line is too wide,
                 // 'cols' also used to check against all other lines
-                if (cols >= _ColsUsed)
-                    return MenuText.FileError.WIDTH;
+                if (cols >= Used_Cols)
+                    return MenuText.FileError.Width;
 
                 foreach (string line in fileByLine)
                 {
                     //Error if all lines are not the same width
                     if (line.Length != cols)
                     {
-                        return MenuText.FileError.UNEVEN;
+                        return MenuText.FileError.Uneven;
                     }
                     //Error of the line is not all 0 and 1
                     if (!OnesAndZerosOnly(line))
                     {
-                        return MenuText.FileError.CONTENTS;
+                        return MenuText.FileError.Contents;
                     }
                     // Update cols to compare to the next line
                     cols = line.Length;
                 }
             }
             
-            return MenuText.FileError.NONE;
+            return MenuText.FileError.None;
        
         }
 //------------------------------------------------------------------------------
