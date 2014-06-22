@@ -328,6 +328,8 @@ namespace GHGameOfLife
             Console.SetWindowSize(origWidth, origHeight);
             Console.SetBufferSize(origWidth, origHeight);
 
+            /*
+             * I think this was used for something I dont do anymore??
             Console.SetCursorPosition(Space, Space - 2);
             Console.Write(" ");          
             Console.SetCursorPosition(origWidth - Space - colLast.Length, Space - 2);            
@@ -343,6 +345,7 @@ namespace GHGameOfLife
             for (int i = 0; i < rowLast.Length; i++)
                 clear.Append(" ");
             Console.Write(clear);
+             */ 
 
             MenuText.ClearUnderBoard();
 

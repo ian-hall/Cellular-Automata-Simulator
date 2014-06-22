@@ -18,11 +18,14 @@ namespace GHGameOfLife
         
         public const String Welcome      = "Welcome to the GAME OF LIFE!!!!";
         public const String Choose_Msg   = "Please choose an option!";
+        
         public const String Menu_Choice1 = "1) Random population";
         public const String Menu_Choice2 = "2) Load population from a file";
         public const String Menu_Choice3 = "3) Load a premade population";
         public const String Menu_Choice4 = "4) Create your own population";
         public const String Menu_Choice5 = "5) Exit";
+        public const int    NMenu_Choice = 5;
+        
         public const String Prompt       = "Your choice: ";
         public const String Err          = "**Invalid entry**";
 
@@ -34,11 +37,13 @@ namespace GHGameOfLife
         public const String Run_Ctrl3 = "[ESC] Exit";
         public const String Run_Ctrl4 = "[+/-] Speed adjust";
         public const String Run_Ctrl5 = "[W] Toggle wrapping";
+        public const int    NRun_Ctrl = 5;
 
         public const String Create_Ctrl1 = "Arrow keys to move cursor";
         public const String Create_Ctrl2 = "[SPACE] Add/Remove cell";
         public const String Create_Ctrl3 = "[ENTER] Start Game";
         public const String Create_Ctrl4 = "[S] Save board";
+        public const int    NCreate_Ctrl = 4;
         
 
         public static int Window_Center; // Vertical center of the console
@@ -85,11 +90,11 @@ namespace GHGameOfLife
             Menu_Start_Row = Console.WindowHeight / 3 + 1;
         }
 //------------------------------------------------------------------------------
-        public static void PrintWelcome()
+        /*public static void PrintWelcome()
         {
             Console.SetCursorPosition(Left_Align, Welcome_Row);
             Console.Write(Welcome);
-        }
+        }*/
 //------------------------------------------------------------------------------
         public static void ClearLine(int row)
         {
@@ -107,9 +112,12 @@ namespace GHGameOfLife
         /// Prints the main menu
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintMainMenu(out int numChoices)
+        public static int PrintMainMenu(/*out int numChoices*/)
         {
-            ClearMenuOptions();
+            ClearAllInBoarder();
+
+            Console.SetCursorPosition(Left_Align, Welcome_Row);
+            Console.Write(Welcome);
 
             int curRow = Menu_Start_Row;
 
@@ -127,7 +135,7 @@ namespace GHGameOfLife
             Console.Write(Menu_Choice4);
             Console.SetCursorPosition(Left_Align + 4, ++curRow);
             Console.Write(Menu_Choice5);
-            numChoices = 5;
+            //numChoices = 5;
             return (++curRow);
         }
 //------------------------------------------------------------------------------
@@ -138,7 +146,7 @@ namespace GHGameOfLife
         /// <returns>Returns the line to print the choice prompt on</returns>
         public static int PrintResourceMenu(out int resCount)
         {
-            ClearMenuOptions();
+            ClearAllInBoarder();
 
             int curRow = Menu_Start_Row;
 
@@ -164,16 +172,6 @@ namespace GHGameOfLife
             string cancel = String.Format("{0,3}) {1}", count, "Cancel");
             Console.Write(cancel);
             Console.ForegroundColor = Default_FG;
-
-            /* USED FOR FINDING SPACING AT MIN WINDOW HEIGHT
-            for (int i = 0; i < 10; i++)
-            {
-                Console.SetCursorPosition(LeftAlign + 4, WindowCenter + currLine);
-                string option = String.Format("{0,3}) {1}", count, i).Replace("_", " ");
-                Console.Write(option);
-                count += 1;
-                currLine += 1;
-            }*/
 
             return (++curRow);
         }
@@ -242,7 +240,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void PromptForAnother()
         {
-            ClearMenuOptions();
+            ClearAllInBoarder();
             ClearUnderBoard();
             ClearLine(Info_Row);
 
@@ -257,22 +255,25 @@ namespace GHGameOfLife
             Console.ForegroundColor = Default_FG;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Only the space under the bottom border is used for the menu
+        /// </summary>
         public static void ClearUnderBoard()
         {
-            for (int i = Console.WindowHeight - 4; i < Console.WindowHeight-1; ++i)
+            for (int i = Console.WindowHeight - 4; i < Console.WindowHeight-1; i++)
             {
                 ClearLine(i);
             }
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Only allow lines within 5 of the middle to be used for printing the
-        /// menus.
+        /// Clear everything inside the board area
         /// </summary>
-        public static void ClearMenuOptions()
+        public static void ClearAllInBoarder()
         {
-            for (int i = Welcome_Row + 1; i < Console.WindowHeight-5; i++)
-                ClearWithinBorder(i);
+            for (int i = 5; i < Console.WindowHeight-5; i++)
+              ClearWithinBorder(i);
+
         }
 //------------------------------------------------------------------------------
         public static string GetReadableError(MenuText.FileError err)

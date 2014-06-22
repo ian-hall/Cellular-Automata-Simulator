@@ -224,11 +224,13 @@ namespace GHGameOfLife
                 Console.Write(horiz);
             Console.Write(botRight);
 
-            MenuText.PrintWelcome();
+            //MenuText.PrintWelcome();
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Displays the main menu. Pick how to load the population.
+        /// Display the choice and ask for confirmation instead of just
+        /// jumping to the next screen incase someone hits a wrong button
         /// </summary>
         ///                                          
         private static void MainMenu()
@@ -236,13 +238,13 @@ namespace GHGameOfLife
             PopType pop = PopType.Random;
             string res = null;
 
-            int numChoices;
-            int currPromptRow = MenuText.PrintMainMenu(out numChoices);
+            int numChoices = MenuText.NMenu_Choice;
+            int currPromptRow = MenuText.PrintMainMenu(/*out numChoices*/);
             int choice = -1;
 
-            StringBuilder allChoices = new StringBuilder();
-            for( int i = 1; i <= numChoices; i++ )
-                allChoices.Append("" + i);
+            //Only allow letters and numbers to be written as a choice
+            //TODO: Add this to the resource selection menu
+            string allCharDec = "abcdefghijklmnopqrstuvwxyz1234567890";
 
             bool validEntry = false;
             int newPromptRow = currPromptRow;
@@ -297,10 +299,10 @@ namespace GHGameOfLife
                         resized = true;
                         break;
                     }
-                    //else if (!allChoices.ToString().Contains(c))
-                    //{
-                        //ignore
-                    //}
+                    else if (!allCharDec.Contains(c))
+                    {
+                        //This is here so these characters are not written
+                    }
                     else if (input.Length < maxLen)
                     {
                         Console.Write(c);
@@ -344,7 +346,7 @@ namespace GHGameOfLife
                             validEntry = true;
                         else
                         {
-                            MenuText.PrintMainMenu(out numChoices);
+                            MenuText.PrintMainMenu(/*out numChoices*/);
                             validEntry = false;
                         }
                         break;
@@ -364,7 +366,7 @@ namespace GHGameOfLife
             }
            
             //Clear the current options
-            MenuText.ClearMenuOptions();
+            MenuText.ClearAllInBoarder();
             
             //Move out into the main loop maybe
             RunGame(pop,res);
@@ -520,9 +522,9 @@ namespace GHGameOfLife
                 Console.Write(horiz);
             Console.Write(botRight);
 
-            MenuText.PrintWelcome();
+            //MenuText.PrintWelcome();
             int trash;
-            return MenuText.PrintMainMenu(out trash);
+            return MenuText.PrintMainMenu(/*out trash*/);
             
         }
 //------------------------------------------------------------------------------
