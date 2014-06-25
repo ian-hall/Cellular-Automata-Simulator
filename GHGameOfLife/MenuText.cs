@@ -54,6 +54,8 @@ namespace GHGameOfLife
         private const int Welcome_Row = 6;
         private static int Menu_Start_Row;
 
+        private static int Space = GoLBoard.Space;
+
         //public static bool Initialized {get; private set;}
 //------------------------------------------------------------------------------
         public static void Initialize()
@@ -65,7 +67,7 @@ namespace GHGameOfLife
             Menu_Start_Row = Console.WindowHeight/3 + 1;
             Res_Names = new List<String>();
 
-            ResourceManager rm = GHGameOfLife.Pops.ResourceManager;
+            ResourceManager rm = GHGameOfLife.LargePops.ResourceManager;
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
 
@@ -89,12 +91,6 @@ namespace GHGameOfLife
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight / 3 + 1;
         }
-//------------------------------------------------------------------------------
-        /*public static void PrintWelcome()
-        {
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);
-        }*/
 //------------------------------------------------------------------------------
         public static void ClearLine(int row)
         {
@@ -242,6 +238,7 @@ namespace GHGameOfLife
         {
             ClearAllInBoarder();
             ClearUnderBoard();
+            ClearAboveBoard();
             ClearLine(Info_Row);
 
             int printRow = Menu_Start_Row + 1;
@@ -274,6 +271,17 @@ namespace GHGameOfLife
             for (int i = 5; i < Console.WindowHeight-5; i++)
               ClearWithinBorder(i);
 
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Clear above the boarder
+        /// </summary>
+        public static void ClearAboveBoard()
+        {
+            for (int i = 0; i < Space - 1; i++)
+            {
+                ClearLine(i);
+            }
         }
 //------------------------------------------------------------------------------
         public static string GetReadableError(MenuText.FileError err)

@@ -46,13 +46,18 @@
     <Compile Include="GoLBoard.cs" />
     <Compile Include="GoLRunner.cs" />
     <Compile Include="MenuText.cs" />
-    <Compile Include="Pops.Designer.cs">
+    <Compile Include="LargePops.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Pops.resx</DependentUpon>
+      <DependentUpon>LargePops.resx</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SmallPops.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SmallPops.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -62,13 +67,22 @@
     <None Include="Resources\shipinbottle.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Pops.resx">
+    <EmbeddedResource Include="LargePops.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Pops.Designer.cs</LastGenOutput>
+      <LastGenOutput>LargePops.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SmallPops.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SmallPops.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Resources\sparky.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\glider%28down%29.txt" />
+    <Content Include="Resources\glider%28up%29.txt" />
+    <Content Include="Resources\small.txt" />
+    <Content Include="Resources\smallship%28left%29.txt" />
+    <Content Include="Resources\smallship%28right%29.txt" />
     <Content Include="Resources\wickstretcher.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

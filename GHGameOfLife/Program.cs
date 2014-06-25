@@ -171,18 +171,18 @@ namespace GHGameOfLife
             Cons_Sizes[0] = new ConsSize(Min_Cols, Min_Rows);
             for (int i = 1; i < DIFFERENT_SIZES; i++)
             {
-                Cons_Sizes[i] = new ConsSize(Cons_Sizes[i - 1].cols + difWid, Cons_Sizes[i - 1].rows + difHeight);
-                while (Cons_Sizes[i].ratio > (1.0 * 10 / 3))
+                Cons_Sizes[i] = new ConsSize(Cons_Sizes[i - 1].Cols + difWid, Cons_Sizes[i - 1].Rows + difHeight);
+                while (Cons_Sizes[i].Ratio > (1.0 * 10 / 3))
                 {
-                    Cons_Sizes[i].SetCols(Cons_Sizes[i].cols - 1);
+                    Cons_Sizes[i].Cols = (Cons_Sizes[i].Cols - 1);
                 }
             }
 
             foreach (ConsSize cs in Cons_Sizes)
             {
-                while (cs.ratio < (1.0 * 10 / 3))
+                while (cs.Ratio < (1.0 * 10 / 3))
                 {
-                    cs.SetCols(cs.cols + 1);
+                    cs.Cols = (cs.Cols + 1);
                 }
             }
 
@@ -522,9 +522,7 @@ namespace GHGameOfLife
                 Console.Write(horiz);
             Console.Write(botRight);
 
-            //MenuText.PrintWelcome();
-            int trash;
-            return MenuText.PrintMainMenu(/*out trash*/);
+            return MenuText.PrintMainMenu();
             
         }
 //------------------------------------------------------------------------------
@@ -580,8 +578,8 @@ namespace GHGameOfLife
            
             //Resize the console window
             Console.SetWindowSize(1, 1);
-            Console.SetBufferSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
-            Console.SetWindowSize(sizes[sizeIndex].cols, sizes[sizeIndex].rows);
+            Console.SetBufferSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
+            Console.SetWindowSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
@@ -603,37 +601,54 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
     class ConsSize
     {
-        public int rows { get; private set; }
-        public int cols { get; private set; }
-        public double ratio;
+        private int _rows;
+        private int _cols;
+        public double Ratio { get; private set; }
 
         public ConsSize(int c, int r)
         {
-            cols = c;
-            rows = r;
+            _cols = c;
+            _rows = r;
             calcRatio();
         }
 
-        public void SetCols(int c)
+        public int Cols
         {
-            cols = c;
-            calcRatio();
+            get
+            {
+                return this._cols;
+            }
+            set
+            {
+                _cols = value;
+                calcRatio();
+            }
         }
 
-        public void SetRows(int r)
+        public int Rows
         {
-            rows = r;
-            calcRatio();
+            get
+            {
+                return this._rows;
+            }
+            set
+            {
+                _rows = value;
+                calcRatio();
+            }
         }
 
         public override string ToString()
         {
-            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", cols, rows, ratio);
+            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", _cols, _rows, Ratio);
         }
 
         private void calcRatio()
         {
-            ratio = 1.0 * cols / rows;
+            if (_cols < 1 || _rows < 1)
+                Ratio = 1.0;
+            else
+                Ratio = 1.0 * _cols / _rows;
         }
 
     }

@@ -17,6 +17,15 @@ namespace GHGameOfLife
     /// </summary>
     class GoLBoard
     {
+
+        private struct Rect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
         public bool IsInitialized { get; private set; }
 
         private int[,] Board;
@@ -26,8 +35,19 @@ namespace GHGameOfLife
         private const char Live_Cell = '☺';
         //private const char _DeadCell = ' ';
         private Random Rand = new Random();
-        private int Space = 5;
+
         public bool Wrap { get; set; }
+        private int OrigConsHeight;
+        private int OrigConsWidth;
+
+        public static int Space
+        {
+            get
+            {
+                return 5;
+            }
+            private set{}
+        }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -38,15 +58,11 @@ namespace GHGameOfLife
         public GoLBoard(int rowMax, int colMax)
         {
             Board = new int[rowMax, colMax];
-            
-            /*for (int r = 0; r < rowMax; r++)
-            {
-                for (int c = 0; c < colMax; c++)
-                    _Board[r, c] = rand.Next() % 2;
-            }*/
-            
+                        
             Used_Rows = rowMax;
             Used_Cols = colMax;
+            OrigConsHeight = Console.WindowHeight;
+            OrigConsWidth = Console.WindowWidth;
             IsInitialized = false;
             Wrap = true;
         }
@@ -129,19 +145,23 @@ namespace GHGameOfLife
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
         /// </summary>
+        //------------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the board from user input. This is going to be ugly...
+        /// </summary>
         public void BuildFromUser()
         {
             SaveFileDialog saveDia = new SaveFileDialog();
             saveDia.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
 
-            int origWidth = Console.WindowWidth;
-            int origHeight = Console.WindowHeight;
+            //int origWidth = Console.WindowWidth;
+            //int origHeight = Console.WindowHeight;
 
-            Console.SetBufferSize(origWidth * 2, origHeight);
+            Console.SetBufferSize(OrigConsWidth * 3, OrigConsHeight);
             Console.ForegroundColor = ConsoleColor.White;
 
-            IEnumerable<int> validLeft = Enumerable.Range(Space, origWidth - 2 * Space );
-            IEnumerable<int> validTop = Enumerable.Range(Space, origHeight - 2 * Space );
+            IEnumerable<int> validLeft = Enumerable.Range(Space, OrigConsWidth - 2 * Space);
+            IEnumerable<int> validTop = Enumerable.Range(Space, OrigConsHeight - 2 * Space);
             bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
 
             for (int i = 0; i < validTop.Count(); i++)
@@ -159,154 +179,351 @@ namespace GHGameOfLife
             {
                 foreach (int left in validLeft)
                 {
-                    Console.SetCursorPosition(left + origWidth, top);
+                    Console.SetCursorPosition(left + OrigConsWidth, top);
                     Console.Write('█');
                 }
             }
 
             Console.ForegroundColor = MenuText.Info_Color;
-            string colFirst = (validLeft.First() - Space).ToString();
-            string colLast = (validLeft.Last() - Space).ToString();
-            string rowFirst = (validLeft.First() - Space).ToString();
-            string rowLast = (validTop.Last() - Space).ToString();
+
 
             int positionPrintRow = Space - 3;
 
             MenuText.PrintCreationControls();
 
-            int blinkLeft = origWidth + 5;
+            int blinkLeft = OrigConsWidth + 5;
             int charLeft = blinkLeft + 1;
             int extraTop = 2;
 
-            int curLeft = Space;
-            int curTop = Space;
+            int curLeft = validLeft.ElementAt(validLeft.Count() / 2);
+            int curTop = validTop.ElementAt(validTop.Count() / 2);
             int nextLeft;
             int nextTop;
             bool exit = false;
             Console.CursorVisible = false;
 
 
+            Rect loadedPopBounds = new Rect();
+            bool smallPopLoaded = false;
+            bool[,] smallPopVals = new bool[0, 0];
+
             while (!exit)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 MenuText.ClearLine(Space - 3);
                 string positionStr = String.Format("Current position: ({0},{1})", curTop - Space, curLeft - Space);
-                Console.SetCursorPosition(origWidth / 2 - positionStr.Length/2, positionPrintRow);
+                Console.SetCursorPosition(OrigConsWidth / 2 - positionStr.Length / 2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
-                while (!Console.KeyAvailable)
+
+                if (!smallPopLoaded)
                 {
-                    Console.MoveBufferArea(curLeft, curTop, 1, 1, charLeft, extraTop);
-                    Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, curLeft, curTop);
-                    System.Threading.Thread.Sleep(100);
-                    Console.MoveBufferArea(curLeft, curTop, 1, 1, blinkLeft, extraTop);
-                    Console.MoveBufferArea(charLeft, extraTop, 1, 1, curLeft, curTop);
-                    System.Threading.Thread.Sleep(100);
-                }
-
-                ConsoleKey pressed = Console.ReadKey(true).Key;
-
-                if (pressed == ConsoleKey.Enter)
-                {
-                    exit = true;
-                    break;
-                }
-
-                if (pressed == ConsoleKey.RightArrow)
-                {
-                    nextLeft = ++curLeft;
-                    if (!validLeft.Contains(nextLeft))
-                        nextLeft = validLeft.Min();
-
-                    curLeft = nextLeft;
-                }
-
-                if (pressed == ConsoleKey.LeftArrow)
-                {
-                    nextLeft = --curLeft;
-                    if (!validLeft.Contains(nextLeft))
-                        nextLeft = validLeft.Max();
-
-                    curLeft = nextLeft;
-                }
-
-                if (pressed == ConsoleKey.UpArrow)
-                {
-                    nextTop = --curTop;
-                    if (!validTop.Contains(nextTop))
-                        nextTop = validTop.Max();
-
-                    curTop = nextTop;
-                }
-
-                if (pressed == ConsoleKey.DownArrow)
-                {
-                    nextTop = ++curTop;
-                    if (!validTop.Contains(nextTop))
-                        nextTop = validTop.Min();
-
-                    curTop = nextTop;
-                }
-
-                if (pressed == ConsoleKey.Spacebar)
-                {
-                    Console.SetCursorPosition(0, 0);
-                    bool boardVal = !tempBoard[curTop - Space, curLeft - Space];
-
-                    if (boardVal)
-                        Console.MoveBufferArea(curLeft + origWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
-                    else
-                        Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + origWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
-
-                    tempBoard[curTop - Space, curLeft - Space] = boardVal;
-                }
-
-                if (pressed == ConsoleKey.S)
-                {
-                    if (saveDia.ShowDialog() == DialogResult.OK)
+                    while (!Console.KeyAvailable)
                     {
-                        
-                        int top = int.MaxValue;
-                        int bottom = int.MinValue;
-                        int left = int.MaxValue;
-                        int right = int.MinValue;
+                        Console.MoveBufferArea(curLeft, curTop, 1, 1, charLeft, extraTop);
+                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, curLeft, curTop);
+                        System.Threading.Thread.Sleep(150);
+                        Console.MoveBufferArea(curLeft, curTop, 1, 1, blinkLeft, extraTop);
+                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, curLeft, curTop);
+                        System.Threading.Thread.Sleep(150);
+                    }
 
-                        // make a box that only includes the minimum needed lines
-                        // to save the board
-                        for (int i = 0; i < validTop.Count(); i++)
+                    ConsoleKey pressed = Console.ReadKey(true).Key;
+
+                    if (pressed == ConsoleKey.Enter)
+                    {
+                        exit = true;
+                        break;
+                    }
+
+                    if (pressed == ConsoleKey.RightArrow)
+                    {
+                        nextLeft = ++curLeft;
+                        if (!validLeft.Contains(nextLeft))
+                            nextLeft = validLeft.Min();
+
+                        curLeft = nextLeft;
+                    }
+
+                    if (pressed == ConsoleKey.LeftArrow)
+                    {
+                        nextLeft = --curLeft;
+                        if (!validLeft.Contains(nextLeft))
+                            nextLeft = validLeft.Max();
+
+                        curLeft = nextLeft;
+                    }
+
+                    if (pressed == ConsoleKey.UpArrow)
+                    {
+                        nextTop = --curTop;
+                        if (!validTop.Contains(nextTop))
+                            nextTop = validTop.Max();
+
+                        curTop = nextTop;
+                    }
+
+                    if (pressed == ConsoleKey.DownArrow)
+                    {
+                        nextTop = ++curTop;
+                        if (!validTop.Contains(nextTop))
+                            nextTop = validTop.Min();
+
+                        curTop = nextTop;
+                    }
+
+                    if (pressed == ConsoleKey.Spacebar)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        bool boardVal = !tempBoard[curTop - Space, curLeft - Space];
+
+                        if (boardVal)
+                            Console.MoveBufferArea(curLeft + OrigConsWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
+                        else
+                            Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + OrigConsWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
+
+                        tempBoard[curTop - Space, curLeft - Space] = boardVal;
+                    }
+
+                    /*
+                     * TODO maybe change this to cycle through a few common small pops
+                     * or change this to P and then numkeys to go through a few pops
+                     * or something
+                     */
+                    if (pressed == ConsoleKey.D1)
+                    {
+                        smallPopLoaded = true;
+                        var testPop = GHGameOfLife.SmallPops.Glider_D;
+                        loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
+                        int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                        int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                        if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
                         {
-                            for (int j = 0; j < validLeft.Count(); j++)
+                            smallPopLoaded = true;
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("Cannot load pop outside of bounds");
+                            smallPopLoaded = false;
+                        }
+                    }
+
+                    if (pressed == ConsoleKey.S)
+                    {
+                        if (saveDia.ShowDialog() == DialogResult.OK)
+                        {
+
+                            int top = int.MaxValue;
+                            int bottom = int.MinValue;
+                            int left = int.MaxValue;
+                            int right = int.MinValue;
+
+                            // make a box that only includes the minimum needed lines
+                            // to save the board
+                            for (int i = 0; i < validTop.Count(); i++)
                             {
-                                if (tempBoard[i, j])
+                                for (int j = 0; j < validLeft.Count(); j++)
                                 {
-                                    if (i < top)
-                                        top = i;
-                                    if (i > bottom)
-                                        bottom = i;
-                                    if (j < left)
-                                        left = j;
-                                    if (j > right)
-                                        right = j;
+                                    if (tempBoard[i, j])
+                                    {
+                                        if (i < top)
+                                            top = i;
+                                        if (i > bottom)
+                                            bottom = i;
+                                        if (j < left)
+                                            left = j;
+                                        if (j > right)
+                                            right = j;
+                                    }
+                                }
+                            }
+
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = top; i <= bottom; i++)
+                            {
+                                for (int j = left; j <= right; j++)
+                                {
+                                    if (tempBoard[i, j])
+                                        sb.Append('1');
+                                    else
+                                        sb.Append('0');
+                                }
+                                if (i != bottom)
+                                    sb.AppendLine();
+                            }
+                            File.WriteAllText(saveDia.FileName, sb.ToString());
+                        }
+
+                    }
+                }
+                else
+                {
+                    //TODO: Only allow the cursor with the small thing to be loaded in a space not outside the board
+                    // Also need to probably limit the size of the small pop to say... 10x10 or something?
+
+                    int popWidth = loadedPopBounds.Right - loadedPopBounds.Left;
+                    int popHeight = loadedPopBounds.Bottom - loadedPopBounds.Top;
+
+                    int storeBoardLeft = loadedPopBounds.Left + popWidth + 1;
+                    int storeBoardTop = loadedPopBounds.Top;
+
+
+                    while (!Console.KeyAvailable)
+                    {
+                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, storeBoardLeft, storeBoardTop);
+                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, popWidth, popHeight, curLeft, curTop);
+                        System.Threading.Thread.Sleep(250);
+                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, loadedPopBounds.Left, loadedPopBounds.Top);
+                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, popWidth, popHeight, curLeft, curTop);
+                        System.Threading.Thread.Sleep(100);
+                    }
+
+                    ConsoleKey pressed = Console.ReadKey(true).Key;
+
+                    if (pressed == ConsoleKey.D1)
+                    {
+                        smallPopLoaded = false;
+                    }
+
+
+
+                    if (pressed == ConsoleKey.RightArrow)
+                    {
+                        nextLeft = ++curLeft;
+                        //if (!validLeft.Contains(nextLeft))
+                        if (nextLeft >= (validLeft.Last() - popWidth) + 2)
+                            nextLeft = validLeft.Min();
+
+                        curLeft = nextLeft;
+                    }
+
+                    if (pressed == ConsoleKey.LeftArrow)
+                    {
+                        nextLeft = --curLeft;
+                        if (!validLeft.Contains(nextLeft))
+                            nextLeft = (validLeft.Last() - popWidth) + 1;
+                        //nextLeft = validLeft.Max();
+
+                        curLeft = nextLeft;
+                    }
+
+                    if (pressed == ConsoleKey.UpArrow)
+                    {
+                        nextTop = --curTop;
+                        if (!validTop.Contains(nextTop))
+                            nextTop = (validTop.Last() - popHeight) + 1;
+                        //nextTop = validTop.Max();
+
+                        curTop = nextTop;
+                    }
+
+                    if (pressed == ConsoleKey.DownArrow)
+                    {
+                        nextTop = ++curTop;
+                        //if (!validTop.Contains(nextTop))
+                        if (nextTop >= (validTop.Last() - popHeight) + 2)
+                            nextTop = validTop.Min();
+
+                        curTop = nextTop;
+                    }
+
+                    /*
+                     * TODO: Check the current board in the rows/cols that correspond to the loaded pop's
+                     * Then print the small loaded pop over the board.
+                     * For the toggle, if the loaded pop lines up with whatever is already on the board
+                     * delete it, otherwise just slam it down.
+                     * 
+                     * Probably copy the necessary section out of the tempBoard matrix, compare with
+                     * the loaded pop, and then put the copy back into the tempboard while also
+                     * printing the changes onto the screen.
+                     */
+                    if (pressed == ConsoleKey.Spacebar)
+                    {
+                        Console.SetCursorPosition(0, 0);
+
+                        int popRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                        int popCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                        for (int r = curTop; r < curTop + popRows; r++)
+                        {
+                            for (int c = curLeft; c < curLeft + popCols; c++)
+                            {
+                                Console.SetCursorPosition(c, r);
+                                if (smallPopVals[r - curTop, c - curLeft])
+                                {
+                                    if (tempBoard[r - Space, c - Space])
+                                    {
+                                        Console.ForegroundColor = MenuText.Board_Color;
+                                        Console.Write('*');
+                                        tempBoard[r - Space, c - Space] = false;
+                                    }
+                                    else
+                                    {
+                                        Console.ForegroundColor = MenuText.Builder_Color;
+                                        Console.Write('█');
+                                        tempBoard[r - Space, c - Space] = true;
+                                    }
                                 }
                             }
                         }
-
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = top; i <= bottom; i++)
-                        {
-                            for (int j = left; j <= right; j++)
-                            {
-                                if (tempBoard[i, j])
-                                    sb.Append('1');
-                                else
-                                    sb.Append('0');
-                            }
-                            if (i != bottom)
-                                sb.AppendLine();
-                        }
-                        File.WriteAllText(saveDia.FileName, sb.ToString());
                     }
 
+                    if (pressed == ConsoleKey.Enter)
+                    {
+                        exit = true;
+                        break;
+                    }
+
+
+                    if (pressed == ConsoleKey.S)
+                    {
+                        if (saveDia.ShowDialog() == DialogResult.OK)
+                        {
+
+                            int top = int.MaxValue;
+                            int bottom = int.MinValue;
+                            int left = int.MaxValue;
+                            int right = int.MinValue;
+
+                            // make a box that only includes the minimum needed lines
+                            // to save the board
+                            for (int i = 0; i < validTop.Count(); i++)
+                            {
+                                for (int j = 0; j < validLeft.Count(); j++)
+                                {
+                                    if (tempBoard[i, j])
+                                    {
+                                        if (i < top)
+                                            top = i;
+                                        if (i > bottom)
+                                            bottom = i;
+                                        if (j < left)
+                                            left = j;
+                                        if (j > right)
+                                            right = j;
+                                    }
+                                }
+                            }
+
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = top; i <= bottom; i++)
+                            {
+                                for (int j = left; j <= right; j++)
+                                {
+                                    if (tempBoard[i, j])
+                                        sb.Append('1');
+                                    else
+                                        sb.Append('0');
+                                }
+                                if (i != bottom)
+                                    sb.AppendLine();
+                            }
+                            File.WriteAllText(saveDia.FileName, sb.ToString());
+                        }
+
+                    }
                 }
             }
 
@@ -320,32 +537,13 @@ namespace GHGameOfLife
                     else
                         popString.Append(0);
                 }
-                if( r != validTop.Count() -1 )
+                if (r != validTop.Count() - 1)
                     popString.AppendLine();
             }
 
             fillBoard(popString.ToString());
-            Console.SetWindowSize(origWidth, origHeight);
-            Console.SetBufferSize(origWidth, origHeight);
-
-            /*
-             * I think this was used for something I dont do anymore??
-            Console.SetCursorPosition(Space, Space - 2);
-            Console.Write(" ");          
-            Console.SetCursorPosition(origWidth - Space - colLast.Length, Space - 2);            
-            StringBuilder clear = new StringBuilder();
-            for (int i = 0; i < colLast.Length; i++)
-                clear.Append(" ");
-            Console.Write(clear);
-
-            Console.SetCursorPosition(Space - 2, Space);
-            Console.Write(" ");
-            Console.SetCursorPosition(Space - rowLast.Length - 1, origHeight - Space - 1);
-            clear = new StringBuilder();
-            for (int i = 0; i < rowLast.Length; i++)
-                clear.Append(" ");
-            Console.Write(clear);
-             */ 
+            Console.SetWindowSize(OrigConsWidth, OrigConsHeight);
+            Console.SetBufferSize(OrigConsWidth, OrigConsHeight);
 
             MenuText.ClearUnderBoard();
 
@@ -363,7 +561,7 @@ namespace GHGameOfLife
         /// <param name="pop"></param>
         public void BuildFromResource(string pop)
         {
-            var startingPop = GHGameOfLife.Pops.ResourceManager.GetString(pop);
+            var startingPop = GHGameOfLife.LargePops.ResourceManager.GetString(pop);
 
             fillBoard(startingPop);
 
@@ -776,6 +974,79 @@ namespace GHGameOfLife
                 return false;
             }
             return true;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Used by files to fill the game board, cente
+        /// </summary>
+        /// <param name="startingPop"></param>
+        /// <returns>Bounds of the pop loaded</returns>
+        private Rect BuilderLoadPop(string pop, ref bool[,] popVals)
+        {
+            string[] popByLine = Regex.Split(pop, "\r\n");
+
+            int midRow = OrigConsHeight / 2;
+            int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth * 2);  //Buffer is 3 times window size during building
+
+            int rowsNum = popByLine.Count();
+            int colsNum = popByLine[0].Length;
+            int rowTop, rowBottom, colLeft, colRight;
+            Rect bounds;
+            popVals = new bool[rowsNum, colsNum];
+
+            if (rowsNum % 2 == 0)
+            {
+                rowTop = midRow - rowsNum / 2;
+                rowBottom = midRow + rowsNum / 2;
+            }
+            else
+            {
+                rowTop = midRow - rowsNum / 2;
+                rowBottom = (midRow + rowsNum / 2) + 1;
+            }
+
+
+            if (colsNum % 2 == 0)
+            {
+                colLeft = midCol - colsNum / 2;
+                colRight = midCol + colsNum / 2;
+            }
+            else
+            {
+                colLeft = midCol - colsNum / 2;
+                colRight = (midCol + colsNum / 2) + 1;
+            }
+
+
+            for (int r = rowTop; r < rowBottom; r++)
+            {
+                for (int c = colLeft; c < colRight; c++)
+                {
+                    int popRow = r - rowTop;
+                    int popCol = c - colLeft;
+
+                    int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+
+                    Console.SetCursorPosition(c, r);
+                    Console.ForegroundColor = MenuText.Info_Color;
+                    if (currPopVal == 1)
+                    {
+                        Console.Write('█');
+                        popVals[popRow, popCol] = true;
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                        popVals[popRow, popCol] = false;
+                    }
+                }
+            }
+
+            bounds.Left = colLeft;
+            bounds.Right = colRight;
+            bounds.Top = rowTop;
+            bounds.Bottom = rowBottom;
+            return bounds;
         }
 //------------------------------------------------------------------------------
     } // end class
