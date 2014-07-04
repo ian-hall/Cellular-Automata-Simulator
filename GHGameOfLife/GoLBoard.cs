@@ -145,19 +145,13 @@ namespace GHGameOfLife
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
         /// </summary>
-        //------------------------------------------------------------------------------
-        /// <summary>
-        /// Builds the board from user input. This is going to be ugly...
-        /// </summary>
         public void BuildFromUser()
         {
             SaveFileDialog saveDia = new SaveFileDialog();
             saveDia.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
 
-            //int origWidth = Console.WindowWidth;
-            //int origHeight = Console.WindowHeight;
 
-            Console.SetBufferSize(OrigConsWidth * 3, OrigConsHeight);
+            Console.SetBufferSize(OrigConsWidth * 2, OrigConsHeight);
             Console.ForegroundColor = ConsoleColor.White;
 
             IEnumerable<int> validLeft = Enumerable.Range(Space, OrigConsWidth - 2 * Space);
@@ -174,6 +168,7 @@ namespace GHGameOfLife
                 }
             }
 
+            /*
             Console.ForegroundColor = MenuText.Builder_Color;
             foreach (int top in validTop)
             {
@@ -182,7 +177,7 @@ namespace GHGameOfLife
                     Console.SetCursorPosition(left + OrigConsWidth, top);
                     Console.Write('█');
                 }
-            }
+            }*/
 
             Console.ForegroundColor = MenuText.Info_Color;
 
@@ -274,13 +269,22 @@ namespace GHGameOfLife
 
                     if (pressed == ConsoleKey.Spacebar)
                     {
-                        Console.SetCursorPosition(0, 0);
+                        Console.SetCursorPosition(curLeft,curTop);
                         bool boardVal = !tempBoard[curTop - Space, curLeft - Space];
 
                         if (boardVal)
-                            Console.MoveBufferArea(curLeft + OrigConsWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
+                        {
+                            //Console.MoveBufferArea(curLeft + OrigConsWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
+                            Console.ForegroundColor = MenuText.Builder_Color;
+                            Console.Write('█');
+                        }
                         else
-                            Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + OrigConsWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
+                        {
+                            //Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + OrigConsWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
+                            Console.ForegroundColor = MenuText.Default_FG;
+                            Console.Write('*');
+                            
+                        }
 
                         tempBoard[curTop - Space, curLeft - Space] = boardVal;
                     }
@@ -360,9 +364,6 @@ namespace GHGameOfLife
                 }
                 else
                 {
-                    //TODO: Only allow the cursor with the small thing to be loaded in a space not outside the board
-                    // Also need to probably limit the size of the small pop to say... 10x10 or something?
-
                     int popWidth = loadedPopBounds.Right - loadedPopBounds.Left;
                     int popHeight = loadedPopBounds.Bottom - loadedPopBounds.Top;
 
@@ -392,7 +393,6 @@ namespace GHGameOfLife
                     if (pressed == ConsoleKey.RightArrow)
                     {
                         nextLeft = ++curLeft;
-                        //if (!validLeft.Contains(nextLeft))
                         if (nextLeft >= (validLeft.Last() - popWidth) + 2)
                             nextLeft = validLeft.Min();
 
@@ -404,7 +404,6 @@ namespace GHGameOfLife
                         nextLeft = --curLeft;
                         if (!validLeft.Contains(nextLeft))
                             nextLeft = (validLeft.Last() - popWidth) + 1;
-                        //nextLeft = validLeft.Max();
 
                         curLeft = nextLeft;
                     }
@@ -414,7 +413,6 @@ namespace GHGameOfLife
                         nextTop = --curTop;
                         if (!validTop.Contains(nextTop))
                             nextTop = (validTop.Last() - popHeight) + 1;
-                        //nextTop = validTop.Max();
 
                         curTop = nextTop;
                     }
@@ -422,23 +420,13 @@ namespace GHGameOfLife
                     if (pressed == ConsoleKey.DownArrow)
                     {
                         nextTop = ++curTop;
-                        //if (!validTop.Contains(nextTop))
                         if (nextTop >= (validTop.Last() - popHeight) + 2)
                             nextTop = validTop.Min();
 
                         curTop = nextTop;
                     }
 
-                    /*
-                     * TODO: Check the current board in the rows/cols that correspond to the loaded pop's
-                     * Then print the small loaded pop over the board.
-                     * For the toggle, if the loaded pop lines up with whatever is already on the board
-                     * delete it, otherwise just slam it down.
-                     * 
-                     * Probably copy the necessary section out of the tempBoard matrix, compare with
-                     * the loaded pop, and then put the copy back into the tempboard while also
-                     * printing the changes onto the screen.
-                     */
+
                     if (pressed == ConsoleKey.Spacebar)
                     {
                         Console.SetCursorPosition(0, 0);
@@ -690,6 +678,10 @@ namespace GHGameOfLife
 
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Slams down the board and the sides of the border using a
+        /// StringBuilder
+        /// </summary>
         public void Print()
         {
             if (Generation == 0)
@@ -740,6 +732,7 @@ namespace GHGameOfLife
         /// Calculates if the current dude at _Board[r,c] will die or not.
         /// If a dude has less than 2, or more than 3 neighbors that dude
         /// is dead next generation.
+        /// % because this allows wrapping around the board
         /// </summary>
         /// <param name="r"></param>
         /// <param name="c"></param>
@@ -766,6 +759,7 @@ namespace GHGameOfLife
         /// Calculates if the current space at _Board[r,c] will become alive
         /// or not. If nothingness has exactly 3 neighbors it will become
         /// living next generation.
+        /// % because this allows wrapping around the board
         /// </summary>
         /// <param name="r"></param>
         /// <param name="c"></param>
@@ -791,6 +785,7 @@ namespace GHGameOfLife
         /// Calculates if the current dude at _Board[r,c] will die or not.
         /// If a dude has less than 2, or more than 3 neighbors that dude
         /// is dead next generation.
+        /// Ugly because I dont fluff the board with a border of 0s
         /// </summary>
         /// <param name="r"></param>
         /// <param name="c"></param>
@@ -841,6 +836,7 @@ namespace GHGameOfLife
     /// Calculates if the current space at _Board[r,c] will become alive
     /// or not. If nothingness has exactly 3 neighbors it will become
     /// living next generation.
+    /// Ugly because I dont fluff the board with a border of 0s
     /// </summary>
     /// <param name="r"></param>
     /// <param name="c"></param>
@@ -986,7 +982,7 @@ namespace GHGameOfLife
             string[] popByLine = Regex.Split(pop, "\r\n");
 
             int midRow = OrigConsHeight / 2;
-            int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth * 2);  //Buffer is 3 times window size during building
+            int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth);  //Buffer is 2 times window size during building
 
             int rowsNum = popByLine.Count();
             int colsNum = popByLine[0].Length;

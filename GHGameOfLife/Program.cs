@@ -134,27 +134,6 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
             
-            /* Checks to see if the window can change to the indicated size.
-             * If it is too small or too large it will be adjusted.
-             *
-
-            CONSOLE_WIDTH = (CONSOLE_WIDTH < MIN_WIDTH) ? MIN_WIDTH : CONSOLE_WIDTH;
-            CONSOLE_WIDTH = (CONSOLE_WIDTH > Console.LargestWindowWidth - 10) ? Console.LargestWindowWidth - 10 : CONSOLE_WIDTH;
-
-            CONSOLE_HEIGHT = (CONSOLE_HEIGHT < MIN_HEIGHT) ? MIN_HEIGHT : CONSOLE_HEIGHT;
-            CONSOLE_HEIGHT = (CONSOLE_HEIGHT > Console.LargestWindowHeight - 5) ? Console.LargestWindowHeight - 5 : CONSOLE_HEIGHT;
-
-
-
-
-            Console.SetWindowSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);
-            Console.SetWindowPosition(0, 0);
-            Console.SetBufferSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);                                 
-            Console.CursorVisible = false;
-            Console.Clear();
-            */
-
-
             Max_Cols = Console.LargestWindowWidth;
             Max_Rows = Console.LargestWindowHeight;
 
@@ -239,7 +218,7 @@ namespace GHGameOfLife
             string res = null;
 
             int numChoices = MenuText.NMenu_Choice;
-            int currPromptRow = MenuText.PrintMainMenu(/*out numChoices*/);
+            int currPromptRow = MenuText.PrintMainMenu();
             int choice = -1;
 
             //Only allow letters and numbers to be written as a choice
@@ -346,7 +325,7 @@ namespace GHGameOfLife
                             validEntry = true;
                         else
                         {
-                            MenuText.PrintMainMenu(/*out numChoices*/);
+                            MenuText.PrintMainMenu();
                             validEntry = false;
                         }
                         break;
@@ -489,12 +468,12 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
 
-            char vert = '║'; // '\u2551'
-            char horiz = '═'; // '\u2550'
-            char topLeft = '╔'; // '\u2554'
-            char topRight = '╗'; // '\u2557'
-            char botLeft = '╚'; // '\u255A'
-            char botRight = '╝'; // '\u255D'
+            char vert = '║';        // '\u2551'
+            char horiz = '═';       // '\u2550'
+            char topLeft = '╔';     // '\u2554'
+            char topRight = '╗';    // '\u2557'
+            char botLeft = '╚';     // '\u255A'
+            char botRight = '╝';    // '\u255D'
 
             int borderTop = 4;
             int borderBottom = Current_Rows - 5;
@@ -584,15 +563,23 @@ namespace GHGameOfLife
             Console.Write("");
 
             //Center on the screen
-            GetWindowRect(current.MainWindowHandle, out consRect);
+            //do-while because there seems to be some kind of bug where the window
+            // Rect comes back with a height of 74
+            do
+            {
+                GetWindowRect(current.MainWindowHandle, out consRect);
+            } while ((consRect.Bottom - consRect.Top) < 100);
+            
             int consWidth = consRect.Right - consRect.Left;
             int consHeight = consRect.Bottom - consRect.Top;
             int widthOffset = (primaryRes.width / 2) - (consWidth / 2);
             int heightOffset = (primaryRes.height / 2) - (consHeight / 2);
             SetWindowPos(current.MainWindowHandle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 
+            /*
             ConsoleTraceListener ctl = new ConsoleTraceListener(true);
             ctl.WriteLine(String.Format("Top Left: {0,-5} Top Right: {1,-5} Window Rect:{2}", widthOffset, heightOffset, consRect));
+             */ 
         }
 //------------------------------------------------------------------------------
     } // end class
