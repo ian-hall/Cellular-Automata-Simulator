@@ -9,6 +9,11 @@ namespace GHGameOfLife
 {
     public static class MenuText
     {
+        /* MESSAGES TO ADD:
+         * Resize screen from main menu
+         * Load small population from user build screen
+         *      Rotate loaded pop
+        */ 
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG    = ConsoleColor.Black;

@@ -199,8 +199,9 @@ namespace GHGameOfLife
 
 
             Rect loadedPopBounds = new Rect();
+            bool popLoaderMode = false;
             bool smallPopLoaded = false;
-            bool[,] smallPopVals = new bool[0, 0];
+            bool[][] smallPopVals = new bool[0][];
 
             while (!exit)
             {
@@ -211,7 +212,7 @@ namespace GHGameOfLife
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
 
-                if (!smallPopLoaded)
+                if (!popLoaderMode)
                 {
                     while (!Console.KeyAvailable)
                     {
@@ -294,24 +295,9 @@ namespace GHGameOfLife
                      * or change this to P and then numkeys to go through a few pops
                      * or something
                      */
-                    if (pressed == ConsoleKey.D1)
+                    if (pressed == ConsoleKey.P)
                     {
-                        smallPopLoaded = true;
-                        var testPop = GHGameOfLife.SmallPops.Glider_D;
-                        loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
-                        int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
-                        int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
-
-                        if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
-                        {
-                            smallPopLoaded = true;
-                        }
-                        else
-                        {
-                            Console.SetCursorPosition(0, 0);
-                            Console.Write("Cannot load pop outside of bounds");
-                            smallPopLoaded = false;
-                        }
+                        popLoaderMode = true;                       
                     }
 
                     if (pressed == ConsoleKey.S)
@@ -373,22 +359,63 @@ namespace GHGameOfLife
 
                     while (!Console.KeyAvailable)
                     {
-                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, storeBoardLeft, storeBoardTop);
-                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, popWidth, popHeight, curLeft, curTop);
-                        System.Threading.Thread.Sleep(250);
-                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, loadedPopBounds.Left, loadedPopBounds.Top);
-                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, popWidth, popHeight, curLeft, curTop);
-                        System.Threading.Thread.Sleep(100);
+
+                        if (smallPopLoaded)
+                        {
+                            Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, storeBoardLeft, storeBoardTop);
+                            Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, popWidth, popHeight, curLeft, curTop);
+                            System.Threading.Thread.Sleep(250);
+                            Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, loadedPopBounds.Left, loadedPopBounds.Top);
+                            Console.MoveBufferArea(storeBoardLeft, storeBoardTop, popWidth, popHeight, curLeft, curTop);
+                            System.Threading.Thread.Sleep(100);
+                        }
+                        else
+                        {
+                            Console.MoveBufferArea(curLeft, curTop, 1, 1, charLeft, extraTop);
+                            Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, curLeft, curTop);
+                            System.Threading.Thread.Sleep(150);
+                            Console.MoveBufferArea(curLeft, curTop, 1, 1, blinkLeft, extraTop);
+                            Console.MoveBufferArea(charLeft, extraTop, 1, 1, curLeft, curTop);
+                            System.Threading.Thread.Sleep(150);
+                        }
+                        
                     }
 
                     ConsoleKey pressed = Console.ReadKey(true).Key;
 
                     if (pressed == ConsoleKey.D1)
                     {
-                        smallPopLoaded = false;
+                        if (!smallPopLoaded)
+                        {
+                            var testPop = GHGameOfLife.SmallPops.Glider;
+                            loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
+                            int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                            int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                            if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
+                            {
+                                smallPopLoaded = true;
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("Cannot load pop outside of bounds");
+                                smallPopLoaded = false;
+                            }
+                        }
+                        else
+                        {
+                            loadedPopBounds = RotateBuilderPop(ref smallPopVals);
+                        }
+                        
                     }
 
 
+                    //Go back to adding single values
+                    if (pressed == ConsoleKey.P)
+                    {
+                        popLoaderMode = false;
+                    }
 
                     if (pressed == ConsoleKey.RightArrow)
                     {
@@ -439,7 +466,7 @@ namespace GHGameOfLife
                             for (int c = curLeft; c < curLeft + popCols; c++)
                             {
                                 Console.SetCursorPosition(c, r);
-                                if (smallPopVals[r - curTop, c - curLeft])
+                                if (smallPopVals[r - curTop][c - curLeft])
                                 {
                                     if (tempBoard[r - Space, c - Space])
                                     {
@@ -977,7 +1004,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="startingPop"></param>
         /// <returns>Bounds of the pop loaded</returns>
-        private Rect BuilderLoadPop(string pop, ref bool[,] popVals)
+        private Rect BuilderLoadPop(string pop, ref bool[][] popVals)
         {
             string[] popByLine = Regex.Split(pop, "\r\n");
 
@@ -988,7 +1015,7 @@ namespace GHGameOfLife
             int colsNum = popByLine[0].Length;
             int rowTop, rowBottom, colLeft, colRight;
             Rect bounds;
-            popVals = new bool[rowsNum, colsNum];
+            popVals = new bool[rowsNum][];   
 
             if (rowsNum % 2 == 0)
             {
@@ -1016,9 +1043,11 @@ namespace GHGameOfLife
 
             for (int r = rowTop; r < rowBottom; r++)
             {
+                int popRow = r - rowTop;
+                popVals[popRow] = new bool[colsNum];
                 for (int c = colLeft; c < colRight; c++)
                 {
-                    int popRow = r - rowTop;
+                    //int popRow = r - rowTop;
                     int popCol = c - colLeft;
 
                     int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
@@ -1028,15 +1057,85 @@ namespace GHGameOfLife
                     if (currPopVal == 1)
                     {
                         Console.Write('█');
-                        popVals[popRow, popCol] = true;
+                        popVals[popRow][popCol] = true;
                     }
                     else
                     {
                         Console.Write(' ');
-                        popVals[popRow, popCol] = false;
+                        popVals[popRow][popCol] = false;
                     }
                 }
             }
+
+
+
+            bounds.Left = colLeft;
+            bounds.Right = colRight;
+            bounds.Top = rowTop;
+            bounds.Bottom = rowBottom;
+            return bounds;
+        }
+//------------------------------------------------------------------------------
+        private Rect RotateBuilderPop(ref bool[][] oldVals)
+        {
+            bool[][] rotated = Matrix<bool>.Rotate90(oldVals);
+
+            int midRow = OrigConsHeight / 2;
+            int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth);  //Buffer is 2 times window size during building
+
+            int rowsNum = oldVals[0].Length;
+            int colsNum = oldVals.Length;
+
+            int rowTop, rowBottom, colLeft, colRight;
+            Rect bounds;
+
+            if (rowsNum % 2 == 0)
+            {
+                rowTop = midRow - rowsNum / 2;
+                rowBottom = midRow + rowsNum / 2;
+            }
+            else
+            {
+                rowTop = midRow - rowsNum / 2;
+                rowBottom = (midRow + rowsNum / 2) + 1;
+            }
+
+
+            if (colsNum % 2 == 0)
+            {
+                colLeft = midCol - colsNum / 2;
+                colRight = midCol + colsNum / 2;
+            }
+            else
+            {
+                colLeft = midCol - colsNum / 2;
+                colRight = (midCol + colsNum / 2) + 1;
+            }
+
+            for (int r = rowTop; r < rowBottom; r++)
+            {
+                int popRow = r - rowTop;
+                for (int c = colLeft; c < colRight; c++)
+                {
+                    int popCol = c - colLeft;
+
+                    //int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+
+                    Console.SetCursorPosition(c, r);
+                    Console.ForegroundColor = MenuText.Info_FG;
+                    if (rotated[popRow][popCol])
+                    {
+                        Console.Write('█');
+                    }
+                    else
+                    {
+                        Console.Write(' ');
+                    }
+                }
+            }
+
+
+            oldVals = rotated;
 
             bounds.Left = colLeft;
             bounds.Right = colRight;

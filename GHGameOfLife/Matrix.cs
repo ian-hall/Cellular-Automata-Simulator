@@ -63,7 +63,7 @@ namespace GHGameOfLife
             return this.Vals[r][c];
         }
 //-----------------------------------------------------------------------------
-        //Equivilent to a mirror + 90deg clockwise turn
+        //Equivilent to 90deg clockwise + mirror
         public Matrix<T> Transpose()
         {
             T[][] transVals = new T[Cols][];
@@ -85,7 +85,7 @@ namespace GHGameOfLife
         /// <summary>
         /// Doing 90 degree rotations of the matrix..
         /// 0: The original matrix (this)
-        /// 1: 90 degrees counterclockwise
+        /// 1: 90 degrees Clockwise
         /// 2: 180 degrees
         /// 3: 270 degrees
         /// </summary>
@@ -127,21 +127,20 @@ namespace GHGameOfLife
             return sb.ToString();
         }
 //-----------------------------------------------------------------------------
-        private T[][] Rotate90(T[][] oldVals/*, ref T[][] rotatedVals*/)
+        public static T[][] Rotate90(T[][] oldVals/*, ref T[][] rotatedVals*/)
         {
             int rotatedCols = oldVals.Length;
             int rotatedRows = oldVals[0].Length;
 
-            T[][] rotatedVals = new T[rotatedCols][];
-            for (int c = rotatedCols - 1; c >= 0; c--)
+            T[][] rotatedVals = new T[rotatedRows][];
+            for (int r = 0; r < rotatedRows; r++)
             {
-                rotatedVals[c] = new T[Rows];
-                for (int r = 0; r < Rows; r++)
+                rotatedVals[r] = new T[rotatedCols];
+                for (int c = 0; c < rotatedCols; c++)
                 {
-                    rotatedVals[c][r] = oldVals[r][rotatedCols - 1 - c];
+                    rotatedVals[r][c] = oldVals[rotatedCols - 1 - c][r];
                 }
             }
-
             return rotatedVals;
         }
 //-----------------------------------------------------------------------------
