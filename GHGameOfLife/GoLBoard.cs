@@ -179,7 +179,7 @@ namespace GHGameOfLife
                 }
             }*/
 
-            Console.ForegroundColor = MenuText.Info_Color;
+            Console.ForegroundColor = MenuText.Info_FG;
 
 
             int positionPrintRow = Space - 3;
@@ -275,7 +275,7 @@ namespace GHGameOfLife
                         if (boardVal)
                         {
                             //Console.MoveBufferArea(curLeft + OrigConsWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
-                            Console.ForegroundColor = MenuText.Builder_Color;
+                            Console.ForegroundColor = MenuText.Builder_FG;
                             Console.Write('█');
                         }
                         else
@@ -443,13 +443,13 @@ namespace GHGameOfLife
                                 {
                                     if (tempBoard[r - Space, c - Space])
                                     {
-                                        Console.ForegroundColor = MenuText.Board_Color;
+                                        Console.ForegroundColor = MenuText.Default_FG;
                                         Console.Write('*');
                                         tempBoard[r - Space, c - Space] = false;
                                     }
                                     else
                                     {
-                                        Console.ForegroundColor = MenuText.Builder_Color;
+                                        Console.ForegroundColor = MenuText.Builder_FG;
                                         Console.Write('█');
                                         tempBoard[r - Space, c - Space] = true;
                                     }
@@ -702,7 +702,7 @@ namespace GHGameOfLife
             }
 
             Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Board_Color;
+            Console.ForegroundColor = MenuText.Board_FG;
 
             Console.SetCursorPosition(0, Space);
             StringBuilder sb = new StringBuilder();
@@ -1024,7 +1024,7 @@ namespace GHGameOfLife
                     int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
 
                     Console.SetCursorPosition(c, r);
-                    Console.ForegroundColor = MenuText.Info_Color;
+                    Console.ForegroundColor = MenuText.Info_FG;
                     if (currPopVal == 1)
                     {
                         Console.Write('█');

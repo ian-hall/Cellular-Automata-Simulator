@@ -23,7 +23,7 @@ namespace GHGameOfLife
         {
             if (!b.IsInitialized)
             {
-                Console.ForegroundColor = MenuText.Info_Color;
+                Console.ForegroundColor = MenuText.Info_FG;
                 Console.Write("ERROR");
                 return;
             }

@@ -565,6 +565,8 @@ namespace GHGameOfLife
             //Center on the screen
             //do-while because there seems to be some kind of bug where the window
             // Rect comes back with a height of 74
+            // Also this results in an infinite loop if starting without debugging
+            // but not if running from the exe so ????
             do
             {
                 GetWindowRect(current.MainWindowHandle, out consRect);

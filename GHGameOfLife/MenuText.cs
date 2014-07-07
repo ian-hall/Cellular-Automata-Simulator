@@ -10,11 +10,11 @@ namespace GHGameOfLife
     public static class MenuText
     {
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
-        public const ConsoleColor Info_Color    = ConsoleColor.Red;
+        public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG    = ConsoleColor.Black;
         public const ConsoleColor Default_FG    = ConsoleColor.White;
-        public const ConsoleColor Board_Color   = ConsoleColor.White;
-        public const ConsoleColor Builder_Color = ConsoleColor.Cyan;
+        public const ConsoleColor Board_FG      = ConsoleColor.White;
+        public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
         
         public const String Welcome      = "Welcome to the GAME OF LIFE!!!!";
         public const String Choose_Msg   = "Please choose an option!";
@@ -164,7 +164,7 @@ namespace GHGameOfLife
             resCount = count;
 
             Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.ForegroundColor = Info_Color;
+            Console.ForegroundColor = Info_FG;
             string cancel = String.Format("{0,3}) {1}", count, "Cancel");
             Console.Write(cancel);
             Console.ForegroundColor = Default_FG;
@@ -174,7 +174,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void PrintRunControls()
         {
-            Console.ForegroundColor = MenuText.Info_Color;
+            Console.ForegroundColor = MenuText.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
@@ -189,7 +189,7 @@ namespace GHGameOfLife
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
-            Console.ForegroundColor = MenuText.Info_Color;
+            Console.ForegroundColor = MenuText.Info_FG;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
@@ -222,7 +222,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void PrintCreationControls()
         {
-            Console.ForegroundColor = MenuText.Info_Color;
+            Console.ForegroundColor = MenuText.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
@@ -245,7 +245,7 @@ namespace GHGameOfLife
             Console.SetCursorPosition(Left_Align, printRow);
             Console.Write("Do you really want to exit?");
             Console.SetCursorPosition(Left_Align, ++printRow);
-            Console.ForegroundColor = Info_Color;
+            Console.ForegroundColor = Info_FG;
             Console.Write("[ENTER] No, keep playing.");
             Console.SetCursorPosition(Left_Align, ++printRow);
             Console.Write("[ESC] Yes, let me out.");
