@@ -26,17 +26,16 @@ namespace GHGameOfLife
             public int Bottom;
         }
 
-        public bool IsInitialized { get; private set; }
-
         private int[,] Board;
-        private int Used_Rows;
-        private int Used_Cols;
         private int Generation;
         private const char Live_Cell = '☺';
         //private const char _DeadCell = ' ';
         private Random Rand = new Random();
-
         public bool Wrap { get; set; }
+        public bool IsInitialized { get; private set; }
+
+        private int Used_Rows;
+        private int Used_Cols;
         private int OrigConsHeight;
         private int OrigConsWidth;
 
@@ -1078,7 +1077,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         private Rect RotateBuilderPop(ref bool[][] oldVals)
         {
-            bool[][] rotated = Matrix<bool>.Rotate90(oldVals);
+            bool[][] rotated = GenericHelp<bool>.Rotate90(oldVals);
 
             int midRow = OrigConsHeight / 2;
             int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth);  //Buffer is 2 times window size during building
