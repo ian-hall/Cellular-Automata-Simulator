@@ -7,7 +7,8 @@ using System.Text;
 
 namespace GHGameOfLife
 {
-    public static class MenuText
+///////////////////////////////////////////////////////////////////////////////
+    static class MenuText
     {
         /* MESSAGES TO ADD:
          * Resize screen from main menu
@@ -15,11 +16,11 @@ namespace GHGameOfLife
          *      Rotate loaded pop
         */ 
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
-        public const ConsoleColor Info_FG    = ConsoleColor.Red;
+        public const ConsoleColor Info_FG       = ConsoleColor.Red;
         public const ConsoleColor Default_BG    = ConsoleColor.Black;
         public const ConsoleColor Default_FG    = ConsoleColor.White;
         public const ConsoleColor Board_FG      = ConsoleColor.White;
-        public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
+        public const ConsoleColor Builder_FG    = ConsoleColor.Cyan;
         
         public const String Welcome      = "Welcome to the GAME OF LIFE!!!!";
         public const String Choose_Msg   = "Please choose an option!";
@@ -320,4 +321,5 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
     } // end class
+///////////////////////////////////////////////////////////////////////////////
 }

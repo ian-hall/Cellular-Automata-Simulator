@@ -15,7 +15,8 @@ namespace GHGameOfLife
     /// does all the checking for living/dying of the population.
     /// TODO: Change around constructors
     /// </summary>
-    class GoLBoard
+///////////////////////////////////////////////////////////////////////////////
+    partial class GoLBoard
     {
 
         private struct Rect
@@ -39,6 +40,8 @@ namespace GHGameOfLife
         private int OrigConsHeight;
         private int OrigConsWidth;
 
+        private enum SmallPops { None, Glider, Ship };
+
         public static int Space
         {
             get
@@ -58,11 +61,12 @@ namespace GHGameOfLife
         {
             Board = new int[rowMax, colMax];
                         
-            Used_Rows = rowMax;
-            Used_Cols = colMax;
-            OrigConsHeight = Console.WindowHeight;
-            OrigConsWidth = Console.WindowWidth;
-            IsInitialized = false;
+            this.Used_Rows = rowMax;
+            this.Used_Cols = colMax;
+            this.OrigConsHeight = Console.WindowHeight;
+            this.OrigConsWidth = Console.WindowWidth;
+            this.IsInitialized = false;
+            this.Generation = 1;
             Wrap = true;
         }
 //------------------------------------------------------------------------------
@@ -167,17 +171,6 @@ namespace GHGameOfLife
                 }
             }
 
-            /*
-            Console.ForegroundColor = MenuText.Builder_Color;
-            foreach (int top in validTop)
-            {
-                foreach (int left in validLeft)
-                {
-                    Console.SetCursorPosition(left + OrigConsWidth, top);
-                    Console.Write('█');
-                }
-            }*/
-
             Console.ForegroundColor = MenuText.Info_FG;
 
 
@@ -199,7 +192,8 @@ namespace GHGameOfLife
 
             Rect loadedPopBounds = new Rect();
             bool popLoaderMode = false;
-            bool smallPopLoaded = false;
+            //bool smallPopLoaded = false;
+            SmallPops loaded = SmallPops.None;
             bool[][] smallPopVals = new bool[0][];
 
             while (!exit)
@@ -274,13 +268,11 @@ namespace GHGameOfLife
 
                         if (boardVal)
                         {
-                            //Console.MoveBufferArea(curLeft + OrigConsWidth, curTop, 1, 1, curLeft, curTop, '█', MenuText.Builder_Color, ConsoleColor.Black);
                             Console.ForegroundColor = MenuText.Builder_FG;
                             Console.Write('█');
                         }
                         else
                         {
-                            //Console.MoveBufferArea(curLeft, curTop, 1, 1, curLeft + OrigConsWidth, curTop, '*', ConsoleColor.White, ConsoleColor.Black);
                             Console.ForegroundColor = MenuText.Default_FG;
                             Console.Write('*');
                             
@@ -293,10 +285,51 @@ namespace GHGameOfLife
                      * TODO maybe change this to cycle through a few common small pops
                      * or change this to P and then numkeys to go through a few pops
                      * or something
+                     * ALSO TODO: Add a check to the size of the loaded population
+                     * before actually loading it.
                      */
-                    if (pressed == ConsoleKey.P)
+                    if (pressed == ConsoleKey.D1)
                     {
-                        popLoaderMode = true;                       
+                        var testPop = GHGameOfLife.SmallPops.Glider;
+                        loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
+                        int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                        int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                        if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
+                        {
+                            loaded = SmallPops.Glider;
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("Cannot load pop outside of bounds");
+                            loaded = SmallPops.None;
+                        }
+
+                        if( loaded != SmallPops.None )
+                            popLoaderMode = true;                       
+                    }
+
+                    if (pressed == ConsoleKey.D2)
+                    {
+                        var testPop = GHGameOfLife.SmallPops.Smallship;
+                        loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
+                        int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                        int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                        if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
+                        {
+                            loaded = SmallPops.Ship;
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 0);
+                            Console.Write("Cannot load pop outside of bounds");
+                            loaded = SmallPops.None;
+                        }
+
+                        if (loaded != SmallPops.None)
+                            popLoaderMode = true;  
                     }
 
                     if (pressed == ConsoleKey.S)
@@ -358,33 +391,19 @@ namespace GHGameOfLife
 
                     while (!Console.KeyAvailable)
                     {
-
-                        if (smallPopLoaded)
-                        {
-                            Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, storeBoardLeft, storeBoardTop);
-                            Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, popWidth, popHeight, curLeft, curTop);
-                            System.Threading.Thread.Sleep(250);
-                            Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, loadedPopBounds.Left, loadedPopBounds.Top);
-                            Console.MoveBufferArea(storeBoardLeft, storeBoardTop, popWidth, popHeight, curLeft, curTop);
-                            System.Threading.Thread.Sleep(100);
-                        }
-                        else
-                        {
-                            Console.MoveBufferArea(curLeft, curTop, 1, 1, charLeft, extraTop);
-                            Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, curLeft, curTop);
-                            System.Threading.Thread.Sleep(150);
-                            Console.MoveBufferArea(curLeft, curTop, 1, 1, blinkLeft, extraTop);
-                            Console.MoveBufferArea(charLeft, extraTop, 1, 1, curLeft, curTop);
-                            System.Threading.Thread.Sleep(150);
-                        }
-                        
+                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, storeBoardLeft, storeBoardTop);
+                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, popWidth, popHeight, curLeft, curTop);
+                        System.Threading.Thread.Sleep(250);
+                        Console.MoveBufferArea(curLeft, curTop, popWidth, popHeight, loadedPopBounds.Left, loadedPopBounds.Top);
+                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, popWidth, popHeight, curLeft, curTop);
+                        System.Threading.Thread.Sleep(100);                     
                     }
 
                     ConsoleKey pressed = Console.ReadKey(true).Key;
 
                     if (pressed == ConsoleKey.D1)
                     {
-                        if (!smallPopLoaded)
+                        if (loaded != SmallPops.Glider)
                         {
                             var testPop = GHGameOfLife.SmallPops.Glider;
                             loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
@@ -393,13 +412,13 @@ namespace GHGameOfLife
 
                             if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
                             {
-                                smallPopLoaded = true;
+                                loaded = SmallPops.Glider;
                             }
                             else
                             {
                                 Console.SetCursorPosition(0, 0);
                                 Console.Write("Cannot load pop outside of bounds");
-                                smallPopLoaded = false;
+                                //smallPopLoaded = false;
                             }
                         }
                         else
@@ -409,9 +428,36 @@ namespace GHGameOfLife
                         
                     }
 
+                    if (pressed == ConsoleKey.D2)
+                    {
+                        if (loaded != SmallPops.Ship)
+                        {
+                            var testPop = GHGameOfLife.SmallPops.Smallship;
+                            loadedPopBounds = BuilderLoadPop(testPop, ref smallPopVals);
+                            int loadedRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                            int loadedCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                            if ((curLeft <= (validLeft.Last() - loadedCols) + 1) && (curTop <= (validTop.Last() - loadedRows) + 1))
+                            {
+                                loaded = SmallPops.Ship;
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.Write("Cannot load pop outside of bounds");
+                                //smallPopLoaded = false;
+                            }
+                        }
+                        else
+                        {
+                            loadedPopBounds = RotateBuilderPop(ref smallPopVals);
+                        }
+
+                    }
+
 
                     //Go back to adding single values
-                    if (pressed == ConsoleKey.P)
+                    if (pressed == ConsoleKey.C)
                     {
                         popLoaderMode = false;
                     }
@@ -582,6 +628,12 @@ namespace GHGameOfLife
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
+        public void RunGame()
+        {
+            Print();
+            GoLHelper.RunIt(this);
+        }
+//------------------------------------------------------------------------------
         /// <summary>
         /// Used by files to fill the game board, cente
         /// </summary>
@@ -710,22 +762,12 @@ namespace GHGameOfLife
         /// </summary>
         public void Print()
         {
-            if (Generation == 0)
-            {
-                String write = "Starting population...";
-                int left = (Console.WindowWidth/2) - (write.Length/2);
-                Console.SetCursorPosition(left, 1);
-                Console.Write(write);
-            }
-            else
-            {
-                Console.SetCursorPosition(0, 1);
-                Console.Write(" ".PadRight(Console.WindowWidth));
-                String write = "Generation " + Generation;
-                int left = (Console.WindowWidth/2) - (write.Length / 2);
-                Console.SetCursorPosition(left, 1);
-                Console.Write(write);
-            }
+            Console.SetCursorPosition(0, 1);
+            Console.Write(" ".PadRight(Console.WindowWidth));
+            String write = "Generation " + Generation;
+            int left = (Console.WindowWidth / 2) - (write.Length / 2);
+            Console.SetCursorPosition(left, 1);
+            Console.Write(write);
 
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Board_FG;
@@ -1144,4 +1186,5 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
     } // end class
+///////////////////////////////////////////////////////////////////////////////
 }

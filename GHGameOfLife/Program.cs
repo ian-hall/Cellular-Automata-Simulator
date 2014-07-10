@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace GHGameOfLife
 {
+///////////////////////////////////////////////////////////////////////////////
     class Program
     {
 
@@ -24,28 +25,68 @@ namespace GHGameOfLife
         static extern bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct Rect
+        public struct Rect : IComparable<Rect>
         {
-            public int Left;        
-            public int Top;         
-            public int Right;       
+            public int Left;
+            public int Top;
+            public int Right;
             public int Bottom;
 
             public override string ToString()
             {
                 return String.Format("T:{0,-5} B:{1,-5} L:{2,-5} R:{3,-5}", Top, Bottom, Left, Right);
             }
+            public int Width
+            {
+                get
+                {
+                    return this.Right - this.Left;
+                }
+                private set { }
+            }
+
+            public int Height
+            {
+                get
+                {
+                    return this.Bottom - this.Top;
+                }
+                private set { }
+
+            }
+
+            public int CompareTo(Rect rhs)
+            {
+                if ((this.Width < rhs.Width) && (this.Height <= rhs.Height) ||
+                    (this.Width <= rhs.Width) && (this.Height < rhs.Height))
+                {
+                    return -1;
+                }
+                else if ((this.Width == rhs.Width) && (this.Height == rhs.Height))
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+
+            public bool IsZero()
+            {
+                return (Left == Right) && (Top == Bottom) && (Left == 0);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct ScreenRes
         {
-            public int height, width;
+            public int Height, Width;
 
             public ScreenRes(int w, int h)
             {
-                height = h;
-                width = w;
+                this.Height = h;
+                this.Width = w;
             }
         }
 
@@ -57,20 +98,20 @@ namespace GHGameOfLife
 
 
         enum PopType { Random, File, Premade, Build };
-
         // Don't go below these values or the text will be screwy
-        const int Min_Cols = 70;
-        const int Min_Rows = 30;
+        static int Min_Cols = 70;
+        static int Min_Rows = 30;
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
 
         static int Max_Cols, Max_Rows;    
+        static IntPtr Current_Proc_Handle;
         static Process Current_Proc;
         static Screen Primary_Screen;
         static ScreenRes Primary_Res;
 
-        const int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
+        static int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
         static ConsSize[] Cons_Sizes = new ConsSize[DIFFERENT_SIZES];
         static int Curr_Size_Index = 2; // Which size to default to, 2 is med
 //------------------------------------------------------------------------------
@@ -91,8 +132,58 @@ namespace GHGameOfLife
 
             Primary_Screen = System.Windows.Forms.Screen.PrimaryScreen;
             Primary_Res = new ScreenRes(Primary_Screen.Bounds.Width, Primary_Screen.Bounds.Height);
-            Current_Proc = Process.GetCurrentProcess();
 
+            
+            //Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
+            Console.SetCursorPosition(0, 0);
+            Console.Write("");
+            Process[] cmdProc = Process.GetProcesses();
+            Rect smallRect;
+            Rect bigRect;
+            foreach (Process p in cmdProc)
+            {
+                IntPtr currentHandle;
+
+                if (p.MainWindowHandle == IntPtr.Zero)
+                    continue;
+
+                try
+                {
+                    currentHandle = p.MainWindowHandle;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                Console.SetWindowSize(1, 1);
+                Console.SetWindowPosition(0, 0);
+                //Console.SetBufferSize(1, 1);
+                System.Threading.Thread.Sleep(5);
+                //Console.SetCursorPosition(0, 0);
+                //Console.WriteLine("Testing Process: {0} {1}", p.ProcessName, p.MainWindowHandle);
+                GetWindowRect(currentHandle, out smallRect);
+                Console.SetWindowSize(initConsWidth,initConsHeight);
+                Console.SetBufferSize(initBuffWidth, initBuffHeight);
+                System.Threading.Thread.Sleep(5);
+                GetWindowRect(currentHandle, out bigRect);
+                //Console.WriteLine("SR:{0}\nBR:{1}", smallRect, bigRect);                
+
+                if (smallRect.CompareTo(bigRect) < 0)
+                {
+                    Current_Proc_Handle = currentHandle;
+                    break;
+                }
+
+            }
+
+            if (Current_Proc_Handle == IntPtr.Zero)
+            {
+                Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
+                Current_Proc = Process.GetCurrentProcess();
+            }
+            //Console.WriteLine("Using process: {0}", Current_Proc);
+            //Console.ReadLine();
             InitializeConsole();
             bool exit = false;
             do
@@ -129,7 +220,7 @@ namespace GHGameOfLife
         /// Initializes the console for display. 
         /// </summary>
         private static void InitializeConsole()
-        {
+        {           
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
@@ -145,7 +236,7 @@ namespace GHGameOfLife
             // Initialize with the smallest window size and build from there
             // Keep around a 10:3 ratio for the window (col:row)
             // I am just moving the width because we have more play there than height
-            // Unless you have some weird portrait setting I guess then enjoy your
+            // Unless you have some weird portrait set up I guess then enjoy your
             // small windows??
             Cons_Sizes[0] = new ConsSize(Min_Cols, Min_Rows);
             for (int i = 1; i < DIFFERENT_SIZES; i++)
@@ -165,7 +256,7 @@ namespace GHGameOfLife
                 }
             }
 
-            ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Curr_Size_Index);
+            ajustWindowSize(/*Current_Proc,*/ Primary_Res, Cons_Sizes[Curr_Size_Index] /*Cons_Sizes, Curr_Size_Index*/);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -359,30 +450,25 @@ namespace GHGameOfLife
         /// 
         private static void RunGame(PopType pop, string res = null)
         {
-            GoLBoard initial = new GoLBoard(Current_Rows - 10, 
+            GoLBoard board = new GoLBoard(Current_Rows - 10, 
                                                             Current_Cols - 10);
             switch (pop)
             {
                 case PopType.Random:
-                    initial.BuildDefaultPop();
+                    board.BuildDefaultPop();
                     break;
                 case PopType.File:
-                    initial.BuildFromFile();
+                    board.BuildFromFile();
                     break;
                 case PopType.Premade:
-                    initial.BuildFromResource(res);
+                    board.BuildFromResource(res);
                     break;
                 case PopType.Build:
-                    initial.BuildFromUser();
+                    board.BuildFromUser();
                     break;
             }
 
-            //Change this to maybe start from the GoLRunner itself
-            //Move out of here into the main loop maybe
-            initial.Print();
-
-            GoLRunner.RunIt(initial);
-
+            board.RunGame();
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -462,7 +548,7 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Curr_Size_Index);
+            ajustWindowSize(/*Current_Proc,*/ Primary_Res, Cons_Sizes[Curr_Size_Index] /*Cons_Sizes, Curr_Size_Index*/);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -551,32 +637,38 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(Process current, ScreenRes primaryRes, ConsSize[] sizes, int sizeIndex)
-        {
-            Rect consRect;
-           
+        private static void ajustWindowSize(/*Process current,*/ ScreenRes primaryRes, ConsSize size/*ConsSize[] sizes, int sizeIndex*/)
+        {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
-            Console.SetBufferSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
-            Console.SetWindowSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
+            Console.SetWindowPosition(0, 0);
+            Console.SetBufferSize(/*sizes[sizeIndex]*/size.Cols, /*sizes[sizeIndex]*/size.Rows);
+            Console.SetWindowSize(/*sizes[sizeIndex]*/size.Cols, /*sizes[sizeIndex]*/size.Rows);
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
             //Center on the screen
-            //do-while because there seems to be some kind of bug where the window
-            // Rect comes back with a height of 74
-            // Also this results in an infinite loop if starting without debugging
-            // but not if running from the exe so ????
-            do
-            {
-                GetWindowRect(current.MainWindowHandle, out consRect);
-            } while ((consRect.Bottom - consRect.Top) < 100);
+            // Some kind of bug where the out Rect comes back with a height of 74,
+            // So just loop until it gets the correct position.
+            // Also check if the out Rect is zero before doing this to avoid
+            // an infinite loop.
             
-            int consWidth = consRect.Right - consRect.Left;
-            int consHeight = consRect.Bottom - consRect.Top;
-            int widthOffset = (primaryRes.width / 2) - (consWidth / 2);
-            int heightOffset = (primaryRes.height / 2) - (consHeight / 2);
-            SetWindowPos(current.MainWindowHandle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+            //IntPtr windowHandle = Current_Proc.MainWindowHandle;
+            Rect consRect;
+            GetWindowRect(Current_Proc_Handle, out consRect);
+            if (!consRect.IsZero())
+            {
+                while ((consRect.Bottom - consRect.Top) < 100)
+                {
+                    GetWindowRect(Current_Proc_Handle, out consRect);
+                }
+            }
+
+            //int consWidth = consRect.Right - consRect.Left;
+            //int consHeight = consRect.Bottom - consRect.Top;
+            int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
+            int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
+            SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 
             /*
             ConsoleTraceListener ctl = new ConsoleTraceListener(true);
@@ -588,58 +680,5 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
-    class ConsSize
-    {
-        private int _rows;
-        private int _cols;
-        public double Ratio { get; private set; }
-
-        public ConsSize(int c, int r)
-        {
-            _cols = c;
-            _rows = r;
-            calcRatio();
-        }
-
-        public int Cols
-        {
-            get
-            {
-                return this._cols;
-            }
-            set
-            {
-                _cols = value;
-                calcRatio();
-            }
-        }
-
-        public int Rows
-        {
-            get
-            {
-                return this._rows;
-            }
-            set
-            {
-                _rows = value;
-                calcRatio();
-            }
-        }
-
-        public override string ToString()
-        {
-            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", _cols, _rows, Ratio);
-        }
-
-        private void calcRatio()
-        {
-            if (_cols < 1 || _rows < 1)
-                Ratio = 1.0;
-            else
-                Ratio = 1.0 * _cols / _rows;
-        }
-
-    }
 ////////////////////////////////////////////////////////////////////////////////
-} // End CLass
+} 

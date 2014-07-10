@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GHGameOfLife
 {
-    public static class GenericHelp<T>
+    static class GenericHelp<T>
     {
 //-----------------------------------------------------------------------------
         /// <summary>
