@@ -60,9 +60,7 @@ namespace GHGameOfLife
         private const int Welcome_Row = 6;
         private static int Menu_Start_Row;
 
-        private static int Space = GoLBoard.Space;
-
-        //public static bool Initialized {get; private set;}
+        public static int Space = 5;
 //------------------------------------------------------------------------------
         public static void Initialize()
         {

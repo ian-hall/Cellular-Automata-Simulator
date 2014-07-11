@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsSize.cs" />
-    <Compile Include="GoLBoard.cs" />
+    <Compile Include="ClassStructHelpers.cs" />
+    <Compile Include="GoL.cs" />
     <Compile Include="GoLHelper.cs" />
     <Compile Include="GenericHelp.cs" />
     <Compile Include="MenuText.cs" />

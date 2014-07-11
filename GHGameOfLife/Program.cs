@@ -14,7 +14,6 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-
         // Imports and junk for resizing the window
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
@@ -24,6 +23,13 @@ namespace GHGameOfLife
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
 
+        const short SWP_NOSIZE = 0x0001;
+        const short SWP_NOZORDER = 0x0004;
+        const int SWP_SHOWWINDOW = 0x0040;
+        static IntPtr HWND_TOPMOST = new IntPtr(-1);
+        // garbage
+
+        /*
         [StructLayout(LayoutKind.Sequential)]
         public struct Rect : IComparable<Rect>
         {
@@ -77,24 +83,7 @@ namespace GHGameOfLife
                 return (Left == Right) && (Top == Bottom) && (Left == 0);
             }
         }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct ScreenRes
-        {
-            public int Height, Width;
-
-            public ScreenRes(int w, int h)
-            {
-                this.Height = h;
-                this.Width = w;
-            }
-        }
-
-        const short SWP_NOSIZE = 0x0001;
-        const short SWP_NOZORDER = 0x0004;
-        const int SWP_SHOWWINDOW = 0x0040;
-        static IntPtr HWND_TOPMOST = new IntPtr(-1);
-        // garbage
+         */      
 
 
         enum PopType { Random, File, Premade, Build };
@@ -107,7 +96,7 @@ namespace GHGameOfLife
 
         static int Max_Cols, Max_Rows;    
         static IntPtr Current_Proc_Handle;
-        static Process Current_Proc;
+        //static Process Current_Proc;
         static Screen Primary_Screen;
         static ScreenRes Primary_Res;
 
@@ -180,7 +169,7 @@ namespace GHGameOfLife
             if (Current_Proc_Handle == IntPtr.Zero)
             {
                 Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-                Current_Proc = Process.GetCurrentProcess();
+                //Current_Proc = Process.GetCurrentProcess();
             }
             //Console.WriteLine("Using process: {0}", Current_Proc);
             //Console.ReadLine();
@@ -256,7 +245,7 @@ namespace GHGameOfLife
                 }
             }
 
-            ajustWindowSize(/*Current_Proc,*/ Primary_Res, Cons_Sizes[Curr_Size_Index] /*Cons_Sizes, Curr_Size_Index*/);
+            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -450,25 +439,24 @@ namespace GHGameOfLife
         /// 
         private static void RunGame(PopType pop, string res = null)
         {
-            GoLBoard board = new GoLBoard(Current_Rows - 10, 
-                                                            Current_Cols - 10);
+            GoL game = new GoL(Current_Rows - 10, Current_Cols - 10);
             switch (pop)
             {
                 case PopType.Random:
-                    board.BuildDefaultPop();
+                    game.BuildDefaultPop();
                     break;
                 case PopType.File:
-                    board.BuildFromFile();
+                    game.BuildFromFile();
                     break;
                 case PopType.Premade:
-                    board.BuildFromResource(res);
+                    game.BuildFromResource(res);
                     break;
                 case PopType.Build:
-                    board.BuildFromUser();
+                    game.BuildFromUser();
                     break;
             }
 
-            board.RunGame();
+            game.RunGame();
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -548,7 +536,7 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(/*Current_Proc,*/ Primary_Res, Cons_Sizes[Curr_Size_Index] /*Cons_Sizes, Curr_Size_Index*/);
+            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -637,13 +625,13 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(/*Process current,*/ ScreenRes primaryRes, ConsSize size/*ConsSize[] sizes, int sizeIndex*/)
+        private static void ajustWindowSize(ScreenRes primaryRes, ConsSize size)
         {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
             Console.SetWindowPosition(0, 0);
-            Console.SetBufferSize(/*sizes[sizeIndex]*/size.Cols, /*sizes[sizeIndex]*/size.Rows);
-            Console.SetWindowSize(/*sizes[sizeIndex]*/size.Cols, /*sizes[sizeIndex]*/size.Rows);
+            Console.SetBufferSize(size.Cols, size.Rows);
+            Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
