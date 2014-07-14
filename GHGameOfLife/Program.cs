@@ -11,9 +11,9 @@ using System.Linq;
 
 namespace GHGameOfLife
 {
+///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-
         // Imports and junk for resizing the window
         [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
         public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
@@ -23,54 +23,27 @@ namespace GHGameOfLife
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Rect
-        {
-            public int Left;        
-            public int Top;         
-            public int Right;       
-            public int Bottom;
-
-            public override string ToString()
-            {
-                return String.Format("T:{0,-5} B:{1,-5} L:{2,-5} R:{3,-5}", Top, Bottom, Left, Right);
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct ScreenRes
-        {
-            public int height, width;
-
-            public ScreenRes(int w, int h)
-            {
-                height = h;
-                width = w;
-            }
-        }
-
         const short SWP_NOSIZE = 0x0001;
         const short SWP_NOZORDER = 0x0004;
         const int SWP_SHOWWINDOW = 0x0040;
         static IntPtr HWND_TOPMOST = new IntPtr(-1);
         // garbage
 
-
         enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy
-        const int Min_Cols = 70;
-        const int Min_Rows = 30;
+        static int Min_Cols = 70;
+        static int Min_Rows = 30;
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
 
         static int Max_Cols, Max_Rows;    
-        static Process Current_Proc;
+        static IntPtr Current_Proc_Handle;
         static Screen Primary_Screen;
         static ScreenRes Primary_Res;
 
-        const int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
+        static int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
         static ConsSize[] Cons_Sizes = new ConsSize[DIFFERENT_SIZES];
         static int Curr_Size_Index = 2; // Which size to default to, 2 is med
 //------------------------------------------------------------------------------
@@ -91,8 +64,58 @@ namespace GHGameOfLife
 
             Primary_Screen = System.Windows.Forms.Screen.PrimaryScreen;
             Primary_Res = new ScreenRes(Primary_Screen.Bounds.Width, Primary_Screen.Bounds.Height);
-            Current_Proc = Process.GetCurrentProcess();
 
+            
+            //Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
+            Console.SetCursorPosition(0, 0);
+            Console.Write("");
+            Process[] cmdProc = Process.GetProcesses();
+            Rect smallRect;
+            Rect bigRect;
+            foreach (Process p in cmdProc)
+            {
+                IntPtr currentHandle;
+
+                if (p.MainWindowHandle == IntPtr.Zero)
+                    continue;
+
+                try
+                {
+                    currentHandle = p.MainWindowHandle;
+                }
+                catch
+                {
+                    continue;
+                }
+
+                Console.SetWindowSize(1, 1);
+                Console.SetWindowPosition(0, 0);
+                //Console.SetBufferSize(1, 1);
+                System.Threading.Thread.Sleep(5);
+                //Console.SetCursorPosition(0, 0);
+                //Console.WriteLine("Testing Process: {0} {1}", p.ProcessName, p.MainWindowHandle);
+                GetWindowRect(currentHandle, out smallRect);
+                Console.SetWindowSize(initConsWidth,initConsHeight);
+                Console.SetBufferSize(initBuffWidth, initBuffHeight);
+                System.Threading.Thread.Sleep(5);
+                GetWindowRect(currentHandle, out bigRect);
+                //Console.WriteLine("SR:{0}\nBR:{1}", smallRect, bigRect);                
+
+                if (smallRect.CompareTo(bigRect) < 0)
+                {
+                    Current_Proc_Handle = currentHandle;
+                    break;
+                }
+
+            }
+
+            if (Current_Proc_Handle == IntPtr.Zero)
+            {
+                Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
+                //Current_Proc = Process.GetCurrentProcess();
+            }
+            //Console.WriteLine("Using process: {0}", Current_Proc);
+            //Console.ReadLine();
             InitializeConsole();
             bool exit = false;
             do
@@ -129,32 +152,11 @@ namespace GHGameOfLife
         /// Initializes the console for display. 
         /// </summary>
         private static void InitializeConsole()
-        {
+        {           
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
             
-            /* Checks to see if the window can change to the indicated size.
-             * If it is too small or too large it will be adjusted.
-             *
-
-            CONSOLE_WIDTH = (CONSOLE_WIDTH < MIN_WIDTH) ? MIN_WIDTH : CONSOLE_WIDTH;
-            CONSOLE_WIDTH = (CONSOLE_WIDTH > Console.LargestWindowWidth - 10) ? Console.LargestWindowWidth - 10 : CONSOLE_WIDTH;
-
-            CONSOLE_HEIGHT = (CONSOLE_HEIGHT < MIN_HEIGHT) ? MIN_HEIGHT : CONSOLE_HEIGHT;
-            CONSOLE_HEIGHT = (CONSOLE_HEIGHT > Console.LargestWindowHeight - 5) ? Console.LargestWindowHeight - 5 : CONSOLE_HEIGHT;
-
-
-
-
-            Console.SetWindowSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);
-            Console.SetWindowPosition(0, 0);
-            Console.SetBufferSize(CONSOLE_WIDTH, CONSOLE_HEIGHT);                                 
-            Console.CursorVisible = false;
-            Console.Clear();
-            */
-
-
             Max_Cols = Console.LargestWindowWidth;
             Max_Rows = Console.LargestWindowHeight;
 
@@ -166,7 +168,7 @@ namespace GHGameOfLife
             // Initialize with the smallest window size and build from there
             // Keep around a 10:3 ratio for the window (col:row)
             // I am just moving the width because we have more play there than height
-            // Unless you have some weird portrait setting I guess then enjoy your
+            // Unless you have some weird portrait set up I guess then enjoy your
             // small windows??
             Cons_Sizes[0] = new ConsSize(Min_Cols, Min_Rows);
             for (int i = 1; i < DIFFERENT_SIZES; i++)
@@ -186,7 +188,7 @@ namespace GHGameOfLife
                 }
             }
 
-            ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Curr_Size_Index);
+            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -239,7 +241,7 @@ namespace GHGameOfLife
             string res = null;
 
             int numChoices = MenuText.NMenu_Choice;
-            int currPromptRow = MenuText.PrintMainMenu(/*out numChoices*/);
+            int currPromptRow = MenuText.PrintMainMenu();
             int choice = -1;
 
             //Only allow letters and numbers to be written as a choice
@@ -261,7 +263,7 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(MenuText.Left_Align, currPromptRow);
                 Console.Write(MenuText.Prompt);                   
 
-                String input = "";
+                string input = "";
                 int maxLen = 1;
 
                 while (true)
@@ -346,7 +348,7 @@ namespace GHGameOfLife
                             validEntry = true;
                         else
                         {
-                            MenuText.PrintMainMenu(/*out numChoices*/);
+                            MenuText.PrintMainMenu();
                             validEntry = false;
                         }
                         break;
@@ -380,30 +382,24 @@ namespace GHGameOfLife
         /// 
         private static void RunGame(PopType pop, string res = null)
         {
-            GoLBoard initial = new GoLBoard(Current_Rows - 10, 
-                                                            Current_Cols - 10);
+            GoL game = new GoL(Current_Rows - 10, Current_Cols - 10);
             switch (pop)
             {
                 case PopType.Random:
-                    initial.BuildDefaultPop();
+                    game.BuildDefaultPop();
                     break;
                 case PopType.File:
-                    initial.BuildFromFile();
+                    game.BuildFromFile();
                     break;
                 case PopType.Premade:
-                    initial.BuildFromResource(res);
+                    game.BuildFromResource(res);
                     break;
                 case PopType.Build:
-                    initial.BuildFromUser();
+                    game.BuildFromUser();
                     break;
             }
 
-            //Change this to maybe start from the GoLRunner itself
-            //Move out of here into the main loop maybe
-            initial.Print();
-
-            GoLRunner.RunIt(initial);
-
+            game.RunGame();
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -429,7 +425,7 @@ namespace GHGameOfLife
                 Console.Write(MenuText.Prompt);
                 Console.CursorVisible = true;
 
-                String input = "";
+                string input = "";
                 int maxLen = 2; // Wont display more than 99 choices...
                 while (true)
                 {
@@ -483,18 +479,18 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Current_Proc, Primary_Res, Cons_Sizes, Curr_Size_Index);
+            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
 
-            char vert = '║'; // '\u2551'
-            char horiz = '═'; // '\u2550'
-            char topLeft = '╔'; // '\u2554'
-            char topRight = '╗'; // '\u2557'
-            char botLeft = '╚'; // '\u255A'
-            char botRight = '╝'; // '\u255D'
+            char vert = '║';        // '\u2551'
+            char horiz = '═';       // '\u2550'
+            char topLeft = '╔';     // '\u2554'
+            char topRight = '╗';    // '\u2557'
+            char botLeft = '╚';     // '\u255A'
+            char botRight = '╝';    // '\u255D'
 
             int borderTop = 4;
             int borderBottom = Current_Rows - 5;
@@ -532,7 +528,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static Boolean IsValidNumber(String s,int numPrinted)
+        private static Boolean IsValidNumber(string s, int numPrinted)
         {
             try
             {
@@ -549,7 +545,7 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-        private static void ResetConsole( int[] initValues)
+        private static void ResetConsole(int[] initValues)
         {
             int initBuffWidth = initValues[0];
             int initBuffHeight = initValues[1];
@@ -560,9 +556,10 @@ namespace GHGameOfLife
 
             MenuText.ClearLine(Current_Rows - 2);
             Console.SetCursorPosition(0, Current_Rows - 2);
-            Console.Write("Press any key to exit...");
-            while (!Console.KeyAvailable)
-                System.Threading.Thread.Sleep(50);
+            
+            //Console.Write("Press any key to exit...");
+            //while (!Console.KeyAvailable)
+            //    System.Threading.Thread.Sleep(50);
             
             Console.SetWindowSize(1, 1);
             Console.SetWindowPosition(initConsolePosLeft, initConsolePosTop);
@@ -572,85 +569,48 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(Process current, ScreenRes primaryRes, ConsSize[] sizes, int sizeIndex)
-        {
-            Rect consRect;
-           
+        private static void ajustWindowSize(ScreenRes primaryRes, ConsSize size)
+        {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
-            Console.SetBufferSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
-            Console.SetWindowSize(sizes[sizeIndex].Cols, sizes[sizeIndex].Rows);
+            Console.SetWindowPosition(0, 0);
+            Console.SetBufferSize(size.Cols, size.Rows);
+            Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
             //Center on the screen
-            GetWindowRect(current.MainWindowHandle, out consRect);
-            int consWidth = consRect.Right - consRect.Left;
-            int consHeight = consRect.Bottom - consRect.Top;
-            int widthOffset = (primaryRes.width / 2) - (consWidth / 2);
-            int heightOffset = (primaryRes.height / 2) - (consHeight / 2);
-            SetWindowPos(current.MainWindowHandle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+            // Some kind of bug where the out Rect comes back with a height of 74,
+            // So just loop until it gets the correct position.
+            // Also check if the out Rect is zero before doing this to avoid
+            // an infinite loop.
+            
+            //IntPtr windowHandle = Current_Proc.MainWindowHandle;
+            Rect consRect;
+            GetWindowRect(Current_Proc_Handle, out consRect);
+            if (!consRect.IsZero())
+            {
+                while ((consRect.Bottom - consRect.Top) < 100)
+                {
+                    GetWindowRect(Current_Proc_Handle, out consRect);
+                }
+            }
 
+            //int consWidth = consRect.Right - consRect.Left;
+            //int consHeight = consRect.Bottom - consRect.Top;
+            int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
+            int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
+            SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+
+            /*
             ConsoleTraceListener ctl = new ConsoleTraceListener(true);
             ctl.WriteLine(String.Format("Top Left: {0,-5} Top Right: {1,-5} Window Rect:{2}", widthOffset, heightOffset, consRect));
+             */ 
         }
 //------------------------------------------------------------------------------
     } // end class
 //------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
-    class ConsSize
-    {
-        private int _rows;
-        private int _cols;
-        public double Ratio { get; private set; }
-
-        public ConsSize(int c, int r)
-        {
-            _cols = c;
-            _rows = r;
-            calcRatio();
-        }
-
-        public int Cols
-        {
-            get
-            {
-                return this._cols;
-            }
-            set
-            {
-                _cols = value;
-                calcRatio();
-            }
-        }
-
-        public int Rows
-        {
-            get
-            {
-                return this._rows;
-            }
-            set
-            {
-                _rows = value;
-                calcRatio();
-            }
-        }
-
-        public override string ToString()
-        {
-            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", _cols, _rows, Ratio);
-        }
-
-        private void calcRatio()
-        {
-            if (_cols < 1 || _rows < 1)
-                Ratio = 1.0;
-            else
-                Ratio = 1.0 * _cols / _rows;
-        }
-
-    }
 ////////////////////////////////////////////////////////////////////////////////
-} // End CLass
+} 

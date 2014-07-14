@@ -65,9 +65,9 @@ namespace GHGameOfLife {
         ///001
         ///111.
         /// </summary>
-        internal static string Glider_D {
+        internal static string Glider {
             get {
-                return ResourceManager.GetString("Glider_D", resourceCulture);
+                return ResourceManager.GetString("Glider", resourceCulture);
             }
         }
         
@@ -101,9 +101,9 @@ namespace GHGameOfLife {
         ///10001
         ///11110.
         /// </summary>
-        internal static string Smallship_L {
+        internal static string Smallship {
             get {
-                return ResourceManager.GetString("Smallship_L", resourceCulture);
+                return ResourceManager.GetString("Smallship", resourceCulture);
             }
         }
         
