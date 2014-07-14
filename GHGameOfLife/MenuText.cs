@@ -22,39 +22,39 @@ namespace GHGameOfLife
         public const ConsoleColor Board_FG      = ConsoleColor.White;
         public const ConsoleColor Builder_FG    = ConsoleColor.Cyan;
         
-        public const String Welcome      = "Welcome to the GAME OF LIFE!!!!";
-        public const String Choose_Msg   = "Please choose an option!";
+        public const string Welcome      = "Welcome to the GAME OF LIFE!!!!";
+        public const string Choose_Msg   = "Please choose an option!";
         
-        public const String Menu_Choice1 = "1) Random population";
-        public const String Menu_Choice2 = "2) Load population from a file";
-        public const String Menu_Choice3 = "3) Load a premade population";
-        public const String Menu_Choice4 = "4) Create your own population";
-        public const String Menu_Choice5 = "5) Exit";
+        public const string Menu_Choice1 = "1) Random population";
+        public const string Menu_Choice2 = "2) Load population from a file";
+        public const string Menu_Choice3 = "3) Load a premade population";
+        public const string Menu_Choice4 = "4) Create your own population";
+        public const string Menu_Choice5 = "5) Exit";
         public const int    NMenu_Choice = 5;
         
-        public const String Prompt       = "Your choice: ";
-        public const String Err          = "**Invalid entry**";
+        public const string Prompt       = "Your choice: ";
+        public const string Err          = "**Invalid entry**";
 
-        public const String Load_Rand   = "Loading random pop.";
-        public const String Enter       = "Press ENTER to confirm";
+        public const string Load_Rand   = "Loading random pop.";
+        public const string Enter       = "Press ENTER to confirm";
 
-        public const String Run_Ctrl1 = "[SPACE] Get next/Pause";
-        public const String Run_Ctrl2 = "[R] Toggle running";
-        public const String Run_Ctrl3 = "[ESC] Exit";
-        public const String Run_Ctrl4 = "[+/-] Speed adjust";
-        public const String Run_Ctrl5 = "[W] Toggle wrapping";
+        public const string Run_Ctrl1 = "[SPACE] Get next/Pause";
+        public const string Run_Ctrl2 = "[R] Toggle running";
+        public const string Run_Ctrl3 = "[ESC] Exit";
+        public const string Run_Ctrl4 = "[+/-] Speed adjust";
+        public const string Run_Ctrl5 = "[W] Toggle wrapping";
         public const int    NRun_Ctrl = 5;
 
-        public const String Create_Ctrl1 = "Arrow keys to move cursor";
-        public const String Create_Ctrl2 = "[SPACE] Add/Remove cell";
-        public const String Create_Ctrl3 = "[ENTER] Start Game";
-        public const String Create_Ctrl4 = "[S] Save board";
+        public const string Create_Ctrl1 = "Arrow keys to move cursor";
+        public const string Create_Ctrl2 = "[SPACE] Add/Remove cell";
+        public const string Create_Ctrl3 = "[ENTER] Start Game";
+        public const string Create_Ctrl4 = "[S] Save board";
         public const int    NCreate_Ctrl = 4;
         
 
         public static int Window_Center; // Vertical center of the console
         public static int Left_Align;    // Align text with the Welcome message
-        public static List<String> Res_Names;
+        public static List<string> Res_Names;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
@@ -157,7 +157,7 @@ namespace GHGameOfLife
 
             int count = 1;
             
-            foreach (String res in MenuText.Res_Names)
+            foreach (string res in MenuText.Res_Names)
             {
                 Console.SetCursorPosition(Left_Align + 4, ++curRow);
                 string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");

@@ -29,64 +29,8 @@ namespace GHGameOfLife
         static IntPtr HWND_TOPMOST = new IntPtr(-1);
         // garbage
 
-        /*
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Rect : IComparable<Rect>
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-
-            public override string ToString()
-            {
-                return String.Format("T:{0,-5} B:{1,-5} L:{2,-5} R:{3,-5}", Top, Bottom, Left, Right);
-            }
-            public int Width
-            {
-                get
-                {
-                    return this.Right - this.Left;
-                }
-                private set { }
-            }
-
-            public int Height
-            {
-                get
-                {
-                    return this.Bottom - this.Top;
-                }
-                private set { }
-
-            }
-
-            public int CompareTo(Rect rhs)
-            {
-                if ((this.Width < rhs.Width) && (this.Height <= rhs.Height) ||
-                    (this.Width <= rhs.Width) && (this.Height < rhs.Height))
-                {
-                    return -1;
-                }
-                else if ((this.Width == rhs.Width) && (this.Height == rhs.Height))
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-
-            public bool IsZero()
-            {
-                return (Left == Right) && (Top == Bottom) && (Left == 0);
-            }
-        }
-         */      
-
-
         enum PopType { Random, File, Premade, Build };
+
         // Don't go below these values or the text will be screwy
         static int Min_Cols = 70;
         static int Min_Rows = 30;
@@ -96,7 +40,6 @@ namespace GHGameOfLife
 
         static int Max_Cols, Max_Rows;    
         static IntPtr Current_Proc_Handle;
-        //static Process Current_Proc;
         static Screen Primary_Screen;
         static ScreenRes Primary_Res;
 
@@ -320,7 +263,7 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(MenuText.Left_Align, currPromptRow);
                 Console.Write(MenuText.Prompt);                   
 
-                String input = "";
+                string input = "";
                 int maxLen = 1;
 
                 while (true)
@@ -482,7 +425,7 @@ namespace GHGameOfLife
                 Console.Write(MenuText.Prompt);
                 Console.CursorVisible = true;
 
-                String input = "";
+                string input = "";
                 int maxLen = 2; // Wont display more than 99 choices...
                 while (true)
                 {
@@ -585,7 +528,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static Boolean IsValidNumber(String s,int numPrinted)
+        private static Boolean IsValidNumber(string s, int numPrinted)
         {
             try
             {
@@ -602,7 +545,7 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-        private static void ResetConsole( int[] initValues)
+        private static void ResetConsole(int[] initValues)
         {
             int initBuffWidth = initValues[0];
             int initBuffHeight = initValues[1];
@@ -613,9 +556,10 @@ namespace GHGameOfLife
 
             MenuText.ClearLine(Current_Rows - 2);
             Console.SetCursorPosition(0, Current_Rows - 2);
-            Console.Write("Press any key to exit...");
-            while (!Console.KeyAvailable)
-                System.Threading.Thread.Sleep(50);
+            
+            //Console.Write("Press any key to exit...");
+            //while (!Console.KeyAvailable)
+            //    System.Threading.Thread.Sleep(50);
             
             Console.SetWindowSize(1, 1);
             Console.SetWindowPosition(initConsolePosLeft, initConsolePosTop);

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GHGameOfLife
+﻿namespace GHGameOfLife
 {
 ///////////////////////////////////////////////////////////////////////////////
     static class GenericHelp<T>
     {
 //-----------------------------------------------------------------------------
         /// <summary>
-        /// Rotates the values in a jagged array 90 degrees clockwise
+        /// Rotates the values in a 2d jagged array 90 degrees clockwise
         /// </summary>
-        /// <param name="oldVals">The jagged array to be rotated</param>
+        /// <param name="oldVals">The 2d jagged array to be rotated</param>
         /// <returns>A new jagged array with the rotated values</returns>
         public static T[][] Rotate90(T[][] oldVals)
         {

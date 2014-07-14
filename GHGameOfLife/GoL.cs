@@ -48,8 +48,6 @@ namespace GHGameOfLife
         private static int OrigConsHeight;
         private static int OrigConsWidth;
 
-        private enum SmallPops { None, Glider, Ship };
-
         private static int Space = MenuText.Space;
 //------------------------------------------------------------------------------
         /// <summary>
@@ -69,6 +67,8 @@ namespace GHGameOfLife
             IsInitialized = false;
             this.Generation = 1;
             Wrap = true;
+
+            GoLHelper.CalcBuilderBounds();
         }
 //------------------------------------------------------------------------------        
         /// <summary>
@@ -111,7 +111,7 @@ namespace GHGameOfLife
         /// <param name="pop"></param>
         public void BuildFromResource(string pop)
         {
-            GoLHelper.BuildFromResource(pop);
+            GoLHelper.BuildBoardResource(pop);
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -137,25 +137,11 @@ namespace GHGameOfLife
                     {
                         if (Wrap)
                         {
-                            //if (WillBeBornWrap(r, c))
-                            //{
-                                nextBoard[r, c] = WillBeBornWrap(r, c);
-                            //}
-                            //else
-                            //{
-                            //    nextBoard[r, c] = 0;
-                            //}
+                            nextBoard[r, c] = WillBeBornWrap(r, c);
                         }
                         else
                         {
-                            //if (WillBeBornNoWrap(r, c))
-                            //{
-                                nextBoard[r, c] = WillBeBornNoWrap(r, c);
-                            //}
-                            //else
-                            //{
-                            //    nextBoard[r, c] = 0;
-                            //}
+                            nextBoard[r, c] = WillBeBornNoWrap(r, c);
                         }
                         
                     }
@@ -164,25 +150,11 @@ namespace GHGameOfLife
                     {
                         if (Wrap)
                         {
-                            //if (WillDieWrap(r, c))
-                            //{
-                                nextBoard[r, c] = !WillDieWrap(r, c);
-                            //}
-                            //else
-                            //{
-                            //    nextBoard[r, c] = 1;
-                            //}
+                            nextBoard[r, c] = !WillDieWrap(r, c);
                         }
                         else
                         {
-                            //if (WillDieNoWrap(r, c))
-                            //{
-                                nextBoard[r, c] = !WillDieNoWrap(r, c);
-                            //}
-                            //else
-                            //{
-                            //    nextBoard[r, c] = 1;
-                            //}
+                            nextBoard[r, c] = !WillDieNoWrap(r, c);
                         }
                         
                     }
@@ -201,7 +173,7 @@ namespace GHGameOfLife
         {
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
-            String write = "Generation " + Generation;
+            string write = "Generation " + Generation;
             int left = (Console.WindowWidth / 2) - (write.Length / 2);
             Console.SetCursorPosition(left, 1);
             Console.Write(write);
@@ -234,7 +206,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Calculates if the current dude at _Board[r,c] will die or not.
+        /// Calculates if the current dude at Board[r,c] will die or not.
         /// If a dude has less than 2, or more than 3 neighbors that dude
         /// is dead next generation.
         /// % because this allows wrapping around the board
@@ -261,7 +233,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Calculates if the current space at _Board[r,c] will become alive
+        /// Calculates if the current space at Board[r,c] will become alive
         /// or not. If nothingness has exactly 3 neighbors it will become
         /// living next generation.
         /// % because this allows wrapping around the board
@@ -290,7 +262,7 @@ namespace GHGameOfLife
         /// Calculates if the current dude at _Board[r,c] will die or not.
         /// If a dude has less than 2, or more than 3 neighbors that dude
         /// is dead next generation.
-        /// Ugly because I dont fluff the board with a border of 0s
+        /// Ugly because I dont fluff the board with a border of nothing
         /// </summary>
         /// <param name="r"></param>
         /// <param name="c"></param>
@@ -341,7 +313,7 @@ namespace GHGameOfLife
         /// Calculates if the current space at _Board[r,c] will become alive
         /// or not. If nothingness has exactly 3 neighbors it will become
         /// living next generation.
-        /// Ugly because I dont fluff the board with a border of 0s
+        /// Ugly because I dont fluff the board with a border of nothing
         /// </summary>
         /// <param name="r"></param>
         /// <param name="c"></param>

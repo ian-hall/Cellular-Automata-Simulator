@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Linq;
 using System.Runtime.InteropServices;
-//using System.Text;
-//using System.Threading.Tasks;
 
 namespace GHGameOfLife
 {
@@ -60,7 +57,7 @@ namespace GHGameOfLife
         {
             return (Left == Right) && (Top == Bottom) && (Left == 0);
         }
-    }
+    } // end struct
 ///////////////////////////////////////////////////////////////////////////////
     [StructLayout(LayoutKind.Sequential)]
     public struct ScreenRes
@@ -72,7 +69,7 @@ namespace GHGameOfLife
             this.Height = h;
             this.Width = w;
         }
-    }
+    } //end struct
 ///////////////////////////////////////////////////////////////////////////////
     class ConsSize
     {
