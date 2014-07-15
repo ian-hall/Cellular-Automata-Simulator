@@ -43,13 +43,15 @@ namespace GHGameOfLife
         public const string Run_Ctrl3 = "[ESC] Exit";
         public const string Run_Ctrl4 = "[+/-] Speed adjust";
         public const string Run_Ctrl5 = "[W] Toggle wrapping";
-        public const int    NRun_Ctrl = 5;
+        public const string Run_Ctrl6 = "[S] Save board";
+        //public const int    NRun_Ctrl = 6;
 
-        public const string Create_Ctrl1 = "Arrow keys to move cursor";
+        public const string Create_Ctrl1 = "[↑|↓|←|→] Move cursor";
         public const string Create_Ctrl2 = "[SPACE] Add/Remove cell";
         public const string Create_Ctrl3 = "[ENTER] Start Game";
         public const string Create_Ctrl4 = "[S] Save board";
-        public const int    NCreate_Ctrl = 4;
+        public const string Create_Ctrl5 = "[C] Single Cells";
+        //public const int    NCreate_Ctrl = 5;
         
 
         public static int Window_Center; // Vertical center of the console
@@ -79,12 +81,6 @@ namespace GHGameOfLife
             {
                 Res_Names.Add(res.Key.ToString());
             }
-
-            /*
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);*/
-
-            //Initialized = true;
         }
 //------------------------------------------------------------------------------
         public static void ReInitialize()
@@ -182,11 +178,11 @@ namespace GHGameOfLife
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl1,Run_Ctrl4));
+            Console.Write(String.Format("{0,-25}{1,-25}",Run_Ctrl1,Run_Ctrl4));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl2,Run_Ctrl5));
+            Console.Write(String.Format("{0,-25}{1,-25}",Run_Ctrl2,Run_Ctrl5));
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(Run_Ctrl3);
+            Console.Write(String.Format("{0,-25}{1,-25}",Run_Ctrl3,Run_Ctrl6));
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
@@ -232,7 +228,7 @@ namespace GHGameOfLife
             Console.SetCursorPosition(5, printRow);
             Console.Write(Create_Ctrl1);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}", Create_Ctrl2, Create_Ctrl4));
+            Console.Write(String.Format("{0,-25}{1,-25}", Create_Ctrl2, Create_Ctrl4));
             Console.SetCursorPosition(5, ++printRow);
             Console.Write(Create_Ctrl3);
             Console.ForegroundColor = MenuText.Default_FG;

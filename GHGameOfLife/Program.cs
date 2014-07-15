@@ -32,19 +32,19 @@ namespace GHGameOfLife
         enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy
-        static int Min_Cols = 70;
+        static int Min_Cols = 90;
         static int Min_Rows = 30;
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
-
-        static int Max_Cols, Max_Rows;    
+        static int Max_Cols, Max_Rows;  
+  
         static IntPtr Current_Proc_Handle;
         static Screen Primary_Screen;
         static ScreenRes Primary_Res;
 
-        static int DIFFERENT_SIZES = 5;  // The amount of different sizes allowed
-        static ConsSize[] Cons_Sizes = new ConsSize[DIFFERENT_SIZES];
+        static int Num_Sizes = 5;  // The amount of different sizes allowed
+        static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
         static int Curr_Size_Index = 2; // Which size to default to, 2 is med
 //------------------------------------------------------------------------------
         [STAThread]
@@ -55,12 +55,9 @@ namespace GHGameOfLife
             int initBuffHeight = Console.BufferHeight;
             int initConsWidth = Console.WindowWidth;
             int initConsHeight = Console.WindowHeight;            
-            int initConsPosLeft = Console.WindowLeft;
-            int initConsPosTop = Console.WindowTop;
 
             int[] initialValues = new int[] { initBuffWidth, initBuffHeight, 
-                                              initConsWidth, initConsHeight, 
-                                              initConsPosLeft, initConsPosTop };
+                                              initConsWidth, initConsHeight };
 
             Primary_Screen = System.Windows.Forms.Screen.PrimaryScreen;
             Primary_Res = new ScreenRes(Primary_Screen.Bounds.Width, Primary_Screen.Bounds.Height);
@@ -157,38 +154,63 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
             
+            
             Max_Cols = Console.LargestWindowWidth;
             Max_Rows = Console.LargestWindowHeight;
 
-            //int diffSizes = 5;
-            int difWid = (Max_Cols - Min_Cols - 10) / (DIFFERENT_SIZES - 1);
-            int difHeight = Math.Max(1, (Max_Rows - Min_Rows - 5) / (DIFFERENT_SIZES - 1));
-            //Cons_Sizes = new ConsSize[diffSizes];
+            int difWid = (Max_Cols - Min_Cols) / (Num_Sizes - 1);
+            int difHeight = Math.Max(1, (Max_Rows - Min_Rows) / (Num_Sizes - 1));
 
             // Initialize with the smallest window size and build from there
-            // Keep around a 10:3 ratio for the window (col:row)
+            // keeping the window ratio near that of the max window size ratio
             // I am just moving the width because we have more play there than height
             // Unless you have some weird portrait set up I guess then enjoy your
             // small windows??
-            Cons_Sizes[0] = new ConsSize(Min_Cols, Min_Rows);
-            for (int i = 1; i < DIFFERENT_SIZES; i++)
+
+            BoardSize max = new BoardSize(Max_Cols, Max_Rows);
+            double consRatio = max.Ratio;
+
+            // Don't actually allow use of the full area to account for something probably
+            Valid_Sizes[Num_Sizes - 1] = new BoardSize(Max_Cols, Max_Rows - 4);
+            for (int i = Num_Sizes - 2; i >= 0; i--)
             {
-                Cons_Sizes[i] = new ConsSize(Cons_Sizes[i - 1].Cols + difWid, Cons_Sizes[i - 1].Rows + difHeight);
-                while (Cons_Sizes[i].Ratio > (1.0 * 10 / 3))
+                int tempCols = Math.Max(Min_Cols, Valid_Sizes[i + 1].Cols - difWid);
+                int tempRows = Math.Max(Min_Rows, Valid_Sizes[i + 1].Rows - difHeight);
+                Valid_Sizes[i] = new BoardSize(tempCols, tempRows);
+            }
+
+
+            // Check the ratios and adjust as needed
+            foreach (BoardSize cs in Valid_Sizes)
+            {
+                while (cs.Ratio > consRatio)
                 {
-                    Cons_Sizes[i].Cols = (Cons_Sizes[i].Cols - 1);
+                    if ((cs.Cols - 1) <= Min_Cols)
+                    {
+                        cs.Rows = Math.Min(Max_Rows, cs.Rows + 1);
+                    }
+                    else
+                    {
+                        cs.Cols = Math.Max(Min_Cols, cs.Cols - 1);
+                    }
+                }
+
+                while (cs.Ratio < consRatio)
+                {
+                    if ((cs.Cols + 1) >= Max_Cols)
+                    {
+                        Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
+                    }
+                    else
+                    {
+                        cs.Cols = Math.Min(Max_Cols, (cs.Cols + 1));
+                    }
+
                 }
             }
 
-            foreach (ConsSize cs in Cons_Sizes)
-            {
-                while (cs.Ratio < (1.0 * 10 / 3))
-                {
-                    cs.Cols = (cs.Cols + 1);
-                }
-            }
 
-            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -283,7 +305,7 @@ namespace GHGameOfLife
                     //Need to reinitialize the console/menu positioning after changing window size
                     else if ((cki.Key == ConsoleKey.OemPlus || cki.Key == ConsoleKey.Add) && cki.Modifiers == ConsoleModifiers.Control)
                     {
-                        if (Curr_Size_Index < Cons_Sizes.Count() - 1)
+                        if (Curr_Size_Index < Valid_Sizes.Count() - 1)
                         {
                             Curr_Size_Index++;
                         }
@@ -479,7 +501,7 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Primary_Res, Cons_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -551,8 +573,6 @@ namespace GHGameOfLife
             int initBuffHeight = initValues[1];
             int initConsoleWidth = initValues[2];
             int initConsHeight = initValues[3];
-            int initConsolePosLeft = initValues[4];
-            int initConsolePosTop = initValues[5];
 
             MenuText.ClearLine(Current_Rows - 2);
             Console.SetCursorPosition(0, Current_Rows - 2);
@@ -562,14 +582,14 @@ namespace GHGameOfLife
             //    System.Threading.Thread.Sleep(50);
             
             Console.SetWindowSize(1, 1);
-            Console.SetWindowPosition(initConsolePosLeft, initConsolePosTop);
+            Console.SetWindowPosition(0, 0);
             Console.SetWindowSize(initConsoleWidth, initConsHeight);
             Console.SetBufferSize(initBuffWidth, initBuffHeight);      
             Console.ResetColor();
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(ScreenRes primaryRes, ConsSize size)
+        private static void ajustWindowSize(ScreenRes primaryRes, BoardSize size)
         {              
             //Resize the console window
             Console.SetWindowSize(1, 1);

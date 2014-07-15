@@ -37,11 +37,11 @@ namespace GHGameOfLife
             {
                 Random rand = new Random();
 
-                for (int r = 0; r < Rows; r++)
+                for (int r = 0; r < GoL.Rows; r++)
                 {
-                    for (int c = 0; c < Cols; c++)
+                    for (int c = 0; c < GoL.Cols; c++)
                     {
-                        Board[r, c] = (rand.Next() % 2 == 0);
+                        GoL.Board[r, c] = (rand.Next() % 2 == 0);
                     }
                 }
             }           
@@ -100,7 +100,7 @@ namespace GHGameOfLife
                         break;
                 }
 
-                IsInitialized = true;
+                GoL.IsInitialized = true;
             
             }
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace GHGameOfLife
 
                 FillBoard(startingPop);
 
-                IsInitialized = true;
+                GoL.IsInitialized = true;
             }
 //------------------------------------------------------------------------------
             /// <summary>
@@ -129,7 +129,7 @@ namespace GHGameOfLife
                 //saveDia.Filter = "Text file (*.txt)|*.txt|All files (*.*)|*.*";
 
 
-                Console.SetBufferSize(OrigConsWidth * 2, OrigConsHeight);
+                Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
                 //IEnumerable<int> validLeft = Enumerable.Range(Space, OrigConsWidth - 2 * Space);
@@ -149,11 +149,11 @@ namespace GHGameOfLife
                 Console.ForegroundColor = MenuText.Info_FG;
 
 
-                int positionPrintRow = Space - 3;
+                int positionPrintRow = MenuText.Space - 3;
 
                 MenuText.PrintCreationControls();
 
-                int blinkLeft = OrigConsWidth + 5;
+                int blinkLeft = GoL.OrigConsWidth + 5;
                 int charLeft = blinkLeft + 1;
                 int extraTop = 2;
 
@@ -174,9 +174,9 @@ namespace GHGameOfLife
                 while (!exit)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    MenuText.ClearLine(Space - 3);
-                    string positionStr = String.Format("Current position: ({0},{1})", CurTop - Space, CurLeft - Space);
-                    Console.SetCursorPosition(OrigConsWidth / 2 - positionStr.Length / 2, positionPrintRow);
+                    MenuText.ClearLine(MenuText.Space - 3);
+                    string positionStr = String.Format("Current position: ({0},{1})", CurTop - MenuText.Space, CurLeft - MenuText.Space);
+                    Console.SetCursorPosition(GoL.OrigConsWidth / 2 - positionStr.Length / 2, positionPrintRow);
                     Console.Write(positionStr);
                     Console.SetCursorPosition(0, 0);
 
@@ -240,7 +240,7 @@ namespace GHGameOfLife
                         if (pressed == ConsoleKey.Spacebar)
                         {
                             Console.SetCursorPosition(CurLeft, CurTop);
-                            bool boardVal = !tempBoard[CurTop - Space, CurLeft - Space];
+                            bool boardVal = !tempBoard[CurTop - MenuText.Space, CurLeft - MenuText.Space];
 
                             if (boardVal)
                             {
@@ -254,7 +254,7 @@ namespace GHGameOfLife
 
                             }
 
-                            tempBoard[CurTop - Space, CurLeft - Space] = boardVal;
+                            tempBoard[CurTop - MenuText.Space, CurLeft - MenuText.Space] = boardVal;
                         }
 
                         /*
@@ -512,17 +512,17 @@ namespace GHGameOfLife
                                     Console.SetCursorPosition(c, r);
                                     if (smallPopVals[r - CurTop][c - CurLeft])
                                     {
-                                        if (tempBoard[r - Space, c - Space])
+                                        if (tempBoard[r - MenuText.Space, c - MenuText.Space])
                                         {
                                             Console.ForegroundColor = MenuText.Default_FG;
                                             Console.Write('*');
-                                            tempBoard[r - Space, c - Space] = false;
+                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = false;
                                         }
                                         else
                                         {
                                             Console.ForegroundColor = MenuText.Builder_FG;
                                             Console.Write('█');
-                                            tempBoard[r - Space, c - Space] = true;
+                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = true;
                                         }
                                     }
                                 }
@@ -558,14 +558,14 @@ namespace GHGameOfLife
                 }
 
                 FillBoard(popString.ToString());
-                Console.SetWindowSize(OrigConsWidth, OrigConsHeight);
-                Console.SetBufferSize(OrigConsWidth, OrigConsHeight);
+                Console.SetWindowSize(GoL.OrigConsWidth, GoL.OrigConsHeight);
+                Console.SetBufferSize(GoL.OrigConsWidth, GoL.OrigConsHeight);
 
                 MenuText.ClearUnderBoard();
 
                 Console.ForegroundColor = MenuText.Default_FG;
                 MenuText.ClearLine(positionPrintRow);
-                IsInitialized = true;
+                GoL.IsInitialized = true;
             }
 //------------------------------------------------------------------------------
             /// <summary>
@@ -577,8 +577,8 @@ namespace GHGameOfLife
             {
                 string[] popByLine = Regex.Split(pop, "\r\n");
 
-                int midRow = OrigConsHeight / 2;
-                int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = GoL.OrigConsHeight / 2;
+                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
 
                 int rowsNum = popByLine.Count();
                 int colsNum = popByLine[0].Length;
@@ -672,8 +672,8 @@ namespace GHGameOfLife
             {
                 bool[][] rotated = GenericHelp<bool>.Rotate90(popVals);
 
-                int midRow = OrigConsHeight / 2;
-                int midCol = ((OrigConsWidth / 2)) + (OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = GoL.OrigConsHeight / 2;
+                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
 
                 int rowsNum = rotated.Length;
                 int colsNum = rotated[0].Length;
@@ -761,7 +761,7 @@ namespace GHGameOfLife
             /// <param name="game">The board to start with</param>
             public static void RunIt(GoL game)
             {
-                if (!IsInitialized)
+                if (!GoL.IsInitialized)
                 {
                     Console.ForegroundColor = MenuText.Info_FG;
                     Console.Write("ERROR");
@@ -804,7 +804,7 @@ namespace GHGameOfLife
                         bool exitPauseLoop = false;
                         paused = true;
                         MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                        while (/*paused*/!exitPauseLoop)
+                        while (!exitPauseLoop)
                         {
                             while (!Console.KeyAvailable)
                             {
@@ -828,7 +828,6 @@ namespace GHGameOfLife
                             {
                                 continuous = !continuous;
                                 exitPauseLoop = true;
-                                //paused = !paused;
                                 MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
                             }
                             else if (pauseEntry == ConsoleKey.W) // toggle wrapping
@@ -849,6 +848,10 @@ namespace GHGameOfLife
                                 if (Curr_Speed_Index <= 3)
                                     Curr_Speed_Index += 1;
                                 MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
+                            }
+                            else if (pauseEntry == ConsoleKey.S)
+                            {
+                                SaveBoard(GoL.Rows, GoL.Cols, GoL.Board);
                             }
                         }
                     }
@@ -881,6 +884,11 @@ namespace GHGameOfLife
                         MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
                     }
 
+                    if (pressed == ConsoleKey.S)
+                    {
+                        SaveBoard(GoL.Rows,GoL.Cols,GoL.Board);
+                    }
+
                     if (pressed == ConsoleKey.Escape)
                     {
                         go = false;
@@ -907,8 +915,8 @@ namespace GHGameOfLife
                     return MenuText.FileError.Contents;
                 }
 
-                // Checks if the file is empty or too large ( > 10KB )
-                if (file.Length == 0 || file.Length > 10240)
+                // Checks if the file is empty or too large ( > 20KB )
+                if (file.Length == 0 || file.Length > 20480)
                 {
                     return MenuText.FileError.Size;
                 }
@@ -923,11 +931,11 @@ namespace GHGameOfLife
                     int cols = fileByLine[0].Length;
 
                     // Error if there are more lines than the board can hold
-                    if (rows >= Rows)
+                    if (rows > GoL.Rows)
                         return MenuText.FileError.Length;
                     // Error if the first line is too wide,
                     // 'cols' also used to check against all other lines
-                    if (cols >= Cols)
+                    if (cols > GoL.Cols)
                         return MenuText.FileError.Width;
 
                     foreach (string line in fileByLine)
@@ -942,8 +950,6 @@ namespace GHGameOfLife
                         {
                             return MenuText.FileError.Contents;
                         }
-                        // Update cols to compare to the next line
-                        cols = line.Length;
                     }
                 }
 
@@ -989,8 +995,8 @@ namespace GHGameOfLife
             {
                 string[] popByLine = Regex.Split(startingPop, "\r\n");
 
-                int midRow = Rows / 2;
-                int midCol = Cols / 2;
+                int midRow = GoL.Rows / 2;
+                int midCol = GoL.Cols / 2;
 
                 int rowsNum = popByLine.Count();
                 int colNum = popByLine[0].Length;
@@ -1028,9 +1034,9 @@ namespace GHGameOfLife
                         int popCol = c - colLow;
                         //Board[r, c] = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
                         if ((int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol)) == 0)
-                            Board[r, c] = false;
+                            GoL.Board[r, c] = false;
                         else
-                            Board[r, c] = true;
+                            GoL.Board[r, c] = true;
                     }
                 }
             }
@@ -1088,8 +1094,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
             public static void CalcBuilderBounds()
             {
-                validLeft = Enumerable.Range(Space, OrigConsWidth - 2 * Space);
-                validTop = Enumerable.Range(Space, OrigConsHeight - 2 * Space);
+                validLeft = Enumerable.Range(MenuText.Space, GoL.OrigConsWidth - 2 * MenuText.Space);
+                validTop = Enumerable.Range(MenuText.Space, GoL.OrigConsHeight - 2 * MenuText.Space);
             }
 //------------------------------------------------------------------------------
         }  // end class GoLHelper

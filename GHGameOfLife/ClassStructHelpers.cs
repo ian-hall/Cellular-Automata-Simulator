@@ -71,58 +71,29 @@ namespace GHGameOfLife
         }
     } //end struct
 ///////////////////////////////////////////////////////////////////////////////
-    class ConsSize
+    class BoardSize
     {
-        private int _rows;
-        private int _cols;
-        public double Ratio { get; private set; }
+        public int Rows;
+        public int Cols;
 
-        public ConsSize(int c, int r)
+        public BoardSize(int c, int r)
         {
-            _cols = c;
-            _rows = r;
-            calcRatio();
+            Rows = r;
+            Cols = c;
         }
 
-        public int Cols
+        public double Ratio
         {
             get
             {
-                return this._cols;
-            }
-            set
-            {
-                _cols = value;
-                calcRatio();
-            }
-        }
-
-        public int Rows
-        {
-            get
-            {
-                return this._rows;
-            }
-            set
-            {
-                _rows = value;
-                calcRatio();
+                return 1.0 * Cols / Rows;
             }
         }
 
         public override string ToString()
         {
-            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", _cols, _rows, Ratio);
+            return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", Cols, Rows, Ratio);
         }
-
-        private void calcRatio()
-        {
-            if (_cols < 1 || _rows < 1)
-                Ratio = 1.0;
-            else
-                Ratio = 1.0 * _cols / _rows;
-        }
-
-    } // End CLass
+    } // End Class
 ///////////////////////////////////////////////////////////////////////////////
 }

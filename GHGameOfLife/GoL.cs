@@ -31,7 +31,6 @@ namespace GHGameOfLife
         private int Generation;
         private const char Live_Cell = '☺';
         //private const char _DeadCell = ' ';
-        private Random Rand = new Random();
         private bool Wrap { get; set; }
         
 
@@ -48,7 +47,7 @@ namespace GHGameOfLife
         private static int OrigConsHeight;
         private static int OrigConsWidth;
 
-        private static int Space = MenuText.Space;
+        //private static int Space = MenuText.Space;
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -181,7 +180,7 @@ namespace GHGameOfLife
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Board_FG;
 
-            Console.SetCursorPosition(0, Space);
+            Console.SetCursorPosition(0, MenuText.Space);
             StringBuilder sb = new StringBuilder();
             for (int r = 0; r < Rows; r++)
             {
