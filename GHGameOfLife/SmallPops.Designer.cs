@@ -61,6 +61,19 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 001100
+        ///010010
+        ///100001
+        ///010010
+        ///001100.
+        /// </summary>
+        internal static string Circle {
+            get {
+                return ResourceManager.GetString("Circle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 010
         ///001
         ///111.
@@ -68,30 +81,6 @@ namespace GHGameOfLife {
         internal static string Glider {
             get {
                 return ResourceManager.GetString("Glider", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 111
-        ///100
-        ///010.
-        /// </summary>
-        internal static string Glider_U {
-            get {
-                return ResourceManager.GetString("Glider_U", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 001100
-        ///010010
-        ///100001
-        ///010010
-        ///001100.
-        /// </summary>
-        internal static string small {
-            get {
-                return ResourceManager.GetString("small", resourceCulture);
             }
         }
         
@@ -104,18 +93,6 @@ namespace GHGameOfLife {
         internal static string Smallship {
             get {
                 return ResourceManager.GetString("Smallship", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 10010
-        ///00001
-        ///10001
-        ///01111.
-        /// </summary>
-        internal static string Smallship_R {
-            get {
-                return ResourceManager.GetString("Smallship_R", resourceCulture);
             }
         }
     }

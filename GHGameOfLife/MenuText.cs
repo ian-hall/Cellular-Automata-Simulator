@@ -50,7 +50,7 @@ namespace GHGameOfLife
         public const string Create_Ctrl2 = "[SPACE] Add/Remove cell";
         public const string Create_Ctrl3 = "[ENTER] Start Game";
         public const string Create_Ctrl4 = "[S] Save board";
-        public const string Create_Ctrl5 = "[C] Single Cells";
+        public const string Create_Ctrl5 = "[C] Cancel pop mode";
         //public const int    NCreate_Ctrl = 5;
         
 
@@ -299,7 +299,7 @@ namespace GHGameOfLife
                     errorStr = "No file loaded";
                     break;
                 case FileError.Size:
-                    errorStr = "File larger than 10KB";
+                    errorStr = "File either empty or larger than 20KB";
                     break;
                 case FileError.Width:
                     errorStr = "Lines are too long";

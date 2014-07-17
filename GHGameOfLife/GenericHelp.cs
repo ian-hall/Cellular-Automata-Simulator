@@ -26,6 +26,26 @@
             return rotatedVals;
         }
 //-----------------------------------------------------------------------------
+        /// <summary>
+        /// Mirrors the values in a 2d jagged array
+        /// </summary>
+        /// <param name="oldVals">The 2d jagged array to be mirrored</param>
+        /// <returns>A new jagged array with the mirrored values</returns>
+        public static T[][] Mirror(T[][] oldVals)
+        {
+            T[][] rotatedVals = new T[oldVals.Length][];
+            for (int r = 0; r < oldVals.Length; r++)
+            {
+                rotatedVals[r] = new T[oldVals[r].Length];
+                for (int c = oldVals[r].Length - 1; c >= 0; c--)
+                {
+                    rotatedVals[r][oldVals[r].Length - 1 - c] = oldVals[r][c];
+                }
+            }
+            return rotatedVals;
+        }
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
     } //End Class
 ///////////////////////////////////////////////////////////////////////////////
 }
