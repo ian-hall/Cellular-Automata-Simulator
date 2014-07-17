@@ -241,11 +241,11 @@ namespace GHGameOfLife
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write("{0,-25}{1,-25}{2,-12}{3,-12}",Create_Ctrl1,Create_Ctrl4,Create_Ctrl7,Create_Ctrl10);
+            Console.Write("{0,-25}{1,-25}{2,-20}{3,-20}",Create_Ctrl1,Create_Ctrl4,Create_Ctrl7,Create_Ctrl10);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}{2,-12}",Create_Ctrl2, Create_Ctrl5,Create_Ctrl8);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl2, Create_Ctrl5,Create_Ctrl8);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}{2,-12}",Create_Ctrl3, Create_Ctrl6,Create_Ctrl9);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl3, Create_Ctrl6,Create_Ctrl9);
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
