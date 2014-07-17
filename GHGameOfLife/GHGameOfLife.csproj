@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GHGameOfLife</RootNamespace>
     <AssemblyName>GHGameOfLife</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -80,6 +81,8 @@
     <None Include="Resources\sparky.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Acorn.txt" />
+    <None Include="Resources\BlockLayer.txt" />
     <Content Include="Resources\glider%28down%29.txt" />
     <Content Include="Resources\glider%28up%29.txt" />
     <Content Include="Resources\small.txt" />

@@ -32,7 +32,7 @@ namespace GHGameOfLife
         enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy
-        static int Min_Cols = 90;
+        static int Min_Cols = 100;
         static int Min_Rows = 30;
         // Don't go below these values or the text will be screwy
 

@@ -121,10 +121,13 @@
   <data name="Glider" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\glider(down).txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="Circle" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>resources\small.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-  </data>
   <data name="Smallship" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\smallship(left).txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Acorn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Acorn.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="BlockLayer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BlockLayer.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

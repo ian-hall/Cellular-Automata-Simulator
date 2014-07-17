@@ -61,15 +61,26 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 001100
-        ///010010
-        ///100001
-        ///010010
-        ///001100.
+        ///   Looks up a localized string similar to 0100000
+        ///0001000
+        ///1100111.
         /// </summary>
-        internal static string Circle {
+        internal static string Acorn {
             get {
-                return ResourceManager.GetString("Circle", resourceCulture);
+                return ResourceManager.GetString("Acorn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 11101
+        ///10000
+        ///00011
+        ///01101
+        ///10101.
+        /// </summary>
+        internal static string BlockLayer {
+            get {
+                return ResourceManager.GetString("BlockLayer", resourceCulture);
             }
         }
         

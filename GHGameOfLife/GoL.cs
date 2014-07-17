@@ -13,19 +13,10 @@ namespace GHGameOfLife
     /// This class pretty much does everything. It sets up the console, 
     /// fills in the initial pop from a file or randomly, and then 
     /// does all the checking for living/dying of the population.
-    /// TODO: Change around constructors
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
     partial class GoL
     {
-        /*
-        private struct Rect
-        {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
-        }*/
 
         private static bool[,] Board;
         private int Generation;
@@ -33,21 +24,11 @@ namespace GHGameOfLife
         //private const char _DeadCell = ' ';
         private bool Wrap { get; set; }
         
-
-        /*
-        private int Used_Rows;
-        private int Used_Cols;
-        private int OrigConsHeight;
-        private int OrigConsWidth;
-         */
-
         private static bool IsInitialized;
         private static int Rows;
         private static int Cols;
         private static int OrigConsHeight;
         private static int OrigConsWidth;
-
-        //private static int Space = MenuText.Space;
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
