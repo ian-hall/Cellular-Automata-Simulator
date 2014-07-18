@@ -12,8 +12,6 @@ namespace GHGameOfLife
     {
         /* MESSAGES TO ADD:
          * Resize screen from main menu
-         * Load small population from user build screen
-         *      Rotate loaded pop
         */ 
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG       = ConsoleColor.Red;
@@ -43,13 +41,20 @@ namespace GHGameOfLife
         public const string Run_Ctrl3 = "[ESC] Exit";
         public const string Run_Ctrl4 = "[+/-] Speed adjust";
         public const string Run_Ctrl5 = "[W] Toggle wrapping";
-        public const int    NRun_Ctrl = 5;
+        public const string Run_Ctrl6 = "[S] Save board";
+        //public const int    NRun_Ctrl = 6;
 
-        public const string Create_Ctrl1 = "Arrow keys to move cursor";
-        public const string Create_Ctrl2 = "[SPACE] Add/Remove cell";
+        public const string Create_Ctrl1 = "[↑|↓|←|→] Move cursor";
+        public const string Create_Ctrl2 = "[SPACE] Add/Remove cells";
         public const string Create_Ctrl3 = "[ENTER] Start Game";
         public const string Create_Ctrl4 = "[S] Save board";
-        public const int    NCreate_Ctrl = 4;
+        public const string Create_Ctrl5 = "[C] Cancel pop mode";
+        public const string Create_Ctrl6 = "[Ctrl+[#]] Mirror pop";
+        public const string Create_Ctrl7 = "[1] Glider";
+        public const string Create_Ctrl8 = "[2] Ship";
+        public const string Create_Ctrl9 = "[3] Acorn";
+        public const string Create_Ctrl10 = "[4] Block Layer";
+        //public const int    NCreate_Ctrl = 10;
         
 
         public static int Window_Center; // Vertical center of the console
@@ -79,12 +84,6 @@ namespace GHGameOfLife
             {
                 Res_Names.Add(res.Key.ToString());
             }
-
-            /*
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);*/
-
-            //Initialized = true;
         }
 //------------------------------------------------------------------------------
         public static void ReInitialize()
@@ -112,7 +111,7 @@ namespace GHGameOfLife
         /// Prints the main menu
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintMainMenu(/*out int numChoices*/)
+        public static int PrintMainMenu()
         {
             ClearAllInBoarder();
 
@@ -135,7 +134,6 @@ namespace GHGameOfLife
             Console.Write(Menu_Choice4);
             Console.SetCursorPosition(Left_Align + 4, ++curRow);
             Console.Write(Menu_Choice5);
-            //numChoices = 5;
             return (++curRow);
         }
 //------------------------------------------------------------------------------
@@ -176,20 +174,30 @@ namespace GHGameOfLife
             return (++curRow);
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints the controls for controling the game while running
+        /// </summary>
         public static void PrintRunControls()
         {
             Console.ForegroundColor = MenuText.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl1,Run_Ctrl4));
+            Console.Write("{0,-25}{1,-25}",Run_Ctrl1,Run_Ctrl4);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}",Run_Ctrl2,Run_Ctrl5));
+            Console.Write("{0,-25}{1,-25}",Run_Ctrl2,Run_Ctrl5);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(Run_Ctrl3);
+            Console.Write("{0,-25}{1,-25}",Run_Ctrl3,Run_Ctrl6);
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints the game status while running
+        /// </summary>
+        /// <param name="running"></param>
+        /// <param name="paused"></param>
+        /// <param name="wrapping"></param>
+        /// <param name="speed"></param>
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
@@ -224,20 +232,26 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints menu when user is building a population
+        /// </summary>
         public static void PrintCreationControls()
         {
             Console.ForegroundColor = MenuText.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write(Create_Ctrl1);
+            Console.Write("{0,-25}{1,-25}{2,-20}{3,-20}",Create_Ctrl1,Create_Ctrl4,Create_Ctrl7,Create_Ctrl10);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(String.Format("{0,-25}{1,-20}", Create_Ctrl2, Create_Ctrl4));
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl2, Create_Ctrl5,Create_Ctrl8);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write(Create_Ctrl3);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl3, Create_Ctrl6,Create_Ctrl9);
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints messages to prompt for another round
+        /// </summary>
         public static void PromptForAnother()
         {
             ClearAllInBoarder();
@@ -303,7 +317,7 @@ namespace GHGameOfLife
                     errorStr = "No file loaded";
                     break;
                 case FileError.Size:
-                    errorStr = "File larger than 10KB";
+                    errorStr = "File either empty or larger than 20KB";
                     break;
                 case FileError.Width:
                     errorStr = "Lines are too long";
