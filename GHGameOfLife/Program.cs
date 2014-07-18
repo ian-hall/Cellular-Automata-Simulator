@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,20 +13,12 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-        // Imports and junk for resizing the window
-        [DllImport("user32.dll", EntryPoint = "SetWindowPos")]
-        public static extern IntPtr SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int Y, int cx, int cy, int wFlags);
-
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(IntPtr hWnd, out Rect lpRect);
-
+        //Garbage for resizing
         const short SWP_NOSIZE = 0x0001;
         const short SWP_NOZORDER = 0x0004;
         const int SWP_SHOWWINDOW = 0x0040;
         static IntPtr HWND_TOPMOST = new IntPtr(-1);
-        // garbage
+
 
         enum PopType { Random, File, Premade, Build };
 
@@ -87,15 +78,12 @@ namespace GHGameOfLife
 
                 Console.SetWindowSize(1, 1);
                 Console.SetWindowPosition(0, 0);
-                //Console.SetBufferSize(1, 1);
                 System.Threading.Thread.Sleep(5);
-                //Console.SetCursorPosition(0, 0);
-                //Console.WriteLine("Testing Process: {0} {1}", p.ProcessName, p.MainWindowHandle);
-                GetWindowRect(currentHandle, out smallRect);
+                NativeMethods.GetWindowRect(currentHandle, out smallRect);
                 Console.SetWindowSize(initConsWidth,initConsHeight);
                 Console.SetBufferSize(initBuffWidth, initBuffHeight);
                 System.Threading.Thread.Sleep(5);
-                GetWindowRect(currentHandle, out bigRect);
+                NativeMethods.GetWindowRect(currentHandle, out bigRect);
                 //Console.WriteLine("SR:{0}\nBR:{1}", smallRect, bigRect);                
 
                 if (smallRect.CompareTo(bigRect) < 0)
@@ -109,10 +97,8 @@ namespace GHGameOfLife
             if (Current_Proc_Handle == IntPtr.Zero)
             {
                 Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-                //Current_Proc = Process.GetCurrentProcess();
             }
-            //Console.WriteLine("Using process: {0}", Current_Proc);
-            //Console.ReadLine();
+
             InitializeConsole();
             bool exit = false;
             do
@@ -607,12 +593,12 @@ namespace GHGameOfLife
             
             //IntPtr windowHandle = Current_Proc.MainWindowHandle;
             Rect consRect;
-            GetWindowRect(Current_Proc_Handle, out consRect);
+            NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
             if (!consRect.IsZero())
             {
                 while ((consRect.Bottom - consRect.Top) < 100)
                 {
-                    GetWindowRect(Current_Proc_Handle, out consRect);
+                    NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
                 }
             }
 
@@ -620,7 +606,7 @@ namespace GHGameOfLife
             //int consHeight = consRect.Bottom - consRect.Top;
             int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
             int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
-            SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+            NativeMethods.SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 
             /*
             ConsoleTraceListener ctl = new ConsoleTraceListener(true);
