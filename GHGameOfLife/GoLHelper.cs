@@ -23,7 +23,7 @@ namespace GHGameOfLife
         private static class GoLHelper
         {
             private static int[] Speeds = { 132, 100, 66, 50, 33 };
-            private static int Curr_Speed_Index = 2; //Start at a 66ms wait
+            private static int Curr_Speed_Index = 2;
             private static IEnumerable<int> validLeft;
             private static IEnumerable<int> validTop;
             private enum SmallPops { None, Glider, Ship, Acorn, BlockLay };

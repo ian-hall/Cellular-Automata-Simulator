@@ -10,18 +10,18 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     static class MenuText
     {
-        /* MESSAGES TO ADD:
-         * Resize screen from main menu
-        */ 
+        // TODO: Change this to be less ugly maybe?
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
-        public const ConsoleColor Info_FG       = ConsoleColor.Red;
-        public const ConsoleColor Default_BG    = ConsoleColor.Black;
-        public const ConsoleColor Default_FG    = ConsoleColor.White;
-        public const ConsoleColor Board_FG      = ConsoleColor.White;
-        public const ConsoleColor Builder_FG    = ConsoleColor.Cyan;
+        public const ConsoleColor Info_FG    = ConsoleColor.Red;
+        public const ConsoleColor Default_BG = ConsoleColor.Black;
+        public const ConsoleColor Default_FG = ConsoleColor.White;
+        public const ConsoleColor Board_FG   = ConsoleColor.White;
+        public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
         
         public const string Welcome      = "Welcome to the GAME OF LIFE!!!!";
         public const string Choose_Msg   = "Please choose an option!";
+
+        public const string ChangeSize   = "[Ctrl + [+/-]] Change board size";
         
         public const string Menu_Choice1 = "1) Random population";
         public const string Menu_Choice2 = "2) Load population from a file";
@@ -33,10 +33,10 @@ namespace GHGameOfLife
         public const string Prompt       = "Your choice: ";
         public const string Err          = "**Invalid entry**";
 
-        public const string Load_Rand   = "Loading random pop.";
-        public const string Enter       = "Press ENTER to confirm";
+        public const string Load_Rand    = "Loading random pop.";
+        public const string Enter        = "Press ENTER to confirm";
 
-        public const string Run_Ctrl1 = "[SPACE] Get next/Pause";
+        public const string Run_Ctrl1 = "[SPACE] Step/Pause";
         public const string Run_Ctrl2 = "[R] Toggle running";
         public const string Run_Ctrl3 = "[ESC] Exit";
         public const string Run_Ctrl4 = "[+/-] Speed adjust";
@@ -49,15 +49,17 @@ namespace GHGameOfLife
         public const string Create_Ctrl3 = "[ENTER] Start Game";
         public const string Create_Ctrl4 = "[S] Save board";
         public const string Create_Ctrl5 = "[C] Cancel pop mode";
-        public const string Create_Ctrl6 = "[Ctrl+[#]] Mirror pop";
-        public const string Create_Ctrl7 = "[1] Glider";
-        public const string Create_Ctrl8 = "[2] Ship";
-        public const string Create_Ctrl9 = "[3] Acorn";
-        public const string Create_Ctrl10 = "[4] Block Layer";
-        //public const int    NCreate_Ctrl = 10;
+        public const string Create_Ctrl6 = "[Ctrl + [#]] Mirror pop";
+        public const string Create_Ctrl7 = "[[#]] Rotate pop";
+        public const string Create_Ctrl8 = "[1] Glider";
+        public const string Create_Ctrl9 = "[2] Ship";
+        public const string Create_Ctrl10 = "[3] Acorn";
+        public const string Create_Ctrl11 = "[4] Block Layer";
+        
+        //public const int    NCreate_Ctrl = 11;
         
 
-        public static int Window_Center; // Vertical center of the console
+        public static int Window_Center; // Center Row
         public static int Left_Align;    // Align text with the Welcome message
         public static List<string> Res_Names;
 
@@ -98,7 +100,7 @@ namespace GHGameOfLife
         public static void ClearLine(int row)
         {
             Console.SetCursorPosition(0, row);
-            Console.Write("".PadRight(Console.WindowWidth));
+            Console.Write("".PadRight(Console.WindowWidth-1));
         }
 //------------------------------------------------------------------------------
         public static void ClearWithinBorder(int row)
@@ -115,6 +117,11 @@ namespace GHGameOfLife
         {
             ClearAllInBoarder();
 
+            Console.ForegroundColor = MenuText.Info_FG;
+            Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
+            Console.WriteLine(ChangeSize);
+
+            Console.ForegroundColor = MenuText.Default_FG;
             Console.SetCursorPosition(Left_Align, Welcome_Row);
             Console.Write(Welcome);
 
@@ -241,11 +248,13 @@ namespace GHGameOfLife
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write("{0,-25}{1,-25}{2,-20}{3,-20}",Create_Ctrl1,Create_Ctrl4,Create_Ctrl7,Create_Ctrl10);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl1,Create_Ctrl5,Create_Ctrl8);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl2, Create_Ctrl5,Create_Ctrl8);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl2, Create_Ctrl6,Create_Ctrl9);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl3, Create_Ctrl6,Create_Ctrl9);
+            Console.Write("{0,-25}{1,-25}{2,-20}",Create_Ctrl3, Create_Ctrl7,Create_Ctrl10);
+            Console.SetCursorPosition(5, ++printRow);
+            Console.Write("{0,-25}{1,-25}{2,-20}", Create_Ctrl4,"",Create_Ctrl11);
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
@@ -275,7 +284,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void ClearUnderBoard()
         {
-            for (int i = Console.WindowHeight - 4; i < Console.WindowHeight-1; i++)
+            for (int i = Console.WindowHeight - 4; i < Console.WindowHeight; i++)
             {
                 ClearLine(i);
             }

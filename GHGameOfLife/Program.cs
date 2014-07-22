@@ -585,13 +585,13 @@ namespace GHGameOfLife
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
-            //Center on the screen
+            // Center on the screen
             // Some kind of bug where the out Rect comes back with a height of 74,
             // So just loop until it gets the correct position.
             // Also check if the out Rect is zero before doing this to avoid
-            // an infinite loop.
+            // an infinite loop. This just means it is like, moving some other
+            // window arround
             
-            //IntPtr windowHandle = Current_Proc.MainWindowHandle;
             Rect consRect;
             NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
             if (!consRect.IsZero())
@@ -601,17 +601,9 @@ namespace GHGameOfLife
                     NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
                 }
             }
-
-            //int consWidth = consRect.Right - consRect.Left;
-            //int consHeight = consRect.Bottom - consRect.Top;
             int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
             int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
             NativeMethods.SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-
-            /*
-            ConsoleTraceListener ctl = new ConsoleTraceListener(true);
-            ctl.WriteLine(String.Format("Top Left: {0,-5} Top Right: {1,-5} Window Rect:{2}", widthOffset, heightOffset, consRect));
-             */ 
         }
 //------------------------------------------------------------------------------
     } // end class
