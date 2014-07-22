@@ -578,9 +578,9 @@ namespace GHGameOfLife
                     for (int c = 0; c < validLeft.Count(); c++)
                     {
                         if (tempBoard[r, c])
-                            popString.Append(1);
+                            popString.Append('O');
                         else
-                            popString.Append(0);
+                            popString.Append('.');
                     }
                     if (r != validTop.Count() - 1)
                         popString.AppendLine();
@@ -628,11 +628,11 @@ namespace GHGameOfLife
                         {
                             int popCol = c - tempBounds.Left;
 
-                            int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
+                            //int currPopVal = (int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol));
 
                             Console.SetCursorPosition(c, r);
                             Console.ForegroundColor = MenuText.Info_FG;
-                            if (currPopVal == 1)
+                            if (popByLine[popRow][popCol] == 'O')
                             {
                                 Console.Write('█');
                                 popVals[popRow][popCol] = true;
@@ -935,7 +935,7 @@ namespace GHGameOfLife
                             return MenuText.FileError.Uneven;
                         }
                         //Error of the line is not all 0 and 1
-                        if (!OnesAndZerosOnly(line))
+                        if (!ValidLine(line))
                         {
                             return MenuText.FileError.Contents;
                         }
@@ -947,19 +947,19 @@ namespace GHGameOfLife
             }
 //------------------------------------------------------------------------------
             /// <summary>
-            /// Makes sure there are only 1s and 0s in a given string, used to 
+            /// Makes sure there are only '.' and 'O' in a given string, used to 
             /// validate the file loaded in BuildFromFile()
             /// </summary>
             /// <param name="s">current string</param>
-            /// <returns>True if the string is 1s and 0s</returns>
-            private static bool OnesAndZerosOnly(string s)
+            /// <returns>True if the string is all '.' and 'O'</returns>
+            private static bool ValidLine(string s)
             {
                 try
                 {
                     for (int i = 0; i < s.Length; i++)
                     {
-                        int check = (int)Char.GetNumericValue(s[i]);
-                        if (check == 1 || check == 0)
+                        //int check = (int)Char.GetNumericValue(s[i]);
+                        if (s[i] == '.' || s[i] == 'O')
                         {
                             continue;
                         }
@@ -999,7 +999,14 @@ namespace GHGameOfLife
                         int popRow = r - bounds.Top;
                         int popCol = c - bounds.Left;
 
+                        /*
                         if ((int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol)) == 0)
+                            GoL.Board[r, c] = false;
+                        else
+                            GoL.Board[r, c] = true;
+                         */
+
+                        if (popByLine[popRow][popCol] == '.')
                             GoL.Board[r, c] = false;
                         else
                             GoL.Board[r, c] = true;
@@ -1049,9 +1056,9 @@ namespace GHGameOfLife
                         for (int c = saveBox.Left; c <= saveBox.Right; c++)
                         {
                             if (tempBoard[r, c])
-                                sb.Append('1');
+                                sb.Append('O');
                             else
-                                sb.Append('0');
+                                sb.Append('.');
                         }
                         if (r != saveBox.Bottom)
                             sb.AppendLine();

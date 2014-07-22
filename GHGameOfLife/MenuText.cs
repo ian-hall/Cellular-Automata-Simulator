@@ -317,7 +317,7 @@ namespace GHGameOfLife
             switch (err)
             {
                 case FileError.Contents:
-                    errorStr = "File not all 0s and 1s";
+                    errorStr = "File not all .'s and O's";
                     break;
                 case FileError.Length:
                     errorStr = "File has too many lines for current window";

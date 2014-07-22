@@ -350,6 +350,8 @@ namespace GHGameOfLife
                         validEntry = true;
                         break;
                     case 3:
+                        //Clear the line telling you how to change window size
+                        MenuText.ClearLine((Console.WindowHeight) - 4);
                         pop = PopType.Premade;
                         res = PromptForRes();
                         if (res != null)
