@@ -12,6 +12,21 @@
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -65,10 +80,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Resources\canadagoose.txt" />
-    <None Include="Resources\growbyone.txt" />
-    <None Include="Resources\twinbees.txt" />
-    <None Include="Resources\shipinbottle.txt" />
+    <EmbeddedResource Include="Resources\canadagoose.txt" />
+    <EmbeddedResource Include="Resources\growbyone.txt" />
+    <EmbeddedResource Include="Resources\twinbees.txt" />
+    <EmbeddedResource Include="Resources\shipinbottle.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LargePops.resx">
@@ -79,17 +94,31 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SmallPops.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Resources\sparky.txt" />
+    <EmbeddedResource Include="Resources\sparky.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Acorn.txt" />
-    <None Include="Resources\BlockLayer.txt" />
-    <Content Include="Resources\glider%28down%29.txt" />
-    <Content Include="Resources\glider%28up%29.txt" />
-    <Content Include="Resources\small.txt" />
-    <Content Include="Resources\smallship%28left%29.txt" />
-    <Content Include="Resources\smallship%28right%29.txt" />
-    <Content Include="Resources\wickstretcher.txt" />
+    <EmbeddedResource Include="Resources\Acorn.txt" />
+    <EmbeddedResource Include="Resources\BlockLayer.txt" />
+    <EmbeddedResource Include="Resources\glider%28down%29.txt" />
+    <EmbeddedResource Include="Resources\smallship%28left%29.txt" />
+    <EmbeddedResource Include="Resources\wickstretcher.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

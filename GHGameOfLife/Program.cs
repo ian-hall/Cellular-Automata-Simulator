@@ -333,7 +333,7 @@ namespace GHGameOfLife
                 else
                 {
                     Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 1);
-                    Console.Write(MenuText.Err);
+                    Console.Write(MenuText.Entry_Error);
                     continue;
                 }
 
@@ -350,6 +350,8 @@ namespace GHGameOfLife
                         validEntry = true;
                         break;
                     case 3:
+                        //Clear the line telling you how to change window size
+                        MenuText.ClearLine((Console.WindowHeight) - 4);
                         pop = PopType.Premade;
                         res = PromptForRes();
                         if (res != null)
@@ -369,7 +371,7 @@ namespace GHGameOfLife
                         return;
                     default:
                         Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 2);
-                        Console.Write(MenuText.Err);
+                        Console.Write(MenuText.Entry_Error);
                         validEntry = false;
                         break;
                 }
@@ -418,7 +420,7 @@ namespace GHGameOfLife
         private static string PromptForRes()
         {
             string retVal = null;
-            int numRes = MenuText.Res_Names.Count;
+            int numRes = MenuText.Large_Pops.Count;
             int resToLoad = -1;
 
             int numPrinted;
@@ -464,15 +466,15 @@ namespace GHGameOfLife
                 else
                 {
                     Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
-                    Console.Write(MenuText.Err);
+                    Console.Write(MenuText.Entry_Error);
                     continue;
                 }
 
             }
 
-            if (resToLoad < MenuText.Res_Names.Count)
+            if (resToLoad < MenuText.Large_Pops.Count)
             {
-                retVal = MenuText.Res_Names[resToLoad].ToString();
+                retVal = MenuText.Large_Pops[resToLoad].ToString();
             }
 
             Console.CursorVisible = false;
@@ -585,13 +587,13 @@ namespace GHGameOfLife
             Console.SetCursorPosition(0, 0);
             Console.Write("");
 
-            //Center on the screen
+            // Center on the screen
             // Some kind of bug where the out Rect comes back with a height of 74,
             // So just loop until it gets the correct position.
             // Also check if the out Rect is zero before doing this to avoid
-            // an infinite loop.
+            // an infinite loop. This just means it is like, moving some other
+            // window arround
             
-            //IntPtr windowHandle = Current_Proc.MainWindowHandle;
             Rect consRect;
             NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
             if (!consRect.IsZero())
@@ -601,17 +603,9 @@ namespace GHGameOfLife
                     NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
                 }
             }
-
-            //int consWidth = consRect.Right - consRect.Left;
-            //int consHeight = consRect.Bottom - consRect.Top;
             int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
             int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
             NativeMethods.SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-
-            /*
-            ConsoleTraceListener ctl = new ConsoleTraceListener(true);
-            ctl.WriteLine(String.Format("Top Left: {0,-5} Top Right: {1,-5} Window Rect:{2}", widthOffset, heightOffset, consRect));
-             */ 
         }
 //------------------------------------------------------------------------------
     } // end class

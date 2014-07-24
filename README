@@ -1,3 +1,2 @@
-You can load a file of 0's and 1's as a starting population, or default to a randomly filled board.
-There are also some preloaded populations you can choose from.
-Controls are displayed on the screen, unless they aren't.	
+You can load a file of '.''s and 'O''s as a starting population, start with a random board, choose from a couple of preloaded populations, or build your own starting population.
+Controls for the game are displayed on the screen, they are pretty self explanatory.
