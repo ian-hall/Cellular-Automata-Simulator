@@ -333,7 +333,7 @@ namespace GHGameOfLife
                 else
                 {
                     Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 1);
-                    Console.Write(MenuText.Err);
+                    Console.Write(MenuText.Entry_Error);
                     continue;
                 }
 
@@ -371,7 +371,7 @@ namespace GHGameOfLife
                         return;
                     default:
                         Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 2);
-                        Console.Write(MenuText.Err);
+                        Console.Write(MenuText.Entry_Error);
                         validEntry = false;
                         break;
                 }
@@ -420,7 +420,7 @@ namespace GHGameOfLife
         private static string PromptForRes()
         {
             string retVal = null;
-            int numRes = MenuText.Res_Names.Count;
+            int numRes = MenuText.Large_Pops.Count;
             int resToLoad = -1;
 
             int numPrinted;
@@ -466,15 +466,15 @@ namespace GHGameOfLife
                 else
                 {
                     Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
-                    Console.Write(MenuText.Err);
+                    Console.Write(MenuText.Entry_Error);
                     continue;
                 }
 
             }
 
-            if (resToLoad < MenuText.Res_Names.Count)
+            if (resToLoad < MenuText.Large_Pops.Count)
             {
-                retVal = MenuText.Res_Names[resToLoad].ToString();
+                retVal = MenuText.Large_Pops[resToLoad].ToString();
             }
 
             Console.CursorVisible = false;

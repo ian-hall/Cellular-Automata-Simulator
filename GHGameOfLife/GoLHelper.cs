@@ -56,21 +56,23 @@ namespace GHGameOfLife
                 MenuText.FileError errType = MenuText.FileError.Not_Loaded;
 
                 OpenFileDialog openWindow = new OpenFileDialog();
+                string startingPop = null;
                 if (openWindow.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = openWindow.FileName;
-                    errType = ValidateFile(filePath);
+                    errType = ValidateFile(filePath, out startingPop);
                 }
                 //no ELSE because it defaults to a file not loaded error
 
                 switch (errType)
                 {
-                    case MenuText.FileError.None:
-                        string startingPop;
-                        using (StreamReader reader = new StreamReader(openWindow.FileName))
-                        {
-                            startingPop = reader.ReadToEnd();
-                        }
+                    // startingPop will not be null if this case is called
+                    case MenuText.FileError.None:                        
+                        //string startingPop;
+                        //using (StreamReader reader = new StreamReader(openWindow.FileName))
+                        //{
+                        //    startingPop = reader.ReadToEnd();
+                        //}
                         FillBoard(startingPop);
                         break;
                     default:
@@ -85,7 +87,7 @@ namespace GHGameOfLife
                         Console.SetCursorPosition(welcomeLeft, windowCenter);
                         Console.Write(MenuText.Load_Rand);
                         Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                        Console.Write(MenuText.Enter);
+                        Console.Write(MenuText.Press_Enter);
 
                         bool keyPressed = false;
                         while (!keyPressed)
@@ -604,6 +606,7 @@ namespace GHGameOfLife
             /// <returns>Bounds of the pop loaded</returns>
             private static bool BuilderLoadPop(string pop, ref bool[][] popVals, ref Rect bounds)
             {
+                // \r\n because files were made in Windows and are loaded as a resource
                 string[] popByLine = Regex.Split(pop, "\r\n");
 
                 int midRow = GoL.OrigConsHeight / 2;
@@ -895,13 +898,14 @@ namespace GHGameOfLife
             /// </summary>
             /// <param name="filename">Path to a file to be checked</param>
             /// <param name="errType">The type of error returned</param>
-            private static MenuText.FileError ValidateFile(string filename)
+            private static MenuText.FileError ValidateFile(string filename, out string popToLoad)
             {
+                popToLoad = null;
                 // File should exist, but its good to make sure.
                 FileInfo file = new FileInfo(filename);
                 if (!file.Exists)
                 {
-                    return MenuText.FileError.Contents;
+                    return MenuText.FileError.Not_Loaded;
                 }
 
                 // Checks if the file is empty or too large ( > 20KB )
@@ -910,43 +914,59 @@ namespace GHGameOfLife
                     return MenuText.FileError.Size;
                 }
 
+                List<string> fileByLine = new List<string>();
                 using (StreamReader reader = new StreamReader(filename))
                 {
-                    string wholeFile = reader.ReadToEnd();
-                    string[] fileByLine = Regex.Split(wholeFile, "\r\n");
-
-
-                    int rows = fileByLine.Length;
-                    int cols = fileByLine[0].Length;
-
-                    // Error if there are more lines than the board can hold
-                    if (rows > GoL.Rows)
-                        return MenuText.FileError.Length;
-                    // Error if the first line is too wide,
-                    // 'cols' also used to check against all other lines
-                    if (cols > GoL.Cols)
-                        return MenuText.FileError.Width;
-
-                    foreach (string line in fileByLine)
+                    // New way to read all the lines for checking...
+                    // Skips the comments at the start of files downloaded
+                    // from (one of) the Life Lexicon website(s)
+                    while(!reader.EndOfStream)
                     {
-                        //Error if all lines are not the same width
-                        if (line.Length != cols)
-                        {
-                            return MenuText.FileError.Uneven;
-                        }
-                        //Error of the line is not all 0 and 1
-                        if (!ValidLine(line))
-                        {
-                            return MenuText.FileError.Contents;
-                        }
+                        string temp = reader.ReadLine();
+                        if( temp[0] != '!')
+                            fileByLine.Add(temp);
                     }
                 }
+                //string wholeFile = reader.ReadToEnd();
+                //string[] fileByLine = Regex.Split(wholeFile, Environment.NewLine);
 
+
+                int rows = fileByLine.Count;
+                int cols = fileByLine[0].Length;
+
+                // Error if there are more lines than the board can hold
+                if (rows > GoL.Rows)
+                    return MenuText.FileError.Length;
+                // Error if the first line is too wide,
+                // 'cols' also used to check against all other lines
+                if (cols > GoL.Cols)
+                    return MenuText.FileError.Width;
+
+                StringBuilder sb = new StringBuilder();
+                int count = 0;
+                foreach (string line in fileByLine)
+                {
+                    //Error if all lines are not the same width
+                    if (line.Length != cols)
+                    {
+                        return MenuText.FileError.Uneven;
+                    }
+                    //Error of the line is not all 0 and 1
+                    if (!ValidLine(line))
+                    {
+                        return MenuText.FileError.Contents;
+                    }
+                    
+                    sb.AppendLine(line);
+                }
+
+                popToLoad = sb.ToString();                
                 return MenuText.FileError.None;
 
             }
 //------------------------------------------------------------------------------
             /// <summary>
+            /// TODO: Change this again to accept more file formats
             /// Makes sure there are only '.' and 'O' in a given string, used to 
             /// validate the file loaded in BuildFromFile()
             /// </summary>
@@ -977,18 +997,22 @@ namespace GHGameOfLife
             }
 //------------------------------------------------------------------------------
             /// <summary>
+            /// TODO: Change this to accept more file formats
             /// Used by files to fill the game board, cente
             /// </summary>
             /// <param name="startingPop"></param>
             private static void FillBoard(string startingPop)
             {
-                string[] popByLine = Regex.Split(startingPop, "\r\n");
+                string[] popByLine = Regex.Split(startingPop, Environment.NewLine);
 
                 int midRow = GoL.Rows / 2;
                 int midCol = GoL.Cols / 2;
 
                 int rowsNum = popByLine.Count();
                 int colsNum = popByLine[0].Length;
+
+                if (popByLine.Last() == "")
+                    rowsNum -= 1;
                 
                 Rect bounds = Center(rowsNum, colsNum, midRow, midCol);
 
@@ -998,13 +1022,6 @@ namespace GHGameOfLife
                     {
                         int popRow = r - bounds.Top;
                         int popCol = c - bounds.Left;
-
-                        /*
-                        if ((int)Char.GetNumericValue(popByLine[popRow].ElementAt(popCol)) == 0)
-                            GoL.Board[r, c] = false;
-                        else
-                            GoL.Board[r, c] = true;
-                         */
 
                         if (popByLine[popRow][popCol] == '.')
                             GoL.Board[r, c] = false;
