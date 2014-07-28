@@ -61,9 +61,9 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0100000
-        ///0001000
-        ///1100111.
+        ///   Looks up a localized string similar to .O.....
+        ///...O...
+        ///OO..OOO.
         /// </summary>
         internal static string Acorn {
             get {
@@ -72,11 +72,11 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 11101
-        ///10000
-        ///00011
-        ///01101
-        ///10101.
+        ///   Looks up a localized string similar to OOO.O
+        ///O....
+        ///...OO
+        ///.OO.O
+        ///O.O.O.
         /// </summary>
         internal static string BlockLayer {
             get {
@@ -85,9 +85,9 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 010
-        ///001
-        ///111.
+        ///   Looks up a localized string similar to .O.
+        ///..O
+        ///OOO.
         /// </summary>
         internal static string Glider {
             get {
@@ -96,10 +96,10 @@ namespace GHGameOfLife {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 01001
-        ///10000
-        ///10001
-        ///11110.
+        ///   Looks up a localized string similar to .O..O
+        ///O....
+        ///O...O
+        ///OOOO..
         /// </summary>
         internal static string Smallship {
             get {
