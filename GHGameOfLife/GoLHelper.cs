@@ -130,7 +130,8 @@ namespace GHGameOfLife
             /// </summary>
             public static void BuildBoardUser()
             {
-                Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
+                //Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
+                Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
                 bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
@@ -166,7 +167,6 @@ namespace GHGameOfLife
 
                 Rect loadedPopBounds = new Rect();
                 bool popLoaderMode = false;
-                //bool smallPopLoaded = false;
                 SmallPops loadedPop = SmallPops.None;
                 bool[][] smallPopVals = new bool[0][];
 
@@ -606,10 +606,10 @@ namespace GHGameOfLife
             /// <returns>Bounds of the pop loaded</returns>
             private static bool BuilderLoadPop(string pop, ref bool[][] popVals, ref Rect bounds)
             {
-                string[] popByLine = Regex.Split(pop, Environment.NewLine);
+                string[] popByLine = Regex.Split(pop, "\r\n");
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = Console.BufferHeight/2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = popByLine.Count();
                 int colsNum = popByLine[0].Length;
@@ -661,8 +661,8 @@ namespace GHGameOfLife
             {
                 bool[][] rotated = GenericHelp<bool>.Rotate90(popVals);
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = Console.BufferHeight/2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = rotated.Length;
                 int colsNum = rotated[0].Length;
@@ -707,8 +707,8 @@ namespace GHGameOfLife
             {
                 bool[][] rotated = GenericHelp<bool>.Mirror(popVals);
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);
+                int midRow = Console.BufferHeight / 2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = rotated.Length;
                 int colsNum = rotated[0].Length;
@@ -949,7 +949,7 @@ namespace GHGameOfLife
                     {
                         return MenuText.FileError.Uneven;
                     }
-                    //Error of the line is not valid
+                    //Error of the line is not all 0 and 1
                     if (!ValidLine(line))
                     {
                         return MenuText.FileError.Contents;
@@ -1009,10 +1009,6 @@ namespace GHGameOfLife
                 int rowsNum = popByLine.Count();
                 int colsNum = popByLine[0].Length;
 
-                /* I somehow introduced a bug here where I'm getting a newline
-                 * at the end of the string when I am loading a file from the
-                 * user. This simply throws that line away. 
-                 */ 
                 if (popByLine.Last() == "")
                     rowsNum -= 1;
                 
@@ -1079,7 +1075,8 @@ namespace GHGameOfLife
                             else
                                 sb.Append('.');
                         }
-                        sb.AppendLine();
+                        if (r != saveBox.Bottom)
+                            sb.AppendLine();
                     }
                     File.WriteAllText(saveDia.FileName, sb.ToString());
                 }
