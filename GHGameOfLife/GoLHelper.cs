@@ -130,7 +130,8 @@ namespace GHGameOfLife
             /// </summary>
             public static void BuildBoardUser()
             {
-                Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
+                //Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
+                Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
                 bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
@@ -166,7 +167,6 @@ namespace GHGameOfLife
 
                 Rect loadedPopBounds = new Rect();
                 bool popLoaderMode = false;
-                //bool smallPopLoaded = false;
                 SmallPops loadedPop = SmallPops.None;
                 bool[][] smallPopVals = new bool[0][];
 
@@ -606,11 +606,10 @@ namespace GHGameOfLife
             /// <returns>Bounds of the pop loaded</returns>
             private static bool BuilderLoadPop(string pop, ref bool[][] popVals, ref Rect bounds)
             {
-                // \r\n because files were made in Windows and are loaded as a resource
                 string[] popByLine = Regex.Split(pop, "\r\n");
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = Console.BufferHeight/2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = popByLine.Count();
                 int colsNum = popByLine[0].Length;
@@ -662,8 +661,8 @@ namespace GHGameOfLife
             {
                 bool[][] rotated = GenericHelp<bool>.Rotate90(popVals);
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);  //Buffer is 2 times window size during building
+                int midRow = Console.BufferHeight/2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = rotated.Length;
                 int colsNum = rotated[0].Length;
@@ -708,8 +707,8 @@ namespace GHGameOfLife
             {
                 bool[][] rotated = GenericHelp<bool>.Mirror(popVals);
 
-                int midRow = GoL.OrigConsHeight / 2;
-                int midCol = ((GoL.OrigConsWidth / 2)) + (GoL.OrigConsWidth);
+                int midRow = Console.BufferHeight / 2;
+                int midCol = Console.BufferWidth - 25;
 
                 int rowsNum = rotated.Length;
                 int colsNum = rotated[0].Length;
@@ -943,7 +942,6 @@ namespace GHGameOfLife
                     return MenuText.FileError.Width;
 
                 StringBuilder sb = new StringBuilder();
-                int count = 0;
                 foreach (string line in fileByLine)
                 {
                     //Error if all lines are not the same width

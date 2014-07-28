@@ -80,10 +80,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <EmbeddedResource Include="Resources\canadagoose.txt" />
-    <EmbeddedResource Include="Resources\growbyone.txt" />
-    <EmbeddedResource Include="Resources\twinbees.txt" />
-    <EmbeddedResource Include="Resources\shipinbottle.txt" />
+    <None Include="Resources\canadagoose.txt" />
+    <None Include="Resources\growbyone.txt" />
+    <None Include="Resources\twinbees.txt" />
+    <None Include="Resources\shipinbottle.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LargePops.resx">
@@ -94,14 +94,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SmallPops.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\sparky.txt" />
+    <None Include="Resources\sparky.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Acorn.txt" />
-    <EmbeddedResource Include="Resources\BlockLayer.txt" />
-    <EmbeddedResource Include="Resources\glider%28down%29.txt" />
-    <EmbeddedResource Include="Resources\smallship%28left%29.txt" />
-    <EmbeddedResource Include="Resources\wickstretcher.txt" />
+    <None Include="Resources\Acorn.txt" />
+    <None Include="Resources\BlockLayer.txt" />
+    <None Include="Resources\glider%28down%29.txt" />
+    <None Include="Resources\smallship%28left%29.txt" />
+    <None Include="Resources\wickstretcher.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">

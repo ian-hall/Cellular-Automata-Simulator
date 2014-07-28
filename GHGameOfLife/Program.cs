@@ -135,7 +135,8 @@ namespace GHGameOfLife
         /// Initializes the console for display. 
         /// </summary>
         private static void InitializeConsole()
-        {           
+        {
+            MenuText mt = new MenuText();
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
@@ -248,7 +249,7 @@ namespace GHGameOfLife
             PopType pop = PopType.Random;
             string res = null;
 
-            int numChoices = MenuText.NMenu_Choice;
+            int numChoices = MenuText.Menu_Choices.Count();
             int currPromptRow = MenuText.PrintMainMenu();
             int choice = -1;
 
