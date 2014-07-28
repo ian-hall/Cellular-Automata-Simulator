@@ -30,10 +30,6 @@ namespace GHGameOfLife
         static int Current_Cols, Current_Rows;
         static int Max_Cols, Max_Rows;  
   
-        static IntPtr Current_Proc_Handle;
-        static Screen Primary_Screen;
-        static ScreenRes Primary_Res;
-
         static int Num_Sizes = 5;  // The amount of different sizes allowed
         static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
         static int Curr_Size_Index = 2; // Which size to default to, 2 is med
@@ -48,56 +44,7 @@ namespace GHGameOfLife
             int initConsHeight = Console.WindowHeight;            
 
             int[] initialValues = new int[] { initBuffWidth, initBuffHeight, 
-                                              initConsWidth, initConsHeight };
-
-            Primary_Screen = System.Windows.Forms.Screen.PrimaryScreen;
-            Primary_Res = new ScreenRes(Primary_Screen.Bounds.Width, Primary_Screen.Bounds.Height);
-
-            
-            //Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-            Console.SetCursorPosition(0, 0);
-            Console.Write("");
-            Process[] cmdProc = Process.GetProcesses();
-            Rect smallRect;
-            Rect bigRect;
-            foreach (Process p in cmdProc)
-            {
-                IntPtr currentHandle;
-
-                if (p.MainWindowHandle == IntPtr.Zero)
-                    continue;
-
-                try
-                {
-                    currentHandle = p.MainWindowHandle;
-                }
-                catch
-                {
-                    continue;
-                }
-
-                Console.SetWindowSize(1, 1);
-                Console.SetWindowPosition(0, 0);
-                System.Threading.Thread.Sleep(5);
-                NativeMethods.GetWindowRect(currentHandle, out smallRect);
-                Console.SetWindowSize(initConsWidth,initConsHeight);
-                Console.SetBufferSize(initBuffWidth, initBuffHeight);
-                System.Threading.Thread.Sleep(5);
-                NativeMethods.GetWindowRect(currentHandle, out bigRect);
-                //Console.WriteLine("SR:{0}\nBR:{1}", smallRect, bigRect);                
-
-                if (smallRect.CompareTo(bigRect) < 0)
-                {
-                    Current_Proc_Handle = currentHandle;
-                    break;
-                }
-
-            }
-
-            if (Current_Proc_Handle == IntPtr.Zero)
-            {
-                Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-            }
+                                              initConsWidth, initConsHeight };     
 
             InitializeConsole();
             bool exit = false;
@@ -151,7 +98,7 @@ namespace GHGameOfLife
             // Initialize with the smallest window size and build from there
             // keeping the window ratio near that of the max window size ratio
             // I am just moving the width because we have more play there than height
-            // Unless you have some weird portrait set up I guess then enjoy your
+            // unless you have some weird portrait set up I guess then enjoy your
             // small windows??
 
             BoardSize max = new BoardSize(Max_Cols, Max_Rows);
@@ -186,7 +133,7 @@ namespace GHGameOfLife
                 {
                     if ((cs.Cols + 1) >= Max_Cols)
                     {
-                        Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
+                        cs.Rows = Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
                     }
                     else
                     {
@@ -197,7 +144,7 @@ namespace GHGameOfLife
             }
 
 
-            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -490,7 +437,7 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -578,7 +525,7 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(ScreenRes primaryRes, BoardSize size)
+        private static void ajustWindowSize(BoardSize size)
         {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
@@ -586,27 +533,6 @@ namespace GHGameOfLife
             Console.SetBufferSize(size.Cols, size.Rows);
             Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
-            Console.Write("");
-
-            // Center on the screen
-            // Some kind of bug where the out Rect comes back with a height of 74,
-            // So just loop until it gets the correct position.
-            // Also check if the out Rect is zero before doing this to avoid
-            // an infinite loop. This just means it is like, moving some other
-            // window arround
-            
-            Rect consRect;
-            NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
-            if (!consRect.IsZero())
-            {
-                while ((consRect.Bottom - consRect.Top) < 100)
-                {
-                    NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
-                }
-            }
-            int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
-            int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
-            NativeMethods.SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
         }
 //------------------------------------------------------------------------------
     } // end class

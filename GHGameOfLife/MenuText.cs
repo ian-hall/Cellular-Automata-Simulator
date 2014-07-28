@@ -29,11 +29,12 @@ namespace GHGameOfLife
         public static string[] Run_Ctrls;
         public static string[] Menu_Choices; 
         public static string[] Create_Ctrls;
-        public static List<string> Small_Pops;
         
         public static int Window_Center; // Center Row
         public static int Left_Align;    // Align text with the Welcome message
+       
         public static List<string> Large_Pops;
+        public static List<string> Builder_Pops;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
@@ -49,7 +50,7 @@ namespace GHGameOfLife
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight/3 + 1;
             Large_Pops = new List<string>();
-            Small_Pops = new List<string>();
+            Builder_Pops = new List<string>();
 
             ResourceManager rm = GHGameOfLife.LargePops.ResourceManager;
             rm.IgnoreCase = true;
@@ -66,7 +67,7 @@ namespace GHGameOfLife
 
             foreach (DictionaryEntry res in all)
             {
-                Small_Pops.Add(res.Key.ToString());
+                Builder_Pops.Add(res.Key.ToString());
             }
 
 
@@ -271,8 +272,21 @@ namespace GHGameOfLife
             Console.Write("{0,-25}{1,-25}",Create_Ctrls[2], Create_Ctrls[6]);
             Console.SetCursorPosition(5, ++printRow);
             Console.Write("{0,-25}{1,-25}", Create_Ctrls[3],"");
-
-            Console.SetCursorPosition(55, printRow);
+            
+            //Each pop gets a space of 20 cols to write to
+            //We start at 55 because the above messages have a space of 50, plus the 5 for the border
+            //We allow 4 pops to display per column, with a max of 2 columns because of the min window
+            //size of 100
+            int count = 0;
+            printRow = printStart;
+            foreach(string popName in Builder_Pops)
+            {
+                printRow = printStart + (printRow % 4);
+                Console.SetCursorPosition(55 + (20*(count/4)), printRow);
+                Console.Write("[{0}]{1,-17}",Builder_Pops.IndexOf(popName)+1, popName);
+                ++count;
+                ++printRow;
+            }
              
             Console.ForegroundColor = MenuText.Default_FG;
         }

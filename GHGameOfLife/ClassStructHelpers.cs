@@ -17,6 +17,7 @@ namespace GHGameOfLife
         {
             return String.Format("T:{0,-5} B:{1,-5} L:{2,-5} R:{3,-5}", Top, Bottom, Left, Right);
         }
+
         public int Width
         {
             get
@@ -58,18 +59,6 @@ namespace GHGameOfLife
             return (Left == Right) && (Top == Bottom) && (Left == 0);
         }
     } // end struct
-///////////////////////////////////////////////////////////////////////////////
-    [StructLayout(LayoutKind.Sequential)]
-    public struct ScreenRes
-    {
-        public int Height, Width;
-
-        public ScreenRes(int w, int h)
-        {
-            this.Height = h;
-            this.Width = w;
-        }
-    } //end struct
 ///////////////////////////////////////////////////////////////////////////////
     class BoardSize
     {
