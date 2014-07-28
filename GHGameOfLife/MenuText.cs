@@ -339,7 +339,7 @@ namespace GHGameOfLife
                     errorStr = "File not all .'s and O's";
                     break;
                 case FileError.Length:
-                    errorStr = "File has too many lines for current window";
+                    errorStr = "Too many lines for current window size";
                     break;
                 case FileError.Not_Loaded:
                     errorStr = "No file loaded";
@@ -348,7 +348,7 @@ namespace GHGameOfLife
                     errorStr = "File either empty or larger than 20KB";
                     break;
                 case FileError.Width:
-                    errorStr = "Lines are too long";
+                    errorStr = "Too many characters per line";
                     break;
                 case FileError.Uneven:
                     errorStr = "Lines are not of even length";
