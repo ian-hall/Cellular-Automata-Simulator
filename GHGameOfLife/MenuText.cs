@@ -61,7 +61,7 @@ namespace GHGameOfLife
                 Large_Pops.Add(res.Key.ToString());
             }
 
-            rm = GHGameOfLife.SmallPops.ResourceManager;
+            rm = GHGameOfLife.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
             all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
 

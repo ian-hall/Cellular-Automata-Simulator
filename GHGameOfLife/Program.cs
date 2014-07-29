@@ -13,13 +13,6 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-        //Garbage for resizing
-        const short SWP_NOSIZE = 0x0001;
-        const short SWP_NOZORDER = 0x0004;
-        const int SWP_SHOWWINDOW = 0x0040;
-        static IntPtr HWND_TOPMOST = new IntPtr(-1);
-
-
         enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy

@@ -246,7 +246,7 @@ namespace GHGameOfLife
                                 break;
                             case ConsoleKey.D1:
                                 //string smallPop = GHGameOfLife.SmallPops.Glider;
-                                string smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[0]);
+                                string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[0]);
                                 if( BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds) )
                                 {
                                     loadedPop = MenuText.Builder_Pops[0];
@@ -262,7 +262,7 @@ namespace GHGameOfLife
                                 break;
                             case ConsoleKey.D2:
                                 //smallPop = GHGameOfLife.SmallPops.Smallship;
-                                smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[1]);
+                                smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[1]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
                                     loadedPop = MenuText.Builder_Pops[1];
@@ -278,7 +278,7 @@ namespace GHGameOfLife
                                 break;
                             case ConsoleKey.D3:
                                 //smallPop = GHGameOfLife.SmallPops.Acorn;
-                                smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[2]);
+                                smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[2]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
                                     loadedPop = MenuText.Builder_Pops[2];
@@ -294,7 +294,7 @@ namespace GHGameOfLife
                                 break;
                             case ConsoleKey.D4:
                                 //smallPop = GHGameOfLife.SmallPops.BlockLayer;
-                                smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[3]);
+                                smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[3]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
                                     loadedPop = MenuText.Builder_Pops[3];
@@ -404,7 +404,7 @@ namespace GHGameOfLife
                             case ConsoleKey.D1:
                                 if (loadedPop != MenuText.Builder_Pops[0])
                                 {
-                                    string smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[0]);
+                                    string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[0]);
                                     if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                     {
                                         loadedPop = MenuText.Builder_Pops[0];
@@ -444,7 +444,7 @@ namespace GHGameOfLife
                             case ConsoleKey.D2:
                                 if (loadedPop != MenuText.Builder_Pops[1])
                                 {
-                                    string smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[1]);
+                                    string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[1]);
                                     if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                     {
                                         loadedPop = MenuText.Builder_Pops[1];
@@ -484,7 +484,7 @@ namespace GHGameOfLife
                             case ConsoleKey.D3:
                                 if (loadedPop != MenuText.Builder_Pops[2])
                                 {
-                                    string smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[2]);
+                                    string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[2]);
                                     if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                     {
                                         loadedPop = MenuText.Builder_Pops[2];
@@ -524,7 +524,7 @@ namespace GHGameOfLife
                             case ConsoleKey.D4:
                                 if (loadedPop != MenuText.Builder_Pops[3])
                                 {
-                                    string smallPop = GHGameOfLife.SmallPops.ResourceManager.GetString(MenuText.Builder_Pops[3]);
+                                    string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[3]);
                                     if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                     {
                                         loadedPop = MenuText.Builder_Pops[3];
