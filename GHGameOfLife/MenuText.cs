@@ -43,7 +43,7 @@ namespace GHGameOfLife
         public static int Space = 5;         
 //------------------------------------------------------------------------------
         public static void Initialize()
-        {
+        {           
             Window_Center = Console.WindowHeight / 2;
             Left_Align = (Console.WindowWidth/2) - (Welcome.Length/2);
             
@@ -146,17 +146,6 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(Left_Align + 4, ++curRow);
                 Console.Write(choice);
             }
-            /*
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice1);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice2);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice3);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice4);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice5);*/
             return (++curRow);
         }
 //------------------------------------------------------------------------------

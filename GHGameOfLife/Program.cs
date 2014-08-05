@@ -76,6 +76,7 @@ namespace GHGameOfLife
         /// </summary>
         private static void InitializeConsole()
         {
+            Console.OutputEncoding = Encoding.UTF8;
             MenuText mt = new MenuText();
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;

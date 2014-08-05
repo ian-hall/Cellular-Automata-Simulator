@@ -245,7 +245,6 @@ namespace GHGameOfLife
                                 tempBoard[CurTop - MenuText.Space, CurLeft - MenuText.Space] = boardVal;
                                 break;
                             case ConsoleKey.D1:
-                                //string smallPop = GHGameOfLife.SmallPops.Glider;
                                 string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[0]);
                                 if( BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds) )
                                 {
@@ -261,7 +260,6 @@ namespace GHGameOfLife
                                 }
                                 break;
                             case ConsoleKey.D2:
-                                //smallPop = GHGameOfLife.SmallPops.Smallship;
                                 smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[1]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
@@ -277,7 +275,6 @@ namespace GHGameOfLife
                                 }
                                 break;
                             case ConsoleKey.D3:
-                                //smallPop = GHGameOfLife.SmallPops.Acorn;
                                 smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[2]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
@@ -293,7 +290,6 @@ namespace GHGameOfLife
                                 }
                                 break;
                             case ConsoleKey.D4:
-                                //smallPop = GHGameOfLife.SmallPops.BlockLayer;
                                 smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[3]);
                                 if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                                 {
@@ -916,12 +912,13 @@ namespace GHGameOfLife
                 using (StreamReader reader = new StreamReader(filename))
                 {
                     // New way to read all the lines for checking...
-                    // Skips the comments at the start of files downloaded
-                    // from (one of) the Life Lexicon website(s)
+                    // Skips lines starting with '!' or '#' because
+                    // (one of) the Life Lexicon website(s) uses them
+                    // as comments
                     while(!reader.EndOfStream)
                     {
-                        string temp = reader.ReadLine();
-                        if( temp[0] != '!')
+                        string temp = reader.ReadLine().Trim();
+                        if( temp[0] != '!' || temp[0] != '#')
                             fileByLine.Add(temp);
                     }
                 }
