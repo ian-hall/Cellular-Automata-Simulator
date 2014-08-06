@@ -76,7 +76,7 @@ namespace GHGameOfLife
         /// </summary>
         private static void InitializeConsole()
         {
-            Console.OutputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.Unicode;
             MenuText mt = new MenuText();
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;
@@ -363,22 +363,32 @@ namespace GHGameOfLife
         {
             string retVal = null;
             int numRes = MenuText.Large_Pops.Count;
-            int resToLoad = -1;
 
-            int numPrinted;
-            int promptRow = MenuText.PrintResourceMenu(out numPrinted);
+            int promptRow = 0;
+            int pageIndex = 0;
+            bool reprintPage = true;
+            bool lastPage = (MenuText.Large_Pops_Pages.Count == 1);
+            bool firstPage = true;
+            List<string> currPage = null;
             
             
-            bool validEntry = false;
-            while (!validEntry)
+            bool go = true;
+            while (go)
             {
-                MenuText.ClearWithinBorder(promptRow);
+                if( reprintPage )
+                {
+                    MenuText.ClearAllInBoarder();
+                    currPage = (List<string>)MenuText.Large_Pops_Pages[pageIndex];
+                    promptRow = MenuText.PrintResourceMenu(currPage,lastPage,firstPage);                   
+                }
+                reprintPage = false;
+
                 Console.SetCursorPosition(MenuText.Left_Align, promptRow);
-                Console.Write(MenuText.Prompt);
+                Console.Write(MenuText.Prompt);              
                 Console.CursorVisible = true;
 
                 string input = "";
-                int maxLen = 2; // Wont display more than 99 choices...
+                int maxLen = 1;
                 while (true)
                 {
                     char c = Console.ReadKey(true).KeyChar;
@@ -399,30 +409,57 @@ namespace GHGameOfLife
                     }
                 }
 
-                if (IsValidNumber(input,numPrinted))
+                switch (input)
                 {
-                    //Menu starts at 1, but resources start at 0
-                    resToLoad = Int32.Parse(input)-1;
-                    validEntry = true;
+                    case "1":
+                    case "2":
+                    case "3":
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        int keyVal = Int32.Parse(input);
+                        if (keyVal <= currPage.Count)
+                            retVal = MenuText.Large_Pops[(pageIndex * 7) + keyVal - 1];
+                        go = false;
+                        break;
+                    case "8":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        if (!firstPage)
+                        {
+                            --pageIndex;
+                            reprintPage = true;
+                            lastPage = false;
+                            if (pageIndex == 0)
+                                firstPage = true;
+                        }
+                        break;
+                    case "9":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        if (!lastPage)
+                        {
+                            ++pageIndex;
+                            reprintPage = true;
+                            firstPage = false;
+                            if (pageIndex == MenuText.Large_Pops_Pages.Count - 1)
+                                lastPage = true;
+                        }
+                        break;
+                    case "0":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        go = false;
+                        break;
+                    default:
+                        Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
+                        Console.Write(MenuText.Entry_Error);
+                        break;
                 }
-                else
-                {
-                    Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
-                    Console.Write(MenuText.Entry_Error);
-                    continue;
-                }
-
-            }
-
-            if (resToLoad < MenuText.Large_Pops.Count)
-            {
-                retVal = MenuText.Large_Pops[resToLoad].ToString();
             }
 
             Console.CursorVisible = false;
             return retVal;
         }
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
         /// <summary>
         /// Reinitialize the console after resizing
@@ -530,8 +567,6 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
     } // end class
-//------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 } 

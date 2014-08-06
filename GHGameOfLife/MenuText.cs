@@ -35,6 +35,7 @@ namespace GHGameOfLife
        
         public static List<string> Large_Pops;
         public static List<string> Builder_Pops;
+        public static ArrayList Large_Pops_Pages;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
@@ -55,10 +56,43 @@ namespace GHGameOfLife
             ResourceManager rm = GHGameOfLife.LargePops.ResourceManager;
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+            
+            List<string> testing = new List<string>();
+            Random rand = new Random();
 
             foreach (DictionaryEntry res in all)
             {
-                Large_Pops.Add(res.Key.ToString());
+                //Large_Pops.Add(res.Key.ToString());
+                testing.Add(res.Key.ToString());
+            }
+
+            int numToTest = 67;
+            for (int i = 0; i < numToTest; i++ )
+            {
+                Large_Pops.Add(testing[rand.Next(testing.Count)]);
+            }
+
+            Large_Pops_Pages = new ArrayList();
+
+            List<string> temp = new List<string>();
+            int count = 0;
+            int elementNum = 0;
+            bool addPage = false;
+            while (elementNum != Large_Pops.Count)
+            {
+                temp.Add(Large_Pops[elementNum]);
+                count++;
+                elementNum++;
+                if (count == 7 || elementNum == Large_Pops.Count)
+                    addPage = true;
+
+                if (addPage)
+                {
+                    Large_Pops_Pages.Add(temp);
+                    temp = new List<string>();
+                    addPage = false;
+                    count = 0;
+                }
             }
 
             rm = GHGameOfLife.BuilderPops.ResourceManager;
@@ -154,6 +188,42 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="resCount">Outputs the number of resources printed</param>
         /// <returns>Returns the line to print the choice prompt on</returns>
+        public static int PrintResourceMenu(List<string> list, bool lastPage, bool firstPage)
+        {
+            int curRow = Menu_Start_Row;
+
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Choose_Msg);
+            Console.SetCursorPosition(Left_Align, ++curRow);
+            Console.Write(Press_Enter);
+
+            int count = 1;
+            string[] defaultPrompts = new string[] {    "8) Last Page",
+                                                        "9) Next Page",
+                                                        "0) Cancel"};
+            foreach (string s in list)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.Write("{0}) {1}", count, s.Replace("_"," "));
+                count++;
+            }
+
+            if (!firstPage)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.WriteLine(defaultPrompts[0]);
+            }
+            if (!lastPage)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.WriteLine(defaultPrompts[1]);
+            }
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.WriteLine(defaultPrompts[2]);
+
+            return ++curRow;
+        }
+        /*
         public static int PrintResourceMenu(out int resCount)
         {
             ClearAllInBoarder();
@@ -184,7 +254,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = Default_FG;
 
             return (++curRow);
-        }
+        }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the controls for controling the game while running
