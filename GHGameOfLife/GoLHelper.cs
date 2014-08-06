@@ -912,14 +912,25 @@ namespace GHGameOfLife
                 using (StreamReader reader = new StreamReader(filename))
                 {
                     // New way to read all the lines for checking...
-                    // Skips lines starting with '!' or '#' because
-                    // (one of) the Life Lexicon website(s) uses them
-                    // as comments
+                    // Skips newlines, also skips lines that are 
+                    // probably comments
                     while(!reader.EndOfStream)
                     {
                         string temp = reader.ReadLine().Trim();
-                        if( temp[0] != '!' || temp[0] != '#')
-                            fileByLine.Add(temp);
+                        if (temp == String.Empty)
+                            continue;
+                        switch(temp[0])
+                        {
+                            case '!':
+                            case '#':
+                            case '/':
+                                // Ignore these lines
+                                break;
+                            default:
+                                fileByLine.Add(temp);
+                                break;
+                        }
+                            
                     }
                 }
 
@@ -1005,7 +1016,7 @@ namespace GHGameOfLife
                  * at the end of the string when I am loading a file from the
                  * user. This simply throws that line away. 
                  */ 
-                if (popByLine.Last() == "")
+                if (popByLine.Last() == String.Empty)
                     rowsNum -= 1;
                 
                 Rect bounds = Center(rowsNum, colsNum, midRow, midCol);
