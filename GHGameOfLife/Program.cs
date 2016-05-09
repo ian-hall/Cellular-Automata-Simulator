@@ -21,11 +21,12 @@ namespace GHGameOfLife
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
-        static int Max_Cols, Max_Rows;  
+        static int Max_Cols = 175;
+        static int Max_Rows = 52;  
   
-        static int Num_Sizes = 5;  // The amount of different sizes allowed
+        static int Num_Sizes = 3;  // The amount of different sizes allowed
         static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
-        static int Curr_Size_Index = 2; // Which size to default to, 2 is med
+        static int Curr_Size_Index = 1; // Which size to default to, 1 is med
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -83,8 +84,8 @@ namespace GHGameOfLife
             Console.Title = "Ian's Conway's Game of Life";        
             
             
-            Max_Cols = Console.LargestWindowWidth;
-            Max_Rows = Console.LargestWindowHeight;
+            Max_Cols = (Console.LargestWindowWidth < Max_Cols)? Console.LargestWindowWidth : Max_Cols;
+            Max_Rows = (Console.LargestWindowHeight < Max_Rows)? Console.LargestWindowHeight : Max_Rows;
 
             int difWid = (Max_Cols - Min_Cols) / (Num_Sizes - 1);
             int difHeight = Math.Max(1, (Max_Rows - Min_Rows) / (Num_Sizes - 1));
@@ -465,6 +466,7 @@ namespace GHGameOfLife
         /// Reinitialize the console after resizing
         /// </summary>
         /// <returns>Returns the new row to print the response text on</returns>
+        /// TODO: This does not seem to get run after having the user create their own population....?
         private static int ReInitializeConsole()
         {
             Console.Clear();

@@ -24,8 +24,8 @@ namespace GHGameOfLife
         {
             private static int[] Speeds = { 132, 100, 66, 50, 0 };
             private static int Curr_Speed_Index = 2;
-            private static IEnumerable<int> validLeft;
-            private static IEnumerable<int> validTop;
+            private static IEnumerable<int> Valid_Left;
+            private static IEnumerable<int> Valid_Top;
             //private enum SmallPops { None, Glider, Ship, Acorn, BlockLay };
             private static int CurLeft, CurTop;
 //-----------------------------------------------------------------------------
@@ -129,13 +129,13 @@ namespace GHGameOfLife
                 Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
-                bool[,] tempBoard = new bool[validTop.Count(), validLeft.Count()];
+                bool[,] tempBoard = new bool[Valid_Top.Count(), Valid_Left.Count()];
 
-                for (int i = 0; i < validTop.Count(); i++)
+                for (int i = 0; i < Valid_Top.Count(); i++)
                 {
-                    for (int j = 0; j < validLeft.Count(); j++)
+                    for (int j = 0; j < Valid_Left.Count(); j++)
                     {
-                        Console.SetCursorPosition(validLeft.ElementAt(j), validTop.ElementAt(i));
+                        Console.SetCursorPosition(Valid_Left.ElementAt(j), Valid_Top.ElementAt(i));
                         Console.Write('*');
                         tempBoard[i, j] = false;
                     }
@@ -152,8 +152,8 @@ namespace GHGameOfLife
                 int charLeft = blinkLeft + 1;
                 int extraTop = 2;
 
-                CurLeft = validLeft.ElementAt(validLeft.Count() / 2);
-                CurTop = validTop.ElementAt(validTop.Count() / 2);
+                CurLeft = Valid_Left.ElementAt(Valid_Left.Count() / 2);
+                CurTop = Valid_Top.ElementAt(Valid_Top.Count() / 2);
                 int nextLeft;
                 int nextTop;
                 bool exit = false;
@@ -196,33 +196,33 @@ namespace GHGameOfLife
                                 continue;
                             case ConsoleKey.RightArrow:
                                 nextLeft = ++CurLeft;
-                                if (!validLeft.Contains(nextLeft))
+                                if (!Valid_Left.Contains(nextLeft))
                                 {
-                                    nextLeft = validLeft.Min();
+                                    nextLeft = Valid_Left.Min();
                                 }
                                 CurLeft = nextLeft;
                                 break;
                             case ConsoleKey.LeftArrow:
                                 nextLeft = --CurLeft;
-                                if (!validLeft.Contains(nextLeft))
+                                if (!Valid_Left.Contains(nextLeft))
                                 {
-                                    nextLeft = validLeft.Max();
+                                    nextLeft = Valid_Left.Max();
                                 }
                                 CurLeft = nextLeft;
                                 break;
                             case ConsoleKey.UpArrow:
                                 nextTop = --CurTop;
-                                if (!validTop.Contains(nextTop))
+                                if (!Valid_Top.Contains(nextTop))
                                 { 
-                                    nextTop = validTop.Max(); 
+                                    nextTop = Valid_Top.Max(); 
                                 }
                                 CurTop = nextTop;
                                 break;
                             case ConsoleKey.DownArrow:
                                 nextTop = ++CurTop;
-                                if (!validTop.Contains(nextTop))
+                                if (!Valid_Top.Contains(nextTop))
                                 { 
-                                    nextTop = validTop.Min(); 
+                                    nextTop = Valid_Top.Min(); 
                                 }
                                 CurTop = nextTop;
                                 break;
@@ -305,7 +305,7 @@ namespace GHGameOfLife
                                 }
                                 break;
                             case ConsoleKey.S:
-                                SaveBoard(validTop.Count(), validLeft.Count(), tempBoard);    
+                                SaveBoard(Valid_Top.Count(), Valid_Left.Count(), tempBoard);    
                                 break;
                             default:
                                 break;
@@ -337,35 +337,35 @@ namespace GHGameOfLife
                                 continue;
                             case ConsoleKey.RightArrow:
                                 nextLeft = ++CurLeft;
-                                if (nextLeft >= (validLeft.Last() - loadedPopBounds.Width) + 2)
+                                if (nextLeft >= (Valid_Left.Last() - loadedPopBounds.Width) + 2)
                                 {
-                                    nextLeft = validLeft.Min();
+                                    nextLeft = Valid_Left.Min();
                                 }
                                 CurLeft = nextLeft;
                                 break;
                             case ConsoleKey.LeftArrow:
                                 nextLeft = --CurLeft;
-                                if (!validLeft.Contains(nextLeft))
+                                if (!Valid_Left.Contains(nextLeft))
                                 {
-                                    nextLeft = (validLeft.Last() - loadedPopBounds.Width) + 1;
+                                    nextLeft = (Valid_Left.Last() - loadedPopBounds.Width) + 1;
                                 }
                                 CurLeft = nextLeft;
                                 break;
 
                             case ConsoleKey.UpArrow:
                                 nextTop = --CurTop;
-                                if (!validTop.Contains(nextTop))
+                                if (!Valid_Top.Contains(nextTop))
                                 {
-                                    nextTop = (validTop.Last() - loadedPopBounds.Height) + 1;
+                                    nextTop = (Valid_Top.Last() - loadedPopBounds.Height) + 1;
                                 }
                                 CurTop = nextTop;
                                 break;
 
                             case ConsoleKey.DownArrow:
                                 nextTop = ++CurTop;
-                                if (nextTop >= (validTop.Last() - loadedPopBounds.Height) + 2)
+                                if (nextTop >= (Valid_Top.Last() - loadedPopBounds.Height) + 2)
                                 {
-                                    nextTop = validTop.Min();
+                                    nextTop = Valid_Top.Min();
                                 }
                                 CurTop = nextTop;
                                 break;
@@ -558,7 +558,7 @@ namespace GHGameOfLife
                                 }
                                 break;
                             case ConsoleKey.S:
-                                SaveBoard(validTop.Count(), validLeft.Count(), tempBoard);
+                                SaveBoard(Valid_Top.Count(), Valid_Left.Count(), tempBoard);
                                 break;
                             case ConsoleKey.C:
                                 popLoaderMode = false;
@@ -570,16 +570,16 @@ namespace GHGameOfLife
                 }
 
                 StringBuilder popString = new StringBuilder();
-                for (int r = 0; r < validTop.Count(); r++)
+                for (int r = 0; r < Valid_Top.Count(); r++)
                 {
-                    for (int c = 0; c < validLeft.Count(); c++)
+                    for (int c = 0; c < Valid_Left.Count(); c++)
                     {
                         if (tempBoard[r, c])
                             popString.Append('O');
                         else
                             popString.Append('.');
                     }
-                    if (r != validTop.Count() - 1)
+                    if (r != Valid_Top.Count() - 1)
                         popString.AppendLine();
                 }
 
@@ -614,7 +614,7 @@ namespace GHGameOfLife
                 bool loaded = false;
 
                 // Checks if the loaded pop is going to fit in the window at the current cursor position
-                if ((CurLeft <= (validLeft.Last() - colsNum) + 1) && (CurTop <= (validTop.Last() - rowsNum) + 1))
+                if ((CurLeft <= (Valid_Left.Last() - colsNum) + 1) && (CurTop <= (Valid_Top.Last() - rowsNum) + 1))
                 {                    
                     popVals = new bool[rowsNum][];
                     for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
@@ -665,7 +665,7 @@ namespace GHGameOfLife
                 bool loaded = false;
                 Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
                 
-                if ((CurLeft <= (validLeft.Last() - colsNum) + 1) && (CurTop <= (validTop.Last() - rowsNum) + 1))
+                if ((CurLeft <= (Valid_Left.Last() - colsNum) + 1) && (CurTop <= (Valid_Top.Last() - rowsNum) + 1))
                 {
                     for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                     {
@@ -712,7 +712,7 @@ namespace GHGameOfLife
 
                 Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
 
-                if ((CurLeft <= (validLeft.Last() - colsNum) + 1) && (CurTop <= (validTop.Last() - rowsNum) + 1))
+                if ((CurLeft <= (Valid_Left.Last() - colsNum) + 1) && (CurTop <= (Valid_Top.Last() - rowsNum) + 1))
                 {
                     for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                     {
@@ -741,12 +741,11 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
             /// <summary>
             /// Runs the game
-            /// TODO: Change this to a switch statement
             /// </summary>
             /// <param name="game">The board to start with</param>
             public static void RunIt(GoL game)
             {
-                if (!GoL.IsInitialized)
+                if (!IsInitialized)
                 {
                     Console.ForegroundColor = MenuText.Info_FG;
                     Console.Write("ERROR");
@@ -1092,8 +1091,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
             public static void CalcBuilderBounds()
             {
-                validLeft = Enumerable.Range(MenuText.Space, GoL.OrigConsWidth - 2 * MenuText.Space);
-                validTop = Enumerable.Range(MenuText.Space, GoL.OrigConsHeight - 2 * MenuText.Space);
+                Valid_Left = Enumerable.Range(MenuText.Space, GoL.OrigConsWidth - 2 * MenuText.Space);
+                Valid_Top = Enumerable.Range(MenuText.Space, GoL.OrigConsHeight - 2 * MenuText.Space);
             }
 //------------------------------------------------------------------------------
             /// <summary>

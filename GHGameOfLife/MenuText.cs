@@ -57,6 +57,7 @@ namespace GHGameOfLife
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
             
+            //TODO: Change testing to be a list of pops loaded from elsewhere
             List<string> testing = new List<string>();
             Random rand = new Random();
 
@@ -198,7 +199,7 @@ namespace GHGameOfLife
             Console.Write(Press_Enter);
 
             int count = 1;
-            string[] defaultPrompts = new string[] {    "8) Last Page",
+            string[] defaultPrompts = new string[] {    "8) Prev Page",
                                                         "9) Next Page",
                                                         "0) Cancel"};
             foreach (string s in list)
@@ -340,7 +341,7 @@ namespace GHGameOfLife
             printRow = printStart;
             foreach(string popName in Builder_Pops)
             {
-                printRow = printStart + (printRow % 4);
+                printRow = printStart + (count % 4);
                 Console.SetCursorPosition(55 + (20*(count/4)), printRow);
                 Console.Write("[{0}]{1,-17}",Builder_Pops.IndexOf(popName)+1, popName);
                 ++count;
