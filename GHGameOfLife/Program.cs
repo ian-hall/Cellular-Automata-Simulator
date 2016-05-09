@@ -13,13 +13,6 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-        //Garbage for resizing
-        const short SWP_NOSIZE = 0x0001;
-        const short SWP_NOZORDER = 0x0004;
-        const int SWP_SHOWWINDOW = 0x0040;
-        static IntPtr HWND_TOPMOST = new IntPtr(-1);
-
-
         enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy
@@ -28,15 +21,12 @@ namespace GHGameOfLife
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
-        static int Max_Cols, Max_Rows;  
+        static int Max_Cols = 175;
+        static int Max_Rows = 52;  
   
-        static IntPtr Current_Proc_Handle;
-        static Screen Primary_Screen;
-        static ScreenRes Primary_Res;
-
-        static int Num_Sizes = 5;  // The amount of different sizes allowed
+        static int Num_Sizes = 3;  // The amount of different sizes allowed
         static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
-        static int Curr_Size_Index = 2; // Which size to default to, 2 is med
+        static int Curr_Size_Index = 1; // Which size to default to, 1 is med
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
@@ -48,56 +38,7 @@ namespace GHGameOfLife
             int initConsHeight = Console.WindowHeight;            
 
             int[] initialValues = new int[] { initBuffWidth, initBuffHeight, 
-                                              initConsWidth, initConsHeight };
-
-            Primary_Screen = System.Windows.Forms.Screen.PrimaryScreen;
-            Primary_Res = new ScreenRes(Primary_Screen.Bounds.Width, Primary_Screen.Bounds.Height);
-
-            
-            //Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-            Console.SetCursorPosition(0, 0);
-            Console.Write("");
-            Process[] cmdProc = Process.GetProcesses();
-            Rect smallRect;
-            Rect bigRect;
-            foreach (Process p in cmdProc)
-            {
-                IntPtr currentHandle;
-
-                if (p.MainWindowHandle == IntPtr.Zero)
-                    continue;
-
-                try
-                {
-                    currentHandle = p.MainWindowHandle;
-                }
-                catch
-                {
-                    continue;
-                }
-
-                Console.SetWindowSize(1, 1);
-                Console.SetWindowPosition(0, 0);
-                System.Threading.Thread.Sleep(5);
-                NativeMethods.GetWindowRect(currentHandle, out smallRect);
-                Console.SetWindowSize(initConsWidth,initConsHeight);
-                Console.SetBufferSize(initBuffWidth, initBuffHeight);
-                System.Threading.Thread.Sleep(5);
-                NativeMethods.GetWindowRect(currentHandle, out bigRect);
-                //Console.WriteLine("SR:{0}\nBR:{1}", smallRect, bigRect);                
-
-                if (smallRect.CompareTo(bigRect) < 0)
-                {
-                    Current_Proc_Handle = currentHandle;
-                    break;
-                }
-
-            }
-
-            if (Current_Proc_Handle == IntPtr.Zero)
-            {
-                Current_Proc_Handle = Process.GetCurrentProcess().MainWindowHandle;
-            }
+                                              initConsWidth, initConsHeight };     
 
             InitializeConsole();
             bool exit = false;
@@ -136,14 +77,15 @@ namespace GHGameOfLife
         /// </summary>
         private static void InitializeConsole()
         {
+            Console.OutputEncoding = Encoding.Unicode;
             MenuText mt = new MenuText();
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;
             Console.Title = "Ian's Conway's Game of Life";        
             
             
-            Max_Cols = Console.LargestWindowWidth;
-            Max_Rows = Console.LargestWindowHeight;
+            Max_Cols = (Console.LargestWindowWidth < Max_Cols)? Console.LargestWindowWidth : Max_Cols;
+            Max_Rows = (Console.LargestWindowHeight < Max_Rows)? Console.LargestWindowHeight : Max_Rows;
 
             int difWid = (Max_Cols - Min_Cols) / (Num_Sizes - 1);
             int difHeight = Math.Max(1, (Max_Rows - Min_Rows) / (Num_Sizes - 1));
@@ -151,7 +93,7 @@ namespace GHGameOfLife
             // Initialize with the smallest window size and build from there
             // keeping the window ratio near that of the max window size ratio
             // I am just moving the width because we have more play there than height
-            // Unless you have some weird portrait set up I guess then enjoy your
+            // unless you have some weird portrait set up I guess then enjoy your
             // small windows??
 
             BoardSize max = new BoardSize(Max_Cols, Max_Rows);
@@ -186,7 +128,7 @@ namespace GHGameOfLife
                 {
                     if ((cs.Cols + 1) >= Max_Cols)
                     {
-                        Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
+                        cs.Rows = Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
                     }
                     else
                     {
@@ -197,7 +139,7 @@ namespace GHGameOfLife
             }
 
 
-            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -422,22 +364,32 @@ namespace GHGameOfLife
         {
             string retVal = null;
             int numRes = MenuText.Large_Pops.Count;
-            int resToLoad = -1;
 
-            int numPrinted;
-            int promptRow = MenuText.PrintResourceMenu(out numPrinted);
+            int promptRow = 0;
+            int pageIndex = 0;
+            bool reprintPage = true;
+            bool lastPage = (MenuText.Large_Pops_Pages.Count == 1);
+            bool firstPage = true;
+            List<string> currPage = null;
             
             
-            bool validEntry = false;
-            while (!validEntry)
+            bool go = true;
+            while (go)
             {
-                MenuText.ClearWithinBorder(promptRow);
+                if( reprintPage )
+                {
+                    MenuText.ClearAllInBoarder();
+                    currPage = (List<string>)MenuText.Large_Pops_Pages[pageIndex];
+                    promptRow = MenuText.PrintResourceMenu(currPage,lastPage,firstPage);                   
+                }
+                reprintPage = false;
+
                 Console.SetCursorPosition(MenuText.Left_Align, promptRow);
-                Console.Write(MenuText.Prompt);
+                Console.Write(MenuText.Prompt);              
                 Console.CursorVisible = true;
 
                 string input = "";
-                int maxLen = 2; // Wont display more than 99 choices...
+                int maxLen = 1;
                 while (true)
                 {
                     char c = Console.ReadKey(true).KeyChar;
@@ -458,39 +410,67 @@ namespace GHGameOfLife
                     }
                 }
 
-                if (IsValidNumber(input,numPrinted))
+                switch (input)
                 {
-                    //Menu starts at 1, but resources start at 0
-                    resToLoad = Int32.Parse(input)-1;
-                    validEntry = true;
+                    case "1":
+                    case "2":
+                    case "3":
+                    case "4":
+                    case "5":
+                    case "6":
+                    case "7":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        int keyVal = Int32.Parse(input);
+                        if (keyVal <= currPage.Count)
+                            retVal = MenuText.Large_Pops[(pageIndex * 7) + keyVal - 1];
+                        go = false;
+                        break;
+                    case "8":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        if (!firstPage)
+                        {
+                            --pageIndex;
+                            reprintPage = true;
+                            lastPage = false;
+                            if (pageIndex == 0)
+                                firstPage = true;
+                        }
+                        break;
+                    case "9":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        if (!lastPage)
+                        {
+                            ++pageIndex;
+                            reprintPage = true;
+                            firstPage = false;
+                            if (pageIndex == MenuText.Large_Pops_Pages.Count - 1)
+                                lastPage = true;
+                        }
+                        break;
+                    case "0":
+                        MenuText.ClearWithinBorder(promptRow + 1);
+                        go = false;
+                        break;
+                    default:
+                        Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
+                        Console.Write(MenuText.Entry_Error);
+                        break;
                 }
-                else
-                {
-                    Console.SetCursorPosition(MenuText.Left_Align, promptRow+1);
-                    Console.Write(MenuText.Entry_Error);
-                    continue;
-                }
-
-            }
-
-            if (resToLoad < MenuText.Large_Pops.Count)
-            {
-                retVal = MenuText.Large_Pops[resToLoad].ToString();
             }
 
             Console.CursorVisible = false;
             return retVal;
         }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
         /// <summary>
         /// Reinitialize the console after resizing
         /// </summary>
         /// <returns>Returns the new row to print the response text on</returns>
+        /// TODO: This does not seem to get run after having the user create their own population....?
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Primary_Res, Valid_Sizes[Curr_Size_Index]);
+            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -578,7 +558,7 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(ScreenRes primaryRes, BoardSize size)
+        private static void ajustWindowSize(BoardSize size)
         {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
@@ -586,32 +566,9 @@ namespace GHGameOfLife
             Console.SetBufferSize(size.Cols, size.Rows);
             Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
-            Console.Write("");
-
-            // Center on the screen
-            // Some kind of bug where the out Rect comes back with a height of 74,
-            // So just loop until it gets the correct position.
-            // Also check if the out Rect is zero before doing this to avoid
-            // an infinite loop. This just means it is like, moving some other
-            // window arround
-            
-            Rect consRect;
-            NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
-            if (!consRect.IsZero())
-            {
-                while ((consRect.Bottom - consRect.Top) < 100)
-                {
-                    NativeMethods.GetWindowRect(Current_Proc_Handle, out consRect);
-                }
-            }
-            int widthOffset = (primaryRes.Width / 2) - (consRect.Width / 2);
-            int heightOffset = (primaryRes.Height / 2) - (consRect.Height / 2);
-            NativeMethods.SetWindowPos(Current_Proc_Handle, HWND_TOPMOST, widthOffset, heightOffset, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
         }
 //------------------------------------------------------------------------------
     } // end class
-//------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////
 } 

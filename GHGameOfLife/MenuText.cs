@@ -29,11 +29,13 @@ namespace GHGameOfLife
         public static string[] Run_Ctrls;
         public static string[] Menu_Choices; 
         public static string[] Create_Ctrls;
-        public static List<string> Small_Pops;
         
         public static int Window_Center; // Center Row
         public static int Left_Align;    // Align text with the Welcome message
+       
         public static List<string> Large_Pops;
+        public static List<string> Builder_Pops;
+        public static ArrayList Large_Pops_Pages;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
@@ -42,31 +44,65 @@ namespace GHGameOfLife
         public static int Space = 5;         
 //------------------------------------------------------------------------------
         public static void Initialize()
-        {
+        {           
             Window_Center = Console.WindowHeight / 2;
             Left_Align = (Console.WindowWidth/2) - (Welcome.Length/2);
             
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight/3 + 1;
             Large_Pops = new List<string>();
-            Small_Pops = new List<string>();
+            Builder_Pops = new List<string>();
 
             ResourceManager rm = GHGameOfLife.LargePops.ResourceManager;
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+            
+            //TODO: Change testing to be a list of pops loaded from elsewhere
+            List<string> testing = new List<string>();
+            Random rand = new Random();
 
             foreach (DictionaryEntry res in all)
             {
-                Large_Pops.Add(res.Key.ToString());
+                //Large_Pops.Add(res.Key.ToString());
+                testing.Add(res.Key.ToString());
             }
 
-            rm = GHGameOfLife.SmallPops.ResourceManager;
+            int numToTest = 67;
+            for (int i = 0; i < numToTest; i++ )
+            {
+                Large_Pops.Add(testing[rand.Next(testing.Count)]);
+            }
+
+            Large_Pops_Pages = new ArrayList();
+
+            List<string> temp = new List<string>();
+            int count = 0;
+            int elementNum = 0;
+            bool addPage = false;
+            while (elementNum != Large_Pops.Count)
+            {
+                temp.Add(Large_Pops[elementNum]);
+                count++;
+                elementNum++;
+                if (count == 7 || elementNum == Large_Pops.Count)
+                    addPage = true;
+
+                if (addPage)
+                {
+                    Large_Pops_Pages.Add(temp);
+                    temp = new List<string>();
+                    addPage = false;
+                    count = 0;
+                }
+            }
+
+            rm = GHGameOfLife.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
             all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
 
             foreach (DictionaryEntry res in all)
             {
-                Small_Pops.Add(res.Key.ToString());
+                Builder_Pops.Add(res.Key.ToString());
             }
 
 
@@ -145,17 +181,6 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(Left_Align + 4, ++curRow);
                 Console.Write(choice);
             }
-            /*
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice1);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice2);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice3);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice4);
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.Write(Menu_Choice5);*/
             return (++curRow);
         }
 //------------------------------------------------------------------------------
@@ -164,6 +189,42 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="resCount">Outputs the number of resources printed</param>
         /// <returns>Returns the line to print the choice prompt on</returns>
+        public static int PrintResourceMenu(List<string> list, bool lastPage, bool firstPage)
+        {
+            int curRow = Menu_Start_Row;
+
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Choose_Msg);
+            Console.SetCursorPosition(Left_Align, ++curRow);
+            Console.Write(Press_Enter);
+
+            int count = 1;
+            string[] defaultPrompts = new string[] {    "8) Prev Page",
+                                                        "9) Next Page",
+                                                        "0) Cancel"};
+            foreach (string s in list)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.Write("{0}) {1}", count, s.Replace("_"," "));
+                count++;
+            }
+
+            if (!firstPage)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.WriteLine(defaultPrompts[0]);
+            }
+            if (!lastPage)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.WriteLine(defaultPrompts[1]);
+            }
+            Console.SetCursorPosition(Left_Align + 4, ++curRow);
+            Console.WriteLine(defaultPrompts[2]);
+
+            return ++curRow;
+        }
+        /*
         public static int PrintResourceMenu(out int resCount)
         {
             ClearAllInBoarder();
@@ -194,7 +255,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = Default_FG;
 
             return (++curRow);
-        }
+        }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the controls for controling the game while running
@@ -271,8 +332,21 @@ namespace GHGameOfLife
             Console.Write("{0,-25}{1,-25}",Create_Ctrls[2], Create_Ctrls[6]);
             Console.SetCursorPosition(5, ++printRow);
             Console.Write("{0,-25}{1,-25}", Create_Ctrls[3],"");
-
-            Console.SetCursorPosition(55, printRow);
+            
+            //Each pop gets a space of 20 cols to write to
+            //We start at 55 because the above messages have a space of 50, plus the 5 for the border
+            //We allow 4 pops to display per column, with a max of 2 columns because of the min window
+            //size of 100
+            int count = 0;
+            printRow = printStart;
+            foreach(string popName in Builder_Pops)
+            {
+                printRow = printStart + (count % 4);
+                Console.SetCursorPosition(55 + (20*(count/4)), printRow);
+                Console.Write("[{0}]{1,-17}",Builder_Pops.IndexOf(popName)+1, popName);
+                ++count;
+                ++printRow;
+            }
              
             Console.ForegroundColor = MenuText.Default_FG;
         }
