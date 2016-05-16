@@ -113,30 +113,38 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    if (!Board[r, c])
-                    {
-                        if (Wrap)
-                        {
-                            nextBoard[r, c] = WillBeBornWrap(r, c);
-                        }
-                        else
-                        {
-                            nextBoard[r, c] = WillBeBornNoWrap(r, c);
-                        }
-                        
-                    }
+                    //if (!Board[r, c])
+                    //{
+                    //    if (Wrap)
+                    //    {
+                    //        nextBoard[r, c] = WillBeBornWrap(r, c);
+                    //    }
+                    //    else
+                    //    {
+                    //        nextBoard[r, c] = WillBeBornNoWrap(r, c);
+                    //    }
 
-                    if (Board[r, c])
+                    //}
+
+                    //if (Board[r, c])
+                    //{
+                    //    if (Wrap)
+                    //    {
+                    //        nextBoard[r, c] = !WillDieWrap(r, c);
+                    //    }
+                    //    else
+                    //    {
+                    //        nextBoard[r, c] = !WillDieNoWrap(r, c);
+                    //    }
+
+                    //}
+                    if(Wrap)
                     {
-                        if (Wrap)
-                        {
-                            nextBoard[r, c] = !WillDieWrap(r, c);
-                        }
-                        else
-                        {
-                            nextBoard[r, c] = !WillDieNoWrap(r, c);
-                        }
-                        
+                        nextBoard[r, c] = NextCellStateWrap(r, c);
+                    }
+                    else
+                    {
+                        nextBoard[r, c] = NextCellState(r, c);
                     }
                 }
             }
@@ -146,7 +154,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Slams down the board and the sides of the border using a
+        /// Slams down the board and the sides of the boarder using a
         /// StringBuilder
         /// </summary>
         private void Print()
@@ -339,6 +347,75 @@ namespace GHGameOfLife
             else return false;
         }
 //------------------------------------------------------------------------------
+        private bool NextCellStateWrap(int r, int c)
+        {
+            int n = 0;
+
+            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+            if (Board[(r - 1 + Rows) % Rows, c]) n++;
+            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+            if (Board[r, (c - 1 + Cols) % Cols]) n++;
+            if (Board[(r + 1 + Rows) % Rows, c]) n++;
+            if (Board[r, (c + 1 + Cols) % Cols]) n++;
+            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+
+            if(Board[r,c])
+            {
+                return ((n == 2) || (n == 3));
+            }
+            else
+            {
+                return (n == 3);
+            }
+        }
+//------------------------------------------------------------------------------
+        private bool NextCellState(int r, int c)
+        {
+            int n = 0;
+
+            if (r != 0 && c != 0)
+            {
+                if (Board[r - 1, c - 1]) n++;
+            }
+            if (r != 0 && c != Cols - 1)
+            {
+                if (Board[r - 1, c + 1]) n++;
+            }
+            if (r != 0)
+            {
+                if (Board[r - 1, c]) n++;
+            }
+            if (r != Rows - 1 && c != 0)
+            {
+                if (Board[r + 1, c - 1]) n++;
+            }
+            if (c != 0)
+            {
+                if (Board[r, c - 1]) n++;
+            }
+            if (r != Rows - 1)
+            {
+                if (Board[r + 1, c]) n++;
+            }
+            if (c != Cols - 1)
+            {
+                if (Board[r, c + 1]) n++;
+            }
+            if (r != Rows - 1 && c != Cols - 1)
+            {
+                if (Board[r + 1, c + 1]) n++;
+            }
+
+            if (Board[r, c])
+            {
+                return ((n == 2) || (n == 3));
+            }
+            else
+            {
+                return (n == 3);
+            }
+        }
 //------------------------------------------------------------------------------
     } // end class
 ///////////////////////////////////////////////////////////////////////////////
