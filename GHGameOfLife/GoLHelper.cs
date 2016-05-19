@@ -22,7 +22,7 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private class GoLHelper
         {
-            private static int[] Speeds = { 132, 100, 66, 50, 0 };
+            private static int[] Speeds = { 132, 100, 66, 50, 33 };
             private static int Curr_Speed_Index = 2;
             private static IEnumerable<int> Valid_Left;
             private static IEnumerable<int> Valid_Top;
@@ -112,9 +112,42 @@ namespace GHGameOfLife
             /// <param name="pop"></param>
             public static void BuildBoardResource(string pop)
             {
-                var startingPop = GHGameOfLife.LargePops.ResourceManager.GetString(pop);
+                string startingPop;
+                var errType = ValidateFileNew(pop, out startingPop, true);
 
-                FillBoard(startingPop);
+                switch (errType)
+                {
+                    case MenuText.FileError.None:
+                        FillBoard(startingPop);
+                        break;
+                    default:
+                        int windowCenter = Console.WindowHeight / 2; //Vert position
+                        int welcomeLeft = (Console.WindowWidth / 2) -
+                            (MenuText.Welcome.Length / 2);
+                        int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
+
+                        MenuText.ClearWithinBorder(windowCenter);
+                        Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
+                        Console.Write(MenuText.GetReadableError(errType));
+                        Console.SetCursorPosition(welcomeLeft, windowCenter);
+                        Console.Write(MenuText.Load_Rand);
+                        Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
+                        Console.Write(MenuText.Press_Enter);
+
+                        bool keyPressed = false;
+                        while (!keyPressed)
+                        {
+                            if (!Console.KeyAvailable)
+                                System.Threading.Thread.Sleep(50);
+                            else
+                            {
+                                if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                                    keyPressed = true;
+                            }
+                        }
+                        GoLHelper.BuildBoardRandom();
+                        break;
+                }
 
                 GoL.IsInitialized = true;
             }
@@ -129,6 +162,10 @@ namespace GHGameOfLife
                 Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
+                char horiz = '═';       // '\u2550'
+                char botLeft = '╚';     // '\u255A'
+                char botRight = '╝';    // '\u255D'
+
                 bool[,] tempBoard = new bool[Valid_Top.Count(), Valid_Left.Count()];
 
                 for (int i = 0; i < Valid_Top.Count(); i++)
@@ -140,6 +177,12 @@ namespace GHGameOfLife
                         tempBoard[i, j] = false;
                     }
                 }
+
+                Console.SetCursorPosition(Valid_Left.First() - 1,Valid_Top.Last()+1);
+                Console.Write(botLeft);
+                for (int i = 0; i < Valid_Left.Count(); i++)
+                    Console.Write(horiz);
+                Console.Write(botRight);
 
                 Console.ForegroundColor = MenuText.Info_FG;
 
@@ -587,15 +630,16 @@ namespace GHGameOfLife
                 Console.SetWindowSize(GoL.OrigConsWidth, GoL.OrigConsHeight);
                 Console.SetBufferSize(GoL.OrigConsWidth, GoL.OrigConsHeight);
 
-                MenuText.ClearUnderBoard();
-
                 Console.ForegroundColor = MenuText.Default_FG;
+                MenuText.ClearUnderBoard();
+                MenuText.DrawBorder();
+
                 MenuText.ClearLine(positionPrintRow);
                 GoL.IsInitialized = true;
             }
 //------------------------------------------------------------------------------
             /// <summary>
-            /// Used by files to fill the game board, cente
+            /// Loads the selected builder pop into the board
             /// </summary>
             /// <param name="startingPop"></param>
             /// <returns>Bounds of the pop loaded</returns>
@@ -761,11 +805,6 @@ namespace GHGameOfLife
                 statusValues["Wrapping"] = game.Wrap;
                 statusValues["ExitPause"] = false;
 
-                //bool go = true;
-                //bool continuous = false;
-                //bool paused = true;
-                //bool wrapping = game.Wrap;
-
                 MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], Curr_Speed_Index);
                 while (statusValues["Go"])
                 {
@@ -806,6 +845,10 @@ namespace GHGameOfLife
                                 //If any key is pressed while the game is paused.
                                 ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
                                 GoLHelper.HandleRunningInput(pauseEntry.Key, ref statusValues);
+                                if(pauseEntry.Key == ConsoleKey.W)
+                                {
+                                    game.Wrap = statusValues["Wrapping"];
+                                }
                             }
                         }
                     }
@@ -813,123 +856,11 @@ namespace GHGameOfLife
                     {
                         //handle any other key pressed while the game is running.
                         GoLHelper.HandleRunningInput(pressed.Key, ref statusValues);
-                        if( pressed.Key == ConsoleKey.W )
+                        if(pressed.Key == ConsoleKey.W )
                         {
                             game.Wrap = statusValues["Wrapping"];
                         }
                     }
-
-                    /*
-                    switch(pressed.Key)
-                    {
-                        case ConsoleKey.Spacebar:
-                            if(!continuous)
-                            {
-                                game.Next();
-                                game.Print();
-                            }
-                            else // this gets entries while it is paused
-                            {
-                                bool exitPauseLoop = false;
-                                paused = true;
-                                MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                while (!exitPauseLoop)
-                                {
-                                    while (!Console.KeyAvailable)
-                                    {
-                                        System.Threading.Thread.Sleep(50);
-                                    }
-
-                                    ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
-                                    switch(pauseEntry.Key)
-                                    {
-                                        case ConsoleKey.Spacebar: // unpause
-                                            exitPauseLoop = true;
-                                            paused = false;
-                                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                            break;
-                                        case ConsoleKey.Escape: // exit
-                                            go = false;
-                                            paused = false;
-                                            exitPauseLoop = true;
-                                            break;
-                                        case ConsoleKey.R: // toggle looping
-                                            continuous = !continuous;
-                                            exitPauseLoop = true;
-                                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                            break;
-                                        case ConsoleKey.W: // toggle wrapping
-                                            wrapping = !wrapping;
-                                            game.Wrap = wrapping;
-                                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                            // purge queue
-                                            break;
-                                        case ConsoleKey.S: // save board
-                                            SaveBoard(GoL.Rows, GoL.Cols, GoL.Board);
-                                            break;
-                                        case ConsoleKey.OemMinus:
-                                        case ConsoleKey.Subtract:
-                                            if (Curr_Speed_Index >= 1)
-                                            { 
-                                                Curr_Speed_Index -= 1;
-                                            }
-                                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                            break;
-                                        case ConsoleKey.OemPlus:
-                                        case ConsoleKey.Add:
-                                            if (Curr_Speed_Index <= 3)
-                                            {
-                                                Curr_Speed_Index += 1;
-                                            }
-                                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                                            break;
-                                        default:
-                                            break;
-                                    }                                   
-                                }
-                            }
-                            break;
-                        case ConsoleKey.R:
-                            continuous = !continuous;
-                            paused = !paused;
-                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                            break;
-                        case ConsoleKey.W:
-                            if(!continuous)
-                            {
-                                wrapping = !wrapping;
-                                game.Wrap = wrapping;
-                                MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                            }
-                            break;
-                        case ConsoleKey.S:
-                            if(!continuous)
-                            {
-                                SaveBoard(GoL.Rows, GoL.Cols, GoL.Board);
-                            }
-                            break;
-                        case ConsoleKey.OemMinus:
-                        case ConsoleKey.Subtract:
-                            if (Curr_Speed_Index >= 1)
-                            {
-                                Curr_Speed_Index -= 1;
-                            }
-                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                            break;
-                        case ConsoleKey.OemPlus:
-                        case ConsoleKey.Add:
-                            if (Curr_Speed_Index <= 3)
-                            {
-                                Curr_Speed_Index += 1;
-                            }
-                            MenuText.PrintStatus(continuous, paused, wrapping, Curr_Speed_Index);
-                            break;
-                        case ConsoleKey.Escape:
-                            go = false;
-                            break;
-                        default:
-                            break;
-                    }*/                  
                 }
 
                 Console.CursorVisible = false;
@@ -957,7 +888,6 @@ namespace GHGameOfLife
                         if (!currentStatus["Continuous"] || currentStatus["Paused"])
                         {
                             currentStatus["Wrapping"] = !currentStatus["Wrapping"];
-                            //game.Wrap = wrapping;
                         }
                         break;
                     case ConsoleKey.S:
@@ -995,123 +925,25 @@ namespace GHGameOfLife
                 MenuText.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], Curr_Speed_Index);
             }
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
             /// <summary>
             /// Validates the selected file from the BuildFromFile() method.
             /// A Valid file is all 0s and 1s and does not have more rows or columns
             /// than the console window. The file must also be pretty small.
+            /// This is also used to validate files from the LargePops resource.
             /// </summary>
-            /// <param name="filename">Path to a file to be checked</param>
-            /// <param name="errType">The type of error returned</param>
-            private static MenuText.FileError ValidateFile(string filename, out string popToLoad)
-            {
-                popToLoad = null;
-                // File should exist, but its good to make sure.
-                FileInfo file = new FileInfo(filename);
-                if (!file.Exists)
-                {
-                    return MenuText.FileError.Not_Loaded;
-                }
-
-                // Checks if the file is empty or too large ( > 20KB )
-                if (file.Length == 0 || file.Length > 20480)
-                {
-                    return MenuText.FileError.Size;
-                }
-
-                List<string> fileByLine = new List<string>();
-                using (StreamReader reader = new StreamReader(filename))
-                {
-                    // New way to read all the lines for checking...
-                    // Skips newlines, also skips lines that are 
-                    // probably comments
-                    while(!reader.EndOfStream)
-                    {
-                        string temp = reader.ReadLine().Trim();
-                        if (temp == String.Empty)
-                            continue;
-                        switch(temp[0])
-                        {
-                            case '!':
-                            case '#':
-                            case '/':
-                                // Ignore these lines
-                                break;
-                            default:
-                                fileByLine.Add(temp);
-                                break;
-                        }
-                            
-                    }
-                }
-
-                int rows = fileByLine.Count;
-                int cols = fileByLine[0].Length;
-
-                // Error if there are more lines than the board can hold
-                if (rows > GoL.Rows)
-                    return MenuText.FileError.Length;
-                // Error if the first line is too wide,
-                // 'cols' also used to check against all other lines
-                if (cols > GoL.Cols)
-                    return MenuText.FileError.Width;
-
-                StringBuilder sb = new StringBuilder();
-                foreach (string line in fileByLine)
-                {
-                    //Error if all lines are not the same width
-                    if (line.Length != cols)
-                    {
-                        return MenuText.FileError.Uneven;
-                    }
-                    //Error of the line is not valid
-                    if (!ValidLine(line))
-                    {
-                        return MenuText.FileError.Contents;
-                    }
-                    
-                    sb.AppendLine(line);
-                }
-
-                popToLoad = sb.ToString();                
-                return MenuText.FileError.None;
-
-            }
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-            /// <summary>
-            /// Validates the selected file from the BuildFromFile() method.
-            /// A Valid file is all 0s and 1s and does not have more rows or columns
-            /// than the console window. The file must also be pretty small.
-            /// </summary>
-            /// <param name="filename">Path to a file to be checked</param>
-            /// <param name="errType">The type of error returned</param>
-            private static MenuText.FileError ValidateFileNew(string filename, out string popToLoad)
+            /// <param name="filename">Path to a file to be checked, or resource to be loaded</param>
+            /// <param name="popToLoad">Out set if the filename or resource are valid</param>
+            /// <param name="fromRes">Set True if loading from a resource file</param>
+            private static MenuText.FileError ValidateFileNew(string filename, out string popToLoad,bool fromRes = false)
             {
                 popToLoad = "";
-                // File should exist, but its good to make sure.
-                FileInfo file = new FileInfo(filename);
-                if (!file.Exists)
+                if (fromRes)
                 {
-                    return MenuText.FileError.Not_Loaded;
-                }
-
-                // Checks if the file is empty or too large ( > 20KB )
-                if (file.Length == 0 || file.Length > 20480)
-                {
-                    return MenuText.FileError.Size;
-                }
-
-                List<string> fileByLine = new List<string>();
-                using (StreamReader reader = new StreamReader(filename))
-                {
-                    // New way to read all the lines for checking...
-                    // Skips newlines, also skips lines that are 
-                    // probably comments
-                    while (!reader.EndOfStream)
+                    var resourceByLine = Regex.Split(GHGameOfLife.LargePops.ResourceManager.GetString(filename),Environment.NewLine);
+                    var fileByLine = new List<string>();
+                    foreach(var line in resourceByLine)
                     {
-                        string temp = reader.ReadLine().Trim();
+                        string temp = line.Trim();
                         if (temp == String.Empty)
                         {
                             fileByLine.Add(temp);
@@ -1128,67 +960,105 @@ namespace GHGameOfLife
                                 fileByLine.Add(temp);
                                 break;
                         }
-
                     }
-                }
 
-                var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
-                var rows = fileByLine.Count;
+                    var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
+                    var rows = fileByLine.Count;
 
-                if (rows > GoL.Rows)
-                {
-                    return MenuText.FileError.Length;
-                }
-                if (longestLine > GoL.Cols)
-                {
-                    return MenuText.FileError.Width;
-                }
-
-                var sb = new StringBuilder();
-                foreach(var line in fileByLine)
-                {
-                    var newLine = line.PadRight(longestLine, '.');
-                    if(!ValidLine(newLine))
+                    if (rows > GoL.Rows)
                     {
-                        return MenuText.FileError.Contents;
+                        return MenuText.FileError.Length;
                     }
-                    sb.AppendLine(newLine);
+                    if (longestLine > GoL.Cols)
+                    {
+                        return MenuText.FileError.Width;
+                    }
+
+                    var sb = new StringBuilder();
+                    foreach (var line in fileByLine)
+                    {
+                        //Pad all lines to the same length as the longest for loading into the game board.
+                        var newLine = line.PadRight(longestLine, '.');
+                        if (!ValidLine(newLine))
+                        {
+                            return MenuText.FileError.Contents;
+                        }
+                        sb.AppendLine(newLine);
+                    }
+                    popToLoad = sb.ToString();
+                    return MenuText.FileError.None;
                 }
-                popToLoad = sb.ToString();
-                return MenuText.FileError.None;
-
-                /*
-                int rows = fileByLine.Count;
-                int cols = fileByLine[0].Length;
-
-                // Error if there are more lines than the board can hold
-                if (rows > GoL.Rows)
-                    return MenuText.FileError.Length;
-                // Error if the first line is too wide,
-                // 'cols' also used to check against all other lines
-                if (cols > GoL.Cols)
-                    return MenuText.FileError.Width;
-
-                StringBuilder sb = new StringBuilder();
-                foreach (string line in fileByLine)
+                else
                 {
-                    //Error if all lines are not the same width
-                    if (line.Length != cols)
+                    // File should exist, but its good to make sure.
+                    FileInfo file = new FileInfo(filename);
+                    if (!file.Exists)
                     {
-                        return MenuText.FileError.Uneven;
-                    }
-                    //Error of the line is not valid
-                    if (!ValidLine(line))
-                    {
-                        return MenuText.FileError.Contents;
+                        return MenuText.FileError.Not_Loaded;
                     }
 
-                    sb.AppendLine(line);
+                    // Checks if the file is empty or too large ( > 20KB )
+                    if (file.Length == 0 || file.Length > 20480)
+                    {
+                        return MenuText.FileError.Size;
+                    }
+
+                    List<string> fileByLine = new List<string>();
+                    using (StreamReader reader = new StreamReader(filename))
+                    {
+                        // New way to read all the lines for checking...
+                        // Skips newlines, also skips lines that are 
+                        // probably comments
+                        while (!reader.EndOfStream)
+                        {
+                            string temp = reader.ReadLine().Trim();
+                            if (temp == String.Empty)
+                            {
+                                fileByLine.Add(temp);
+                                continue;
+                            }
+                            switch (temp[0])
+                            {
+                                case '!':
+                                case '#':
+                                case '/':
+                                    // Ignore these lines
+                                    break;
+                                default:
+                                    fileByLine.Add(temp);
+                                    break;
+                            }
+
+                        }
+                    }
+
+                    //Find the longest line in the file
+                    var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
+                    var rows = fileByLine.Count;
+
+                    if (rows > GoL.Rows)
+                    {
+                        return MenuText.FileError.Length;
+                    }
+                    if (longestLine > GoL.Cols)
+                    {
+                        return MenuText.FileError.Width;
+                    }
+
+                    var sb = new StringBuilder();
+                    foreach (var line in fileByLine)
+                    {
+                        //Pad all lines to the same length as the longest for loading into the game board.
+                        var newLine = line.PadRight(longestLine, '.');
+                        if (!ValidLine(newLine))
+                        {
+                            return MenuText.FileError.Contents;
+                        }
+                        sb.AppendLine(newLine);
+                    }
+                    popToLoad = sb.ToString();
+                    return MenuText.FileError.None;
                 }
-
-                popToLoad = sb.ToString();
-                return MenuText.FileError.None;*/
-
             }
 //------------------------------------------------------------------------------
             /// <summary>
@@ -1222,7 +1092,6 @@ namespace GHGameOfLife
             }
 //------------------------------------------------------------------------------
             /// <summary>
-            /// TODO: Change this to accept more file formats
             /// Used by files to fill the game board, centered
             /// </summary>
             /// <param name="startingPop"></param>
@@ -1260,6 +1129,12 @@ namespace GHGameOfLife
                 }
             }
 //------------------------------------------------------------------------------
+            /// <summary>
+            /// Saves the current board to a file. 
+            /// </summary>
+            /// <param name="numRows">Total number of rows on the board</param>
+            /// <param name="numCols">Total number of cols on the board</param>
+            /// <param name="tempBoard">2d bool array representing the board</param>
             private static void SaveBoard(int numRows, int numCols, bool[,] tempBoard)
             {
                 SaveFileDialog saveDia = new SaveFileDialog();

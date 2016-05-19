@@ -113,31 +113,6 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    //if (!Board[r, c])
-                    //{
-                    //    if (Wrap)
-                    //    {
-                    //        nextBoard[r, c] = WillBeBornWrap(r, c);
-                    //    }
-                    //    else
-                    //    {
-                    //        nextBoard[r, c] = WillBeBornNoWrap(r, c);
-                    //    }
-
-                    //}
-
-                    //if (Board[r, c])
-                    //{
-                    //    if (Wrap)
-                    //    {
-                    //        nextBoard[r, c] = !WillDieWrap(r, c);
-                    //    }
-                    //    else
-                    //    {
-                    //        nextBoard[r, c] = !WillDieNoWrap(r, c);
-                    //    }
-
-                    //}
                     if(Wrap)
                     {
                         nextBoard[r, c] = NextCellStateWrap(r, c);
@@ -154,7 +129,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Slams down the board and the sides of the boarder using a
+        /// Slams down the board and the sides of the border using a
         /// StringBuilder
         /// </summary>
         private void Print()
@@ -191,160 +166,6 @@ namespace GHGameOfLife
 
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;    
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Calculates if the current dude at Board[r,c] will die or not.
-        /// If a dude has less than 2, or more than 3 neighbors that dude
-        /// is dead next generation.
-        /// % because this allows wrapping around the board
-        /// </summary>
-        /// <param name="r"></param>
-        /// <param name="c"></param>
-        /// <returns>True if the current dude dies.</returns>
-        private Boolean WillDieWrap(int r, int c)
-        {
-            int n = 0;
-
-            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, c]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[r, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, c]) n++;
-            if (Board[r, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-
-            if (n < 2) return true;
-            if (n > 3) return true;
-            else return false;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Calculates if the current space at Board[r,c] will become alive
-        /// or not. If nothingness has exactly 3 neighbors it will become
-        /// living next generation.
-        /// % because this allows wrapping around the board
-        /// </summary>
-        /// <param name="r"></param>
-        /// <param name="c"></param>
-        /// <returns>True if the miracle of life occurs.</returns>
-        private Boolean WillBeBornWrap(int r, int c)
-        {
-            int n = 0;
-
-            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, c]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[r, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, c]) n++;
-            if (Board[r, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-
-            if (n == 3) return true;
-            else return false;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Calculates if the current dude at _Board[r,c] will die or not.
-        /// If a dude has less than 2, or more than 3 neighbors that dude
-        /// is dead next generation.
-        /// Ugly because I dont fluff the board with a border of nothing
-        /// </summary>
-        /// <param name="r"></param>
-        /// <param name="c"></param>
-        /// <returns>True if the current dude dies.</returns>
-        private Boolean WillDieNoWrap(int r, int c)
-        {
-            int n = 0;
-
-            if (r != 0 && c != 0)
-            {
-                if (Board[r - 1, c - 1]) n++;
-            }
-            if (r != 0 && c != Cols - 1)
-            {
-                if (Board[r - 1, c + 1]) n++;
-            }
-            if (r != 0)
-            {
-                if (Board[r - 1, c]) n++;
-            }
-            if (r != Rows - 1 && c != 0)
-            {
-                if (Board[r + 1, c - 1]) n++;
-            }
-            if (c != 0)
-            {
-                if (Board[r, c - 1]) n++;
-            }
-            if (r != Rows - 1)
-            {
-                if (Board[r + 1, c]) n++;
-            }
-            if (c != Cols - 1)
-            {
-                if (Board[r, c + 1]) n++;
-            }
-            if (r != Rows - 1 && c != Cols - 1)
-            {
-                if (Board[r + 1, c + 1]) n++;
-            }
-
-            if (n < 2) return true;
-            if (n > 3) return true;
-            else return false;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Calculates if the current space at _Board[r,c] will become alive
-        /// or not. If nothingness has exactly 3 neighbors it will become
-        /// living next generation.
-        /// Ugly because I dont fluff the board with a border of nothing
-        /// </summary>
-        /// <param name="r"></param>
-        /// <param name="c"></param>
-        /// <returns>True if the miracle of life occurs.</returns>
-        private Boolean WillBeBornNoWrap(int r, int c)
-        {
-            int n = 0;
-
-            if (r != 0 && c != 0)
-            {
-                if (Board[r - 1, c - 1]) n++;
-            }
-            if (r != 0 && c != Cols - 1)
-            {
-                if (Board[r - 1, c + 1]) n++;
-            }
-            if (r != 0)
-            {
-                if (Board[r - 1, c]) n++;
-            }
-            if (r != Rows - 1 && c != 0)
-            {
-                if (Board[r + 1, c - 1]) n++;
-            }
-            if (c != 0)
-            {
-                if (Board[r, c - 1]) n++;
-            }
-            if (r != Rows - 1)
-            {
-                if (Board[r + 1, c]) n++;
-            }
-            if (c != Cols - 1)
-            {
-                if (Board[r, c + 1]) n++;
-            }
-            if (r != Rows - 1 && c != Cols - 1)
-            {
-                if (Board[r + 1, c + 1]) n++;
-            }
-
-            if (n == 3) return true;
-            else return false;
         }
 //------------------------------------------------------------------------------
         private bool NextCellStateWrap(int r, int c)

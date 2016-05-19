@@ -53,7 +53,7 @@ namespace GHGameOfLife
                     while (!Console.KeyAvailable)
                         System.Threading.Thread.Sleep(50);
 
-                    ConsoleKey pressed = Console.ReadKey(false).Key;
+                    ConsoleKey pressed = Console.ReadKey(true).Key;
                     if (pressed == ConsoleKey.Escape)
                     {
                         exit = true;
@@ -143,39 +143,39 @@ namespace GHGameOfLife
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
+            MenuText.DrawBorder();
+            //char vert =     '║'; // '\u2551'
+            //char horiz =    '═'; // '\u2550'
+            //char topLeft =  '╔'; // '\u2554'
+            //char topRight = '╗'; // '\u2557'
+            //char botLeft =  '╚'; // '\u255A'
+            //char botRight = '╝'; // '\u255D'
 
-            char vert =     '║'; // '\u2551'
-            char horiz =    '═'; // '\u2550'
-            char topLeft =  '╔'; // '\u2554'
-            char topRight = '╗'; // '\u2557'
-            char botLeft =  '╚'; // '\u255A'
-            char botRight = '╝'; // '\u255D'
-
-            int borderTop = 4;
-            int borderBottom = Current_Rows- 5;
-            int borderLeft = 4;
-            int borderRight = Current_Cols - 5;
+            //int borderTop = 4;
+            //int borderBottom = Current_Rows- 5;
+            //int borderLeft = 4;
+            //int borderRight = Current_Cols - 5;
 
 
-            // This draws the nice little border on the screen...
-            Console.SetCursorPosition(borderLeft, borderTop);
-            Console.Write(topLeft);
-            for (int i = borderLeft; i < borderRight; i++)
-                Console.Write(horiz);
-            Console.SetCursorPosition(borderRight,borderTop);
-            Console.Write(topRight);
-            for (int i = borderTop+1; i < borderBottom; i++)
-            {
-                Console.SetCursorPosition(borderLeft, i);
-                Console.Write(vert);
-                Console.SetCursorPosition(borderRight, i);
-                Console.Write(vert);
-            }
-            Console.SetCursorPosition(borderLeft, borderBottom);
-            Console.Write(botLeft);
-            for (int i = 5; i < borderRight; i++)
-                Console.Write(horiz);
-            Console.Write(botRight);
+            //// This draws the nice little border on the screen...
+            //Console.SetCursorPosition(borderLeft, borderTop);
+            //Console.Write(topLeft);
+            //for (int i = borderLeft; i < borderRight; i++)
+            //    Console.Write(horiz);
+            //Console.SetCursorPosition(borderRight,borderTop);
+            //Console.Write(topRight);
+            //for (int i = borderTop+1; i < borderBottom; i++)
+            //{
+            //    Console.SetCursorPosition(borderLeft, i);
+            //    Console.Write(vert);
+            //    Console.SetCursorPosition(borderRight, i);
+            //    Console.Write(vert);
+            //}
+            //Console.SetCursorPosition(borderLeft, borderBottom);
+            //Console.Write(botLeft);
+            //for (int i = 5; i < borderRight; i++)
+            //    Console.Write(horiz);
+            //Console.Write(botRight);
 
             //MenuText.PrintWelcome();
         }
@@ -321,7 +321,7 @@ namespace GHGameOfLife
             }
            
             //Clear the current options
-            MenuText.ClearAllInBoarder();
+            MenuText.ClearAllInBorder();
             
             //Move out into the main loop maybe
             RunGame(pop,res);
@@ -378,7 +378,7 @@ namespace GHGameOfLife
             {
                 if( reprintPage )
                 {
-                    MenuText.ClearAllInBoarder();
+                    MenuText.ClearAllInBorder();
                     currPage = (List<string>)MenuText.Large_Pops_Pages[pageIndex];
                     promptRow = MenuText.PrintResourceMenu(currPage,lastPage,firstPage);                   
                 }
@@ -475,7 +475,9 @@ namespace GHGameOfLife
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
+            MenuText.DrawBorder();
 
+            /*
             char vert = '║';        // '\u2551'
             char horiz = '═';       // '\u2550'
             char topLeft = '╔';     // '\u2554'
@@ -507,7 +509,7 @@ namespace GHGameOfLife
             Console.Write(botLeft);
             for (int i = 5; i < borderRight; i++)
                 Console.Write(horiz);
-            Console.Write(botRight);
+            Console.Write(botRight);*/
 
             return MenuText.PrintMainMenu();
             

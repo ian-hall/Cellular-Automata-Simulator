@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 
 namespace GHGameOfLife
 {
@@ -63,16 +64,16 @@ namespace GHGameOfLife
 
             foreach (DictionaryEntry res in all)
             {
-                //Large_Pops.Add(res.Key.ToString());
-                testing.Add(res.Key.ToString());
+                Large_Pops.Add(res.Key.ToString());
+                //testing.Add(res.Key.ToString());
             }
 
-            int numToTest = 67;
-            for (int i = 0; i < numToTest; i++ )
-            {
-                Large_Pops.Add(testing[rand.Next(testing.Count)]);
-            }
-
+            //int numToTest = 67;
+            //for (int i = 0; i < numToTest; i++ )
+            //{
+            //    Large_Pops.Add(testing[rand.Next(testing.Count)]);
+            //}
+            Large_Pops.Sort();
             Large_Pops_Pages = new ArrayList();
 
             List<string> temp = new List<string>();
@@ -95,6 +96,7 @@ namespace GHGameOfLife
                     count = 0;
                 }
             }
+            //End testing for pop list
 
             rm = GHGameOfLife.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
@@ -154,13 +156,52 @@ namespace GHGameOfLife
             Console.Write("".PadRight(Console.WindowWidth-10));
         }
 //------------------------------------------------------------------------------
+        public static void DrawBorder()
+        {
+            var rows = Console.WindowHeight;
+            var cols = Console.WindowWidth;
+
+            char vert = '║'; // '\u2551'
+            char horiz = '═'; // '\u2550'
+            char topLeft = '╔'; // '\u2554'
+            char topRight = '╗'; // '\u2557'
+            char botLeft = '╚'; // '\u255A'
+            char botRight = '╝'; // '\u255D'
+
+            int borderTop = 4;
+            int borderBottom = rows - 5;
+            int borderLeft = 4;
+            int borderRight = cols - 5;
+
+
+            // This draws the nice little border on the screen...
+            Console.SetCursorPosition(borderLeft, borderTop);
+            Console.Write(topLeft);
+            for (int i = borderLeft; i < borderRight; i++)
+                Console.Write(horiz);
+            Console.SetCursorPosition(borderRight, borderTop);
+            Console.Write(topRight);
+            for (int i = borderTop + 1; i < borderBottom; i++)
+            {
+                Console.SetCursorPosition(borderLeft, i);
+                Console.Write(vert);
+                Console.SetCursorPosition(borderRight, i);
+                Console.Write(vert);
+            }
+            Console.SetCursorPosition(borderLeft, borderBottom);
+            Console.Write(botLeft);
+            for (int i = 5; i < borderRight; i++)
+                Console.Write(horiz);
+            Console.Write(botRight);
+        }
+//------------------------------------------------------------------------------
         /// <summary>
         /// Prints the main menu
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
         public static int PrintMainMenu()
         {
-            ClearAllInBoarder();
+            ClearAllInBorder();
 
             Console.ForegroundColor = MenuText.Info_FG;
             Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
@@ -224,38 +265,6 @@ namespace GHGameOfLife
 
             return ++curRow;
         }
-        /*
-        public static int PrintResourceMenu(out int resCount)
-        {
-            ClearAllInBoarder();
-
-            int curRow = Menu_Start_Row;
-
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
-            Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
-
-            int count = 1;
-            
-            foreach (string res in MenuText.Large_Pops)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                string option = String.Format("{0,3}) {1}", count, res).Replace("_"," ");
-                Console.Write(option);
-                count += 1;
-            }
-
-            resCount = count;
-
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.ForegroundColor = Info_FG;
-            string cancel = String.Format("{0,3}) {1}", count, "Cancel");
-            Console.Write(cancel);
-            Console.ForegroundColor = Default_FG;
-
-            return (++curRow);
-        }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the controls for controling the game while running
@@ -356,7 +365,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void PromptForAnother()
         {
-            ClearAllInBoarder();
+            ClearAllInBorder();
             ClearUnderBoard();
             ClearAboveBoard();
             ClearLine(Info_Row);
@@ -386,7 +395,7 @@ namespace GHGameOfLife
         /// <summary>
         /// Clear everything inside the board area
         /// </summary>
-        public static void ClearAllInBoarder()
+        public static void ClearAllInBorder()
         {
             for (int i = 5; i < Console.WindowHeight-5; i++)
               ClearWithinBorder(i);
@@ -394,7 +403,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Clear above the boarder
+        /// Clear above the border
         /// </summary>
         public static void ClearAboveBoard()
         {
