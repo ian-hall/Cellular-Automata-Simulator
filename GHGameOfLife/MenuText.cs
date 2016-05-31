@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 using System.Text;
-using System.Linq;
 
 namespace GHGameOfLife
 {
@@ -58,21 +57,12 @@ namespace GHGameOfLife
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
             
-            //TODO: Change testing to be a list of pops loaded from elsewhere
-            List<string> testing = new List<string>();
-            Random rand = new Random();
 
             foreach (DictionaryEntry res in all)
             {
                 Large_Pops.Add(res.Key.ToString());
-                //testing.Add(res.Key.ToString());
             }
 
-            //int numToTest = 67;
-            //for (int i = 0; i < numToTest; i++ )
-            //{
-            //    Large_Pops.Add(testing[rand.Next(testing.Count)]);
-            //}
             Large_Pops.Sort();
             Large_Pops_Pages = new ArrayList();
 
@@ -267,7 +257,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Prints the controls for controling the game while running
+        /// Prints the controls for controlling the game while running
         /// </summary>
         public static void PrintRunControls()
         {

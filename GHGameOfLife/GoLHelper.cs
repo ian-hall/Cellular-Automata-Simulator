@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading;
 
 namespace GHGameOfLife
 {
@@ -22,11 +23,10 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private class GoLHelper
         {
-            private static int[] Speeds = { 132, 100, 66, 50, 33 };
+            private static int[] Speeds = { 132, 100, 66, 50, 0 };
             private static int Curr_Speed_Index = 2;
             private static IEnumerable<int> Valid_Left;
             private static IEnumerable<int> Valid_Top;
-            //private enum SmallPops { None, Glider, Ship, Acorn, BlockLay };
             private static int CurLeft, CurTop;
 //-----------------------------------------------------------------------------
             /// <summary>
@@ -105,9 +105,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
             /// <summary>
             /// Builds the board from a resource
-            /// TODO: Don't really need to validate built in stuff, but probably 
-            /// need to add the ability to resize the window if for some reason
-            /// it is set smaller than a preloaded population can display in.
+            /// TODO: Add the name of the resource to the screen
             /// </summary>
             /// <param name="pop"></param>
             public static void BuildBoardResource(string pop)
@@ -162,9 +160,9 @@ namespace GHGameOfLife
                 Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
-                char horiz = '═';       // '\u2550'
-                char botLeft = '╚';     // '\u255A'
-                char botRight = '╝';    // '\u255D'
+                //char horiz = '═';       // '\u2550'
+                //char botLeft = '╚';     // '\u255A'
+                //char botRight = '╝';    // '\u255D'
 
                 bool[,] tempBoard = new bool[Valid_Top.Count(), Valid_Left.Count()];
 
@@ -178,12 +176,12 @@ namespace GHGameOfLife
                     }
                 }
 
-                Console.SetCursorPosition(Valid_Left.First() - 1,Valid_Top.Last()+1);
-                Console.Write(botLeft);
-                for (int i = 0; i < Valid_Left.Count(); i++)
-                    Console.Write(horiz);
-                Console.Write(botRight);
-
+                //Console.SetCursorPosition(Valid_Left.First() - 1,Valid_Top.Last()+1);
+                //Console.Write(botLeft);
+                //for (int i = 0; i < Valid_Left.Count(); i++)
+                //    Console.Write(horiz);
+                //Console.Write(botRight);
+                MenuText.DrawBorder();
                 Console.ForegroundColor = MenuText.Info_FG;
 
 
@@ -787,7 +785,7 @@ namespace GHGameOfLife
             /// Runs the game
             /// </summary>
             /// <param name="game">The board to start with</param>
-            public static void RunIt(GoL game)
+            /*public static void RunIt(GoL game)
             {
                 if (!IsInitialized)
                 {
@@ -864,7 +862,7 @@ namespace GHGameOfLife
                 }
 
                 Console.CursorVisible = false;
-            }
+            }*/
 //------------------------------------------------------------------------------
         /// <summary>
         /// Handles all 
@@ -872,7 +870,7 @@ namespace GHGameOfLife
         /// <param name="pressed"></param>
         /// <param name="pauseLoop"></param>
         /// <returns></returns>
-            private static void HandleRunningInput(ConsoleKey pressed, ref Dictionary<string,bool> currentStatus)
+            private static void HandleRunningInput(ConsoleKey pressed, ref Dictionary<string,bool> currentStatus, bool threadedHandler = false)
             {
                 switch (pressed)
                 {
@@ -885,6 +883,10 @@ namespace GHGameOfLife
                         }                       
                         break;
                     case ConsoleKey.W:
+                        if(threadedHandler)
+                        {
+                            break;
+                        }
                         if (!currentStatus["Continuous"] || currentStatus["Paused"])
                         {
                             currentStatus["Wrapping"] = !currentStatus["Wrapping"];
@@ -918,11 +920,101 @@ namespace GHGameOfLife
                         currentStatus["Go"] = false;
                         currentStatus["ExitPause"] = true;
                         currentStatus["Paused"] = false;
+
+                        GoL.StopLock.WaitOne();
+                        GoL.StopNext = true;
+                        GoL.StopLock.ReleaseMutex();
                         break;
                     default:
                         break;
                 }
                 MenuText.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], Curr_Speed_Index);
+            }
+//------------------------------------------------------------------------------
+            /// <summary>
+            /// Runs the game using my half-assed threading
+            /// Wrapping is always on in this case.
+            /// </summary>
+            /// <param name="game">The board to start with</param>
+            public static void ThreadedRunner(GoL game)
+            {
+                if (!IsInitialized)
+                {
+                    Console.ForegroundColor = MenuText.Info_FG;
+                    Console.Write("ERROR");
+                    return;
+                }
+
+                MenuText.PrintRunControls();
+
+                var statusValues = new Dictionary<string, bool>();
+                statusValues["Go"] = true;
+                statusValues["Continuous"] = false;
+                statusValues["Paused"] = true;
+                statusValues["Wrapping"] = true;
+                statusValues["ExitPause"] = false;
+
+                MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], Curr_Speed_Index);
+
+                var boardRunner = new Thread(GoL.ThreadedNext);
+                boardRunner.Start();
+                game.ThreadedPrint();
+                while (statusValues["Go"])
+                {
+                    // If it isnt running, and no keys are pressed
+                    while (!Console.KeyAvailable && !statusValues["Continuous"])
+                    {
+                        Thread.Sleep(10);
+                    }
+                    // if it IS running, and no keys are pressed
+                    while (!Console.KeyAvailable && statusValues["Continuous"])
+                    {
+                        game.ThreadedPrint();
+                        Thread.Sleep(Speeds[Curr_Speed_Index]);
+                    }
+
+                    //Catch the key press here
+                    ConsoleKeyInfo pressed = Console.ReadKey(true);
+                    if (pressed.Key == ConsoleKey.Spacebar)
+                    {
+                        //If space is pressed and the game is not running continuously
+                        if (!statusValues["Continuous"])
+                        {
+                            game.ThreadedPrint();
+                        }
+                        else //if space is pressed, pausing the game
+                        {
+                            statusValues["ExitPause"] = false;
+                            statusValues["Paused"] = true;
+                            MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], Curr_Speed_Index);
+                            while (!statusValues["ExitPause"])
+                            {
+                                while (!Console.KeyAvailable)
+                                {
+                                    System.Threading.Thread.Sleep(50);
+                                }
+                                //If any key is pressed while the game is paused.
+                                ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
+                                GoLHelper.HandleRunningInput(pauseEntry.Key, ref statusValues,true);
+                                if (pauseEntry.Key == ConsoleKey.W)
+                                {
+                                    game.Wrap = statusValues["Wrapping"];
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //handle any other key pressed while the game is running.
+                        GoLHelper.HandleRunningInput(pressed.Key, ref statusValues,true);
+                        if (pressed.Key == ConsoleKey.W)
+                        {
+                            game.Wrap = statusValues["Wrapping"];
+                        }
+                    }
+                }
+
+                Console.CursorVisible = false;
             }
 //------------------------------------------------------------------------------
             /// <summary>

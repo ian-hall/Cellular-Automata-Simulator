@@ -6,6 +6,8 @@ using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Drawing;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace GHGameOfLife
 {
@@ -29,6 +31,12 @@ namespace GHGameOfLife
         private static int Cols;
         private static int OrigConsHeight;
         private static int OrigConsWidth;
+
+        private static bool StopNext;
+        private static AutoResetEvent NextStopped;
+        private static Mutex StopLock;
+        private const int Max_Boards = 100;
+        private static ConcurrentQueue<bool[,]> Next_Boards;
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -48,6 +56,12 @@ namespace GHGameOfLife
             this.Generation = 1;
             Wrap = true;
 
+
+            StopNext = false;
+            StopLock = new Mutex(false);
+            NextStopped = new AutoResetEvent(false);
+            Next_Boards = new ConcurrentQueue<bool[,]>();
+
             GoLHelper.CalcBuilderBounds();
         }
 //------------------------------------------------------------------------------        
@@ -58,6 +72,7 @@ namespace GHGameOfLife
         public void BuildDefaultPop() 
         {
             GoLHelper.BuildBoardRandom();
+            Next_Boards.Enqueue(Board);
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -69,8 +84,8 @@ namespace GHGameOfLife
         public void BuildFromFile()
         {          
             GoLHelper.BuildBoardFile();
-            IsInitialized = true;
-            
+            Next_Boards.Enqueue(Board);
+            IsInitialized = true;            
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -79,6 +94,7 @@ namespace GHGameOfLife
         public void BuildFromUser()
         {
             GoLHelper.BuildBoardUser();
+            Next_Boards.Enqueue(Board);
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -92,143 +108,267 @@ namespace GHGameOfLife
         public void BuildFromResource(string pop)
         {
             GoLHelper.BuildBoardResource(pop);
+            Next_Boards.Enqueue(Board);
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
-        public void RunGame()
+        //public void RunGame()
+        //{
+        //    Print();
+        //    GoLHelper.RunIt(this);
+        //}
+//------------------------------------------------------------------------------
+        public void ThreadedRunGame()
         {
-            Print();
-            GoLHelper.RunIt(this);
+            GoLHelper.ThreadedRunner(this);
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Updates the board for the next generation of peoples
         /// </summary>
         /// Need to enable wrapping here
-        private void Next()
+        //private void Next()
+        //{
+        //    bool[,] nextBoard = new bool[Rows, Cols];
+
+        //    for (int r = 0; r < Rows; r++)
+        //    {
+        //        for (int c = 0; c < Cols; c++)
+        //        {
+        //            if(Wrap)
+        //            {
+        //                nextBoard[r, c] = NextCellStateWrap(r, c);
+        //            }
+        //            else
+        //            {
+        //                nextBoard[r, c] = NextCellState(r, c);
+        //            }
+        //        }
+        //    }
+        //    Generation++;          
+        //    Board = nextBoard;
+        //}
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Adds the next board values to a queue to be read from
+        /// </summary>
+        private static void ThreadedNext()
         {
-            bool[,] nextBoard = new bool[Rows, Cols];
-
-            for (int r = 0; r < Rows; r++)
+            var go = true;
+            while(go)
             {
-                for (int c = 0; c < Cols; c++)
+                while(Next_Boards.Count >= Max_Boards)
                 {
-                    if(Wrap)
+                    StopLock.WaitOne();
+                    if(StopNext)
                     {
-                        nextBoard[r, c] = NextCellStateWrap(r, c);
+                        go = false;
+                        break;
                     }
-                    else
-                    {
-                        nextBoard[r, c] = NextCellState(r, c);
-                    }
+                    StopLock.ReleaseMutex();
+                    Thread.Sleep(10);
                 }
-            }
-            Generation++;          
-            Board = nextBoard;
 
+                if (Next_Boards.Count < Max_Boards && IsInitialized && go)
+                {
+                    var lastBoard = Next_Boards.Last();
+                    var nextBoard = new bool[Rows, Cols];
+
+                    for (int r = 0; r < Rows; r++)
+                    {
+                        for (int c = 0; c < Cols; c++)
+                        {
+                            nextBoard[r, c] = ThreadedNextCellState(r, c, ref lastBoard);
+                        }
+                    }
+                    Next_Boards.Enqueue(nextBoard);
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
+
+                StopLock.WaitOne();
+                if (StopNext)
+                {
+                    go = false;
+                }
+                StopLock.ReleaseMutex();
+            }
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Slams down the board and the sides of the border using a
         /// StringBuilder
         /// </summary>
-        private void Print()
+        //private void Print()
+        //{
+        //    Console.SetCursorPosition(0, 1);
+        //    Console.Write(" ".PadRight(Console.WindowWidth));
+        //    string write = "Generation " + Generation;
+        //    int left = (Console.WindowWidth / 2) - (write.Length / 2);
+        //    Console.SetCursorPosition(left, 1);
+        //    Console.Write(write);
+
+        //    Console.BackgroundColor = MenuText.Default_BG;
+        //    Console.ForegroundColor = MenuText.Board_FG;
+
+        //    Console.SetCursorPosition(0, MenuText.Space);
+        //    StringBuilder sb = new StringBuilder();
+        //    for (int r = 0; r < Rows; r++)
+        //    {
+        //        sb.Append("    ║");
+        //        for (int c = 0; c < Cols; c++)
+        //        {
+        //            if (!Board[r, c])
+        //            {
+        //                sb.Append(" ");
+        //            }
+        //            else
+        //            {
+        //                sb.Append(Live_Cell);
+        //            }
+        //        }
+        //        sb.AppendLine("║");
+        //    }
+        //    Console.Write(sb);
+
+        //    Console.BackgroundColor = MenuText.Default_BG;
+        //    Console.ForegroundColor = MenuText.Default_FG;    
+        //}
+//------------------------------------------------------------------------------
+        private void ThreadedPrint()
         {
-            Console.SetCursorPosition(0, 1);
-            Console.Write(" ".PadRight(Console.WindowWidth));
-            string write = "Generation " + Generation;
-            int left = (Console.WindowWidth / 2) - (write.Length / 2);
-            Console.SetCursorPosition(left, 1);
-            Console.Write(write);
-
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Board_FG;
-
-            Console.SetCursorPosition(0, MenuText.Space);
-            StringBuilder sb = new StringBuilder();
-            for (int r = 0; r < Rows; r++)
+            bool printed = false;
+            do
             {
-                sb.Append("    ║");
-                for (int c = 0; c < Cols; c++)
+                if (Next_Boards.Count >= 2)
                 {
-                    if (!Board[r, c])
+                    if (Next_Boards.TryDequeue(out Board))
                     {
-                        sb.Append(" ");
-                    }
-                    else
-                    {
-                        sb.Append(Live_Cell);
+                        Console.SetCursorPosition(0, 1);
+                        Console.Write(" ".PadRight(Console.WindowWidth));
+                        string write = "Generation " + Generation;
+                        int left = (Console.WindowWidth / 2) - (write.Length / 2);
+                        Console.SetCursorPosition(left, 1);
+                        Console.Write(write);
+
+                        Console.BackgroundColor = MenuText.Default_BG;
+                        Console.ForegroundColor = MenuText.Board_FG;
+
+                        Console.SetCursorPosition(0, MenuText.Space);
+                        StringBuilder sb = new StringBuilder();
+                        for (int r = 0; r < Rows; r++)
+                        {
+                            sb.Append("    ║");
+                            for (int c = 0; c < Cols; c++)
+                            {
+                                if (!Board[r, c])
+                                {
+                                    sb.Append(" ");
+                                }
+                                else
+                                {
+                                    sb.Append(Live_Cell);
+                                }
+                            }
+                            sb.AppendLine("║");
+                        }
+                        Console.Write(sb);
+
+                        Console.BackgroundColor = MenuText.Default_BG;
+                        Console.ForegroundColor = MenuText.Default_FG;
+                        printed = true;
                     }
                 }
-                sb.AppendLine("║");
-            }
-            Console.Write(sb);
-
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Default_FG;    
+            } while (!printed);
+            Generation++;
         }
 //------------------------------------------------------------------------------
-        private bool NextCellStateWrap(int r, int c)
+//        private bool NextCellStateWrap(int r, int c)
+//        {
+//            int n = 0;
+
+//            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+//            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+//            if (Board[(r - 1 + Rows) % Rows, c]) n++;
+//            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+//            if (Board[r, (c - 1 + Cols) % Cols]) n++;
+//            if (Board[(r + 1 + Rows) % Rows, c]) n++;
+//            if (Board[r, (c + 1 + Cols) % Cols]) n++;
+//            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+
+//            if (Board[r, c])
+//            {
+//                return ((n == 2) || (n == 3));
+//            }
+//            else
+//            {
+//                return (n == 3);
+//            }
+//        }
+////------------------------------------------------------------------------------
+//        private bool NextCellState(int r, int c)
+//        {
+//            int n = 0;
+
+//            if (r != 0 && c != 0)
+//            {
+//                if (Board[r - 1, c - 1]) n++;
+//            }
+//            if (r != 0 && c != Cols - 1)
+//            {
+//                if (Board[r - 1, c + 1]) n++;
+//            }
+//            if (r != 0)
+//            {
+//                if (Board[r - 1, c]) n++;
+//            }
+//            if (r != Rows - 1 && c != 0)
+//            {
+//                if (Board[r + 1, c - 1]) n++;
+//            }
+//            if (c != 0)
+//            {
+//                if (Board[r, c - 1]) n++;
+//            }
+//            if (r != Rows - 1)
+//            {
+//                if (Board[r + 1, c]) n++;
+//            }
+//            if (c != Cols - 1)
+//            {
+//                if (Board[r, c + 1]) n++;
+//            }
+//            if (r != Rows - 1 && c != Cols - 1)
+//            {
+//                if (Board[r + 1, c + 1]) n++;
+//            }
+
+//            if (Board[r, c])
+//            {
+//                return ((n == 2) || (n == 3));
+//            }
+//            else
+//            {
+//                return (n == 3);
+//            }
+//        }
+//------------------------------------------------------------------------------
+        private static bool ThreadedNextCellState(int r, int c, ref bool[,] board)
         {
             int n = 0;
 
-            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r - 1 + Rows) % Rows, c]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (Board[r, (c - 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, c]) n++;
-            if (Board[r, (c + 1 + Cols) % Cols]) n++;
-            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+            if (board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+            if (board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+            if (board[(r - 1 + Rows) % Rows, c]) n++;
+            if (board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
+            if (board[r, (c - 1 + Cols) % Cols]) n++;
+            if (board[(r + 1 + Rows) % Rows, c]) n++;
+            if (board[r, (c + 1 + Cols) % Cols]) n++;
+            if (board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
 
-            if(Board[r,c])
-            {
-                return ((n == 2) || (n == 3));
-            }
-            else
-            {
-                return (n == 3);
-            }
-        }
-//------------------------------------------------------------------------------
-        private bool NextCellState(int r, int c)
-        {
-            int n = 0;
-
-            if (r != 0 && c != 0)
-            {
-                if (Board[r - 1, c - 1]) n++;
-            }
-            if (r != 0 && c != Cols - 1)
-            {
-                if (Board[r - 1, c + 1]) n++;
-            }
-            if (r != 0)
-            {
-                if (Board[r - 1, c]) n++;
-            }
-            if (r != Rows - 1 && c != 0)
-            {
-                if (Board[r + 1, c - 1]) n++;
-            }
-            if (c != 0)
-            {
-                if (Board[r, c - 1]) n++;
-            }
-            if (r != Rows - 1)
-            {
-                if (Board[r + 1, c]) n++;
-            }
-            if (c != Cols - 1)
-            {
-                if (Board[r, c + 1]) n++;
-            }
-            if (r != Rows - 1 && c != Cols - 1)
-            {
-                if (Board[r + 1, c + 1]) n++;
-            }
-
-            if (Board[r, c])
+            if(board[r,c])
             {
                 return ((n == 2) || (n == 3));
             }

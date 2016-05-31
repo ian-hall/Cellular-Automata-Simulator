@@ -144,40 +144,6 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
             MenuText.DrawBorder();
-            //char vert =     '║'; // '\u2551'
-            //char horiz =    '═'; // '\u2550'
-            //char topLeft =  '╔'; // '\u2554'
-            //char topRight = '╗'; // '\u2557'
-            //char botLeft =  '╚'; // '\u255A'
-            //char botRight = '╝'; // '\u255D'
-
-            //int borderTop = 4;
-            //int borderBottom = Current_Rows- 5;
-            //int borderLeft = 4;
-            //int borderRight = Current_Cols - 5;
-
-
-            //// This draws the nice little border on the screen...
-            //Console.SetCursorPosition(borderLeft, borderTop);
-            //Console.Write(topLeft);
-            //for (int i = borderLeft; i < borderRight; i++)
-            //    Console.Write(horiz);
-            //Console.SetCursorPosition(borderRight,borderTop);
-            //Console.Write(topRight);
-            //for (int i = borderTop+1; i < borderBottom; i++)
-            //{
-            //    Console.SetCursorPosition(borderLeft, i);
-            //    Console.Write(vert);
-            //    Console.SetCursorPosition(borderRight, i);
-            //    Console.Write(vert);
-            //}
-            //Console.SetCursorPosition(borderLeft, borderBottom);
-            //Console.Write(botLeft);
-            //for (int i = 5; i < borderRight; i++)
-            //    Console.Write(horiz);
-            //Console.Write(botRight);
-
-            //MenuText.PrintWelcome();
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -352,7 +318,8 @@ namespace GHGameOfLife
                     break;
             }
 
-            game.RunGame();
+            //game.RunGame();
+            game.ThreadedRunGame();
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -476,48 +443,13 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
             MenuText.DrawBorder();
-
-            /*
-            char vert = '║';        // '\u2551'
-            char horiz = '═';       // '\u2550'
-            char topLeft = '╔';     // '\u2554'
-            char topRight = '╗';    // '\u2557'
-            char botLeft = '╚';     // '\u255A'
-            char botRight = '╝';    // '\u255D'
-
-            int borderTop = 4;
-            int borderBottom = Current_Rows - 5;
-            int borderLeft = 4;
-            int borderRight = Current_Cols - 5;
-
-
-            // This draws the nice little border on the screen...
-            Console.SetCursorPosition(borderLeft, borderTop);
-            Console.Write(topLeft);
-            for (int i = borderLeft; i < borderRight; i++)
-                Console.Write(horiz);
-            Console.SetCursorPosition(borderRight, borderTop);
-            Console.Write(topRight);
-            for (int i = borderTop + 1; i < borderBottom; i++)
-            {
-                Console.SetCursorPosition(borderLeft, i);
-                Console.Write(vert);
-                Console.SetCursorPosition(borderRight, i);
-                Console.Write(vert);
-            }
-            Console.SetCursorPosition(borderLeft, borderBottom);
-            Console.Write(botLeft);
-            for (int i = 5; i < borderRight; i++)
-                Console.Write(horiz);
-            Console.Write(botRight);*/
-
             return MenuText.PrintMainMenu();
             
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.
-        /// Also makes sure it is in range of the number of choices presnted
+        /// Also makes sure it is in range of the number of choices presented
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
