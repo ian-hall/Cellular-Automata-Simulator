@@ -54,51 +54,37 @@ namespace GHGameOfLife
             public static void BuildBoardFile()
             {
                 MenuText.FileError errType = MenuText.FileError.Not_Loaded;
+                var isValidFile = false;
 
                 OpenFileDialog openWindow = new OpenFileDialog();
                 string startingPop = null;
                 if (openWindow.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = openWindow.FileName;
-                    errType = ValidateFileNew(filePath, out startingPop);
+                    isValidFile = IsValidFileOrResource(filePath, out startingPop, out errType);
                 }
                 //no ELSE because it defaults to a file not loaded error
 
-                switch (errType)
+                if(isValidFile)
                 {
-                    // startingPop will not be null if this case is called
-                    case MenuText.FileError.None:                        
-                        FillBoard(startingPop);
-                        break;
-                    default:
-                        int windowCenter = Console.WindowHeight / 2; //Vert position
-                        int welcomeLeft = (Console.WindowWidth / 2) -
-                            (MenuText.Welcome.Length / 2);
-                        int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
-
-                        MenuText.ClearWithinBorder(windowCenter);
-                        Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
-                        Console.Write(MenuText.GetReadableError(errType));
-                        Console.SetCursorPosition(welcomeLeft, windowCenter);
-                        Console.Write(MenuText.Load_Rand);
-                        Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                        Console.Write(MenuText.Press_Enter);
-
-                        bool keyPressed = false;
-                        while (!keyPressed)
-                        {
-                            if (!Console.KeyAvailable)
-                                System.Threading.Thread.Sleep(50);
-                            else
-                            {
-                                if (Console.ReadKey(true).Key == ConsoleKey.Enter)
-                                    keyPressed = true;
-                            }
-                        }
-                        GoLHelper.BuildBoardRandom();
-                        break;
+                    FillBoard(startingPop);
                 }
-
+                else
+                {
+                    MenuText.PrintFileError(errType);
+                    bool keyPressed = false;
+                    while (!keyPressed)
+                    {
+                        if (!Console.KeyAvailable)
+                            System.Threading.Thread.Sleep(50);
+                        else
+                        {
+                            if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                                keyPressed = true;
+                        }
+                    }
+                    GoLHelper.BuildBoardRandom();
+                }
                 GoL.IsInitialized = true;
             
             }
@@ -111,40 +97,28 @@ namespace GHGameOfLife
             public static void BuildBoardResource(string pop)
             {
                 string startingPop;
-                var errType = ValidateFileNew(pop, out startingPop, true);
+                MenuText.FileError errType = MenuText.FileError.Not_Loaded;
+                var isValidResource = IsValidFileOrResource(pop, out startingPop, out errType, true);
 
-                switch (errType)
+                if(isValidResource)
                 {
-                    case MenuText.FileError.None:
-                        FillBoard(startingPop);
-                        break;
-                    default:
-                        int windowCenter = Console.WindowHeight / 2; //Vert position
-                        int welcomeLeft = (Console.WindowWidth / 2) -
-                            (MenuText.Welcome.Length / 2);
-                        int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
-
-                        MenuText.ClearWithinBorder(windowCenter);
-                        Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
-                        Console.Write(MenuText.GetReadableError(errType));
-                        Console.SetCursorPosition(welcomeLeft, windowCenter);
-                        Console.Write(MenuText.Load_Rand);
-                        Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-                        Console.Write(MenuText.Press_Enter);
-
-                        bool keyPressed = false;
-                        while (!keyPressed)
+                    FillBoard(startingPop);
+                }
+                else
+                {
+                    MenuText.PrintFileError(errType);
+                    bool keyPressed = false;
+                    while (!keyPressed)
+                    {
+                        if (!Console.KeyAvailable)
+                            System.Threading.Thread.Sleep(50);
+                        else
                         {
-                            if (!Console.KeyAvailable)
-                                System.Threading.Thread.Sleep(50);
-                            else
-                            {
-                                if (Console.ReadKey(true).Key == ConsoleKey.Enter)
-                                    keyPressed = true;
-                            }
+                            if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+                                keyPressed = true;
                         }
-                        GoLHelper.BuildBoardRandom();
-                        break;
+                    }
+                    GoLHelper.BuildBoardRandom();
                 }
 
                 GoL.IsInitialized = true;
@@ -781,89 +755,6 @@ namespace GHGameOfLife
                 return loaded;
             }
 //------------------------------------------------------------------------------
-            /// <summary>
-            /// Runs the game
-            /// </summary>
-            /// <param name="game">The board to start with</param>
-            /*public static void RunIt(GoL game)
-            {
-                if (!IsInitialized)
-                {
-                    Console.ForegroundColor = MenuText.Info_FG;
-                    Console.Write("ERROR");
-                    return;
-                }
-
-                MenuText.PrintRunControls();
-
-                var statusValues = new Dictionary<string, bool>();
-                statusValues["Go"] = true;
-                statusValues["Continuous"] = false;
-                statusValues["Paused"] = true;
-                statusValues["Wrapping"] = game.Wrap;
-                statusValues["ExitPause"] = false;
-
-                MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], Curr_Speed_Index);
-                while (statusValues["Go"])
-                {
-                    // If it isnt running, and no keys are pressed
-                    while (!Console.KeyAvailable && !statusValues["Continuous"])
-                    {
-                        System.Threading.Thread.Sleep(10);
-                    }
-                    // if it IS running, and no keys are pressed
-                    while (!Console.KeyAvailable && statusValues["Continuous"])
-                    {
-                        game.Next();
-                        game.Print();
-                        System.Threading.Thread.Sleep(Speeds[Curr_Speed_Index]);
-                    }
-                    
-                    //Catch the key press here
-                    ConsoleKeyInfo pressed = Console.ReadKey(true);
-                    if (pressed.Key == ConsoleKey.Spacebar)
-                    {
-                        //If space is pressed and the game is not running continuously
-                        if (!statusValues["Continuous"])
-                        {
-                            game.Next();
-                            game.Print();
-                        }
-                        else //if space is pressed, pausing the game
-                        {
-                            statusValues["ExitPause"] = false;
-                            statusValues["Paused"] = true;
-                            MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], Curr_Speed_Index);
-                            while(!statusValues["ExitPause"])
-                            {
-                                while (!Console.KeyAvailable)
-                                {
-                                    System.Threading.Thread.Sleep(50);
-                                }
-                                //If any key is pressed while the game is paused.
-                                ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
-                                GoLHelper.HandleRunningInput(pauseEntry.Key, ref statusValues);
-                                if(pauseEntry.Key == ConsoleKey.W)
-                                {
-                                    game.Wrap = statusValues["Wrapping"];
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //handle any other key pressed while the game is running.
-                        GoLHelper.HandleRunningInput(pressed.Key, ref statusValues);
-                        if(pressed.Key == ConsoleKey.W )
-                        {
-                            game.Wrap = statusValues["Wrapping"];
-                        }
-                    }
-                }
-
-                Console.CursorVisible = false;
-            }*/
-//------------------------------------------------------------------------------
         /// <summary>
         /// Handles all 
         /// </summary>
@@ -881,16 +772,6 @@ namespace GHGameOfLife
                             currentStatus["ExitPause"] = true;
                             currentStatus["Paused"] = false;
                         }                       
-                        break;
-                    case ConsoleKey.W:
-                        if(threadedHandler)
-                        {
-                            break;
-                        }
-                        if (!currentStatus["Continuous"] || currentStatus["Paused"])
-                        {
-                            currentStatus["Wrapping"] = !currentStatus["Wrapping"];
-                        }
                         break;
                     case ConsoleKey.S:
                         if (!currentStatus["Continuous"] || currentStatus["Paused"])
@@ -991,15 +872,11 @@ namespace GHGameOfLife
                             {
                                 while (!Console.KeyAvailable)
                                 {
-                                    System.Threading.Thread.Sleep(50);
+                                    System.Threading.Thread.Sleep(10);
                                 }
                                 //If any key is pressed while the game is paused.
                                 ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
                                 GoLHelper.HandleRunningInput(pauseEntry.Key, ref statusValues,true);
-                                if (pauseEntry.Key == ConsoleKey.W)
-                                {
-                                    game.Wrap = statusValues["Wrapping"];
-                                }
                             }
                         }
                     }
@@ -1026,9 +903,10 @@ namespace GHGameOfLife
             /// <param name="filename">Path to a file to be checked, or resource to be loaded</param>
             /// <param name="popToLoad">Out set if the filename or resource are valid</param>
             /// <param name="fromRes">Set True if loading from a resource file</param>
-            private static MenuText.FileError ValidateFileNew(string filename, out string popToLoad,bool fromRes = false)
+            private static bool IsValidFileOrResource(string filename, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
             {
                 popToLoad = "";
+                error = MenuText.FileError.None;
                 if (fromRes)
                 {
                     var resourceByLine = Regex.Split(GHGameOfLife.LargePops.ResourceManager.GetString(filename),Environment.NewLine);
@@ -1059,11 +937,13 @@ namespace GHGameOfLife
 
                     if (rows > GoL.Rows)
                     {
-                        return MenuText.FileError.Length;
+                        error = MenuText.FileError.Length;
+                        return false;
                     }
                     if (longestLine > GoL.Cols)
                     {
-                        return MenuText.FileError.Width;
+                        error = MenuText.FileError.Width;
+                        return false;
                     }
 
                     var sb = new StringBuilder();
@@ -1073,12 +953,14 @@ namespace GHGameOfLife
                         var newLine = line.PadRight(longestLine, '.');
                         if (!ValidLine(newLine))
                         {
-                            return MenuText.FileError.Contents;
+                            error = MenuText.FileError.Contents;
+                            return false;
                         }
                         sb.AppendLine(newLine);
                     }
                     popToLoad = sb.ToString();
-                    return MenuText.FileError.None;
+                    error = MenuText.FileError.None;
+                    return true;
                 }
                 else
                 {
@@ -1086,13 +968,15 @@ namespace GHGameOfLife
                     FileInfo file = new FileInfo(filename);
                     if (!file.Exists)
                     {
-                        return MenuText.FileError.Not_Loaded;
+                        error = MenuText.FileError.Not_Loaded;
+                        return false;
                     }
 
                     // Checks if the file is empty or too large ( > 20KB )
                     if (file.Length == 0 || file.Length > 20480)
                     {
-                        return MenuText.FileError.Size;
+                        error = MenuText.FileError.Size;
+                        return false;
                     }
 
                     List<string> fileByLine = new List<string>();
@@ -1130,11 +1014,13 @@ namespace GHGameOfLife
 
                     if (rows > GoL.Rows)
                     {
-                        return MenuText.FileError.Length;
+                        error = MenuText.FileError.Length;
+                        return false;
                     }
                     if (longestLine > GoL.Cols)
                     {
-                        return MenuText.FileError.Width;
+                        error = MenuText.FileError.Width;
+                        return false;
                     }
 
                     var sb = new StringBuilder();
@@ -1144,12 +1030,14 @@ namespace GHGameOfLife
                         var newLine = line.PadRight(longestLine, '.');
                         if (!ValidLine(newLine))
                         {
-                            return MenuText.FileError.Contents;
+                            error = MenuText.FileError.Contents;
+                            return false;
                         }
                         sb.AppendLine(newLine);
                     }
                     popToLoad = sb.ToString();
-                    return MenuText.FileError.None;
+                    error = MenuText.FileError.None;
+                    return true;
                 }
             }
 //------------------------------------------------------------------------------

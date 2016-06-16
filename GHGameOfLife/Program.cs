@@ -318,8 +318,7 @@ namespace GHGameOfLife
                     break;
             }
 
-            //game.RunGame();
-            game.ThreadedRunGame();
+            game.RunGame();
         }
 //------------------------------------------------------------------------------
         /// <summary>

@@ -403,7 +403,7 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-        public static string GetReadableError(MenuText.FileError err)
+        public static void PrintFileError(MenuText.FileError err)
         {
             string errorStr;
             switch (err)
@@ -430,7 +430,19 @@ namespace GHGameOfLife
                     errorStr = "Generic file error...";
                     break;
             }
-            return errorStr;
+
+            int windowCenter = Console.WindowHeight / 2; //Vert position
+            int welcomeLeft = (Console.WindowWidth / 2) -
+                (MenuText.Welcome.Length / 2);
+            int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
+
+            MenuText.ClearWithinBorder(windowCenter);
+            Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
+            Console.Write(errorStr);
+            Console.SetCursorPosition(welcomeLeft, windowCenter);
+            Console.Write(MenuText.Load_Rand);
+            Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
+            Console.Write(MenuText.Press_Enter);
         }
 //------------------------------------------------------------------------------
     } // end class

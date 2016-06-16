@@ -112,42 +112,10 @@ namespace GHGameOfLife
             IsInitialized = true;
         }
 //------------------------------------------------------------------------------
-        //public void RunGame()
-        //{
-        //    Print();
-        //    GoLHelper.RunIt(this);
-        //}
-//------------------------------------------------------------------------------
-        public void ThreadedRunGame()
+        public void RunGame()
         {
             GoLHelper.ThreadedRunner(this);
         }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Updates the board for the next generation of peoples
-        /// </summary>
-        /// Need to enable wrapping here
-        //private void Next()
-        //{
-        //    bool[,] nextBoard = new bool[Rows, Cols];
-
-        //    for (int r = 0; r < Rows; r++)
-        //    {
-        //        for (int c = 0; c < Cols; c++)
-        //        {
-        //            if(Wrap)
-        //            {
-        //                nextBoard[r, c] = NextCellStateWrap(r, c);
-        //            }
-        //            else
-        //            {
-        //                nextBoard[r, c] = NextCellState(r, c);
-        //            }
-        //        }
-        //    }
-        //    Generation++;          
-        //    Board = nextBoard;
-        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Adds the next board values to a queue to be read from
@@ -198,45 +166,10 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Slams down the board and the sides of the border using a
-        /// StringBuilder
+        /// Prints the game based on the threaded set up.
+        /// Waits until there are at least 2 boards in the board queue and then 
+        /// prints the next board in the queue. 
         /// </summary>
-        //private void Print()
-        //{
-        //    Console.SetCursorPosition(0, 1);
-        //    Console.Write(" ".PadRight(Console.WindowWidth));
-        //    string write = "Generation " + Generation;
-        //    int left = (Console.WindowWidth / 2) - (write.Length / 2);
-        //    Console.SetCursorPosition(left, 1);
-        //    Console.Write(write);
-
-        //    Console.BackgroundColor = MenuText.Default_BG;
-        //    Console.ForegroundColor = MenuText.Board_FG;
-
-        //    Console.SetCursorPosition(0, MenuText.Space);
-        //    StringBuilder sb = new StringBuilder();
-        //    for (int r = 0; r < Rows; r++)
-        //    {
-        //        sb.Append("    ║");
-        //        for (int c = 0; c < Cols; c++)
-        //        {
-        //            if (!Board[r, c])
-        //            {
-        //                sb.Append(" ");
-        //            }
-        //            else
-        //            {
-        //                sb.Append(Live_Cell);
-        //            }
-        //        }
-        //        sb.AppendLine("║");
-        //    }
-        //    Console.Write(sb);
-
-        //    Console.BackgroundColor = MenuText.Default_BG;
-        //    Console.ForegroundColor = MenuText.Default_FG;    
-        //}
-//------------------------------------------------------------------------------
         private void ThreadedPrint()
         {
             bool printed = false;
@@ -284,76 +217,6 @@ namespace GHGameOfLife
             } while (!printed);
             Generation++;
         }
-//------------------------------------------------------------------------------
-//        private bool NextCellStateWrap(int r, int c)
-//        {
-//            int n = 0;
-
-//            if (Board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-//            if (Board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-//            if (Board[(r - 1 + Rows) % Rows, c]) n++;
-//            if (Board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-//            if (Board[r, (c - 1 + Cols) % Cols]) n++;
-//            if (Board[(r + 1 + Rows) % Rows, c]) n++;
-//            if (Board[r, (c + 1 + Cols) % Cols]) n++;
-//            if (Board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-
-//            if (Board[r, c])
-//            {
-//                return ((n == 2) || (n == 3));
-//            }
-//            else
-//            {
-//                return (n == 3);
-//            }
-//        }
-////------------------------------------------------------------------------------
-//        private bool NextCellState(int r, int c)
-//        {
-//            int n = 0;
-
-//            if (r != 0 && c != 0)
-//            {
-//                if (Board[r - 1, c - 1]) n++;
-//            }
-//            if (r != 0 && c != Cols - 1)
-//            {
-//                if (Board[r - 1, c + 1]) n++;
-//            }
-//            if (r != 0)
-//            {
-//                if (Board[r - 1, c]) n++;
-//            }
-//            if (r != Rows - 1 && c != 0)
-//            {
-//                if (Board[r + 1, c - 1]) n++;
-//            }
-//            if (c != 0)
-//            {
-//                if (Board[r, c - 1]) n++;
-//            }
-//            if (r != Rows - 1)
-//            {
-//                if (Board[r + 1, c]) n++;
-//            }
-//            if (c != Cols - 1)
-//            {
-//                if (Board[r, c + 1]) n++;
-//            }
-//            if (r != Rows - 1 && c != Cols - 1)
-//            {
-//                if (Board[r + 1, c + 1]) n++;
-//            }
-
-//            if (Board[r, c])
-//            {
-//                return ((n == 2) || (n == 3));
-//            }
-//            else
-//            {
-//                return (n == 3);
-//            }
-//        }
 //------------------------------------------------------------------------------
         private static bool ThreadedNextCellState(int r, int c, ref bool[,] board)
         {
