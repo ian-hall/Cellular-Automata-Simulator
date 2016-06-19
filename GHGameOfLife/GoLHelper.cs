@@ -130,7 +130,6 @@ namespace GHGameOfLife
             /// </summary>
             public static void BuildBoardUser()
             {
-                //Console.SetBufferSize(GoL.OrigConsWidth * 2, GoL.OrigConsHeight);
                 Console.SetBufferSize(GoL.OrigConsWidth + 50, GoL.OrigConsHeight);
                 Console.ForegroundColor = ConsoleColor.White;
 
@@ -149,12 +148,6 @@ namespace GHGameOfLife
                         tempBoard[i, j] = false;
                     }
                 }
-
-                //Console.SetCursorPosition(Valid_Left.First() - 1,Valid_Top.Last()+1);
-                //Console.Write(botLeft);
-                //for (int i = 0; i < Valid_Left.Count(); i++)
-                //    Console.Write(horiz);
-                //Console.Write(botRight);
                 MenuText.DrawBorder();
                 Console.ForegroundColor = MenuText.Info_FG;
 

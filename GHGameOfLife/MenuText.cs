@@ -109,8 +109,8 @@ namespace GHGameOfLife
                                         "[R] Toggle running",
                                         "[ESC] Exit",
                                         "[+/-] Speed adjust",
-                                        "[W] Toggle wrapping",
-                                        "[S] Save board"};
+                                        "[S] Save board",
+                                        "(while stepping/paused)"};
 
             Create_Ctrls = new string[] {   "[↑|↓|←|→] Move cursor", 
                                             "[SPACE] Add/Remove cells",

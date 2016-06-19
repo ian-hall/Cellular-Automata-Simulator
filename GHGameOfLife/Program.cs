@@ -139,7 +139,7 @@ namespace GHGameOfLife
             }
 
 
-            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
+            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
             MenuText.Initialize();
@@ -436,7 +436,7 @@ namespace GHGameOfLife
         private static int ReInitializeConsole()
         {
             Console.Clear();
-            ajustWindowSize(Valid_Sizes[Curr_Size_Index]);
+            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
 
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
@@ -478,11 +478,7 @@ namespace GHGameOfLife
 
             MenuText.ClearLine(Current_Rows - 2);
             Console.SetCursorPosition(0, Current_Rows - 2);
-            
-            //Console.Write("Press any key to exit...");
-            //while (!Console.KeyAvailable)
-            //    System.Threading.Thread.Sleep(50);
-            
+                        
             Console.SetWindowSize(1, 1);
             Console.SetWindowPosition(0, 0);
             Console.SetWindowSize(initConsoleWidth, initConsHeight);
@@ -491,7 +487,7 @@ namespace GHGameOfLife
             Console.CursorVisible = true;
         }
 //------------------------------------------------------------------------------
-        private static void ajustWindowSize(BoardSize size)
+        private static void AdjustWindowSize(BoardSize size)
         {              
             //Resize the console window
             Console.SetWindowSize(1, 1);
