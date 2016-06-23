@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutomataRule.cs" />
     <Compile Include="ClassStructHelpers.cs" />
     <Compile Include="GoL.cs" />
     <Compile Include="GoLHelper.cs" />

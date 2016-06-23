@@ -102,7 +102,8 @@ namespace GHGameOfLife
                                             "2) Load population from a file",
                                             "3) Load a premade population",
                                             "4) Create your own population",
-                                            "5) Exit"};
+                                            "5) Automata Rules",
+                                            "6) Exit"};
             
             
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",

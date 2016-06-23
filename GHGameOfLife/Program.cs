@@ -168,7 +168,7 @@ namespace GHGameOfLife
             bool validEntry = false;
             int newPromptRow = currPromptRow;
             bool resized = false;
-
+            var tryAuto = false;
             while (!validEntry)
             {
                 if (resized)
@@ -247,7 +247,6 @@ namespace GHGameOfLife
                 }
 
                 Console.CursorVisible = false;
-                
                 switch (choice)
                 {
                     case 1:
@@ -277,6 +276,10 @@ namespace GHGameOfLife
                         break;
                     case 5:
                         validEntry = true;
+                        tryAuto = true;
+                        break;
+                    case 6:
+                        validEntry = true;
                         return;
                     default:
                         Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 2);
@@ -285,12 +288,21 @@ namespace GHGameOfLife
                         break;
                 }
             }
+
+            if(tryAuto)
+            {
+                var autoBoard = new AutomataRule(Current_Cols,AutomataRule.RuleTypes.rule90);
+                autoBoard.Run();
+            }
+            else
+            {
+                //Clear the current options
+                MenuText.ClearAllInBorder();
+
+                //Move out into the main loop maybe
+                RunGame(pop, res);
+            }
            
-            //Clear the current options
-            MenuText.ClearAllInBorder();
-            
-            //Move out into the main loop maybe
-            RunGame(pop,res);
         }
 //------------------------------------------------------------------------------
         /// <summary>
