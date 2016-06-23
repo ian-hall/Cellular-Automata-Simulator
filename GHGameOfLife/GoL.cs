@@ -37,6 +37,8 @@ namespace GHGameOfLife
         private static Mutex StopLock;
         private const int Max_Boards = 100;
         private static ConcurrentQueue<bool[,]> Next_Boards;
+
+        public enum BuildType { Random, File, Resource, User };
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -44,7 +46,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        public GoL(int rowMax, int colMax)
+        public GoL(int rowMax, int colMax, BuildType bType, string res = null)
         {
             Board = new bool[rowMax, colMax];
                         
@@ -63,15 +65,31 @@ namespace GHGameOfLife
             Next_Boards = new ConcurrentQueue<bool[,]>();
 
             GoLHelper.CalcBuilderBounds();
+
+            switch (bType)
+            {
+                case BuildType.Random:
+                    BuildDefaultPop();
+                    break;
+                case BuildType.File:
+                    BuildFromFile();
+                    break;
+                case BuildType.Resource:
+                    BuildFromResource(res);
+                    break;
+                case BuildType.User:
+                    BuildFromUser();
+                    break;
+            }
         }
 //------------------------------------------------------------------------------        
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
         /// </summary>
-        public void BuildDefaultPop() 
+        private void BuildDefaultPop() 
         {
-            GoLHelper.BuildBoardRandom();
+            Board = ConsoleRunHelper.BuildGOLBoardRandom(Rows, Cols);
             Next_Boards.Enqueue(Board);
             IsInitialized = true;
         }
@@ -81,21 +99,11 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        public void BuildFromFile()
+        private void BuildFromFile()
         {          
-            GoLHelper.BuildBoardFile();
+            Board = ConsoleRunHelper.BuildGOLBoardFile(Rows,Cols);          
             Next_Boards.Enqueue(Board);
             IsInitialized = true;            
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Builds the board from user input. This is going to be ugly...
-        /// </summary>
-        public void BuildFromUser()
-        {
-            GoLHelper.BuildBoardUser();
-            Next_Boards.Enqueue(Board);
-            IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -104,10 +112,20 @@ namespace GHGameOfLife
         /// need to add the ability to resize the window if for some reason
         /// it is set smaller than a preloaded population can display in.
         /// </summary>
-        /// <param name="pop"></param>
-        public void BuildFromResource(string pop)
+        /// <param name="res"></param>
+        private void BuildFromResource(string res)
         {
-            GoLHelper.BuildBoardResource(pop);
+            Board = ConsoleRunHelper.BuildGOLBoardResource(res, Rows, Cols);
+            Next_Boards.Enqueue(Board);
+            IsInitialized = true;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the board from user input. This is going to be ugly...
+        /// </summary>
+        private void BuildFromUser()
+        {
+            GoLHelper.BuildBoardUser();
             Next_Boards.Enqueue(Board);
             IsInitialized = true;
         }

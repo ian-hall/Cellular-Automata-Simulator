@@ -13,7 +13,7 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-        enum PopType { Random, File, Premade, Build };
+        //enum PopType { Random, File, Premade, Build };
 
         // Don't go below these values or the text will be screwy
         static int Min_Cols = 100;
@@ -154,7 +154,7 @@ namespace GHGameOfLife
         ///                                          
         private static void MainMenu()
         {
-            PopType pop = PopType.Random;
+            var pop = GoL.BuildType.Random;
             string res = null;
 
             int numChoices = MenuText.Menu_Choices.Count();
@@ -250,17 +250,17 @@ namespace GHGameOfLife
                 switch (choice)
                 {
                     case 1:
-                        pop = PopType.Random;
+                        pop = GoL.BuildType.Random;
                         validEntry = true;
                         break;
                     case 2:
-                        pop = PopType.File;
+                        pop = GoL.BuildType.File;
                         validEntry = true;
                         break;
                     case 3:
                         //Clear the line telling you how to change window size
                         MenuText.ClearLine((Console.WindowHeight) - 4);
-                        pop = PopType.Premade;
+                        pop = GoL.BuildType.Resource;
                         res = PromptForRes();
                         if (res != null)
                             validEntry = true;
@@ -271,7 +271,7 @@ namespace GHGameOfLife
                         }
                         break;
                     case 4:
-                        pop = PopType.Build;
+                        pop = GoL.BuildType.User;
                         validEntry = true;
                         break;
                     case 5:
@@ -311,9 +311,10 @@ namespace GHGameOfLife
         /// <param name="pop">The type of population to build</param>
         /// <param name="res">Resource to load, if needed</param>
         /// 
-        private static void RunGame(PopType pop, string res = null)
+        private static void RunGame(GoL.BuildType bType, string res = null)
         {
-            GoL game = new GoL(Current_Rows - 10, Current_Cols - 10);
+            GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
+            /*
             switch (pop)
             {
                 case PopType.Random:
@@ -328,7 +329,7 @@ namespace GHGameOfLife
                 case PopType.Build:
                     game.BuildFromUser();
                     break;
-            }
+            }*/
 
             game.RunGame();
         }
@@ -464,7 +465,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private static Boolean IsValidNumber(string s, int numPrinted)
+        private static bool IsValidNumber(string s, int numPrinted)
         {
             try
             {
