@@ -291,7 +291,7 @@ namespace GHGameOfLife
 
             if(tryAuto)
             {
-                var autoBoard = new AutomataRule(Current_Cols,AutomataRule.RuleTypes.rule90);
+                var autoBoard = new AutomataRule(Current_Rows - 10,Current_Cols - 10,AutomataRule.RuleTypes.rule90);
                 autoBoard.Run();
             }
             else
