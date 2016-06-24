@@ -57,7 +57,7 @@ namespace GHGameOfLife
             this.Generation = 1;
             Wrap = true;
 
-            GoLHelper.CalcBuilderBounds(this);
+            ConsoleRunHelper.CalcBuilderBounds(this);
 
             switch (bType)
             {
@@ -82,7 +82,7 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildDefaultPop() 
         {
-            Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
+            this.Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
             this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromFile()
         {          
-            Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
+            this.Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
             this.__IsInitialized = true;            
         }
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ namespace GHGameOfLife
         /// <param name="res"></param>
         private void BuildFromResource(string res)
         {
-            Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
+            this.Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
             this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromUser()
         {
-            GoLHelper.BuildBoardUser(this);
+            this.Board = ConsoleRunHelper.BuildBoardUser(this);
             this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------

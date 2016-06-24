@@ -284,7 +284,473 @@ namespace GHGameOfLife
             }
             return true;
         }
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Builds the board from user input. This is going to be ugly...
+        /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
+        /// </summary>
+        public static bool[,] BuildBoardUser(GoL currentGame)
+        {
+            Console.SetBufferSize(currentGame.OrigConsWidth + 50, currentGame.OrigConsHeight);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            //char horiz = '═';       // '\u2550'
+            //char botLeft = '╚';     // '\u255A'
+            //char botRight = '╝';    // '\u255D'
+
+            bool[,] tempBoard = new bool[__Valid_Tops.Count(), __Valid_Lefts.Count()];
+
+            for (int i = 0; i < __Valid_Tops.Count(); i++)
+            {
+                for (int j = 0; j < __Valid_Lefts.Count(); j++)
+                {
+                    Console.SetCursorPosition(__Valid_Lefts.ElementAt(j), __Valid_Tops.ElementAt(i));
+                    Console.Write('*');
+                    tempBoard[i, j] = false;
+                }
+            }
+            MenuText.DrawBorder();
+            Console.ForegroundColor = MenuText.Info_FG;
+
+
+            int positionPrintRow = MenuText.Space - 3;
+
+            MenuText.PrintCreationControls();
+
+            int blinkLeft = currentGame.OrigConsWidth + 5;
+            int charLeft = blinkLeft + 1;
+            int extraTop = 2;
+
+            __Cursor_Left = __Valid_Lefts.ElementAt(__Valid_Lefts.Count() / 2);
+            __Cursor_Top = __Valid_Tops.ElementAt(__Valid_Tops.Count() / 2);
+            int nextLeft;
+            int nextTop;
+            bool exit = false;
+            Console.CursorVisible = false;
+
+
+            Rect loadedPopBounds = new Rect();
+            bool popLoaderMode = false;
+            string loadedPop = null;
+            bool[][] smallPopVals = new bool[0][];
+
+            while (!exit)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                MenuText.ClearLine(MenuText.Space - 3);
+                string positionStr = String.Format("Current position: ({0},{1})", __Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space);
+                Console.SetCursorPosition(currentGame.OrigConsWidth / 2 - positionStr.Length / 2, positionPrintRow);
+                Console.Write(positionStr);
+                Console.SetCursorPosition(0, 0);
+
+                if (!popLoaderMode)
+                {
+                    while (!Console.KeyAvailable)
+                    {
+                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, 1, 1, charLeft, extraTop);
+                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, __Cursor_Left, __Cursor_Top);
+                        System.Threading.Thread.Sleep(150);
+                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, 1, 1, blinkLeft, extraTop);
+                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, __Cursor_Left, __Cursor_Top);
+                        System.Threading.Thread.Sleep(150);
+                    }
+
+                    MenuText.ClearLine(0);
+                    ConsoleKeyInfo pressed = Console.ReadKey(true);
+
+                    switch (pressed.Key)
+                    {
+                        case ConsoleKey.Enter:
+                            exit = true;
+                            continue;
+                        case ConsoleKey.RightArrow:
+                            nextLeft = ++__Cursor_Left;
+                            if (!__Valid_Lefts.Contains(nextLeft))
+                            {
+                                nextLeft = __Valid_Lefts.Min();
+                            }
+                            __Cursor_Left = nextLeft;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            nextLeft = --__Cursor_Left;
+                            if (!__Valid_Lefts.Contains(nextLeft))
+                            {
+                                nextLeft = __Valid_Lefts.Max();
+                            }
+                            __Cursor_Left = nextLeft;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            nextTop = --__Cursor_Top;
+                            if (!__Valid_Tops.Contains(nextTop))
+                            {
+                                nextTop = __Valid_Tops.Max();
+                            }
+                            __Cursor_Top = nextTop;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            nextTop = ++__Cursor_Top;
+                            if (!__Valid_Tops.Contains(nextTop))
+                            {
+                                nextTop = __Valid_Tops.Min();
+                            }
+                            __Cursor_Top = nextTop;
+                            break;
+                        case ConsoleKey.Spacebar:
+                            Console.SetCursorPosition(__Cursor_Left, __Cursor_Top);
+                            bool boardVal = !tempBoard[__Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space];
+
+                            if (boardVal)
+                            {
+                                Console.ForegroundColor = MenuText.Builder_FG;
+                                Console.Write('█');
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = MenuText.Default_FG;
+                                Console.Write('*');
+
+                            }
+
+                            tempBoard[__Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space] = boardVal;
+                            break;
+                        case ConsoleKey.D1:
+                        case ConsoleKey.D2:
+                        case ConsoleKey.D3:
+                        case ConsoleKey.D4:
+                            var keyNum = pressed.Key.ToString()[1];
+                            var keyVal = Int32.Parse("" + keyNum);
+                            string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[keyVal - 1]);
+                            if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
+                            {
+                                loadedPop = MenuText.Builder_Pops[keyVal - 1];
+                                popLoaderMode = true;
+                            }
+                            else
+                            {
+                                Console.SetCursorPosition(0, 0);
+                                Console.ForegroundColor = MenuText.Info_FG;
+                                Console.Write("Cannot load pop outside of bounds");
+                                loadedPop = null;
+                            }
+                            break;
+                        case ConsoleKey.S:
+                            SaveBoard(__Valid_Tops.Count(), __Valid_Lefts.Count(), tempBoard);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else //This means a population is loaded into the builder
+                {
+                    int storeBoardLeft = loadedPopBounds.Left + loadedPopBounds.Width + 1;
+                    int storeBoardTop = loadedPopBounds.Top;
+
+
+                    while (!Console.KeyAvailable)
+                    {
+                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, storeBoardLeft, storeBoardTop);
+                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, loadedPopBounds.Width, loadedPopBounds.Height, __Cursor_Left, __Cursor_Top);
+                        System.Threading.Thread.Sleep(250);
+                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, loadedPopBounds.Left, loadedPopBounds.Top);
+                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, loadedPopBounds.Width, loadedPopBounds.Height, __Cursor_Left, __Cursor_Top);
+                        System.Threading.Thread.Sleep(150);
+                    }
+
+                    MenuText.ClearLine(0);
+                    ConsoleKeyInfo pressed = Console.ReadKey(true);
+
+                    switch (pressed.Key)
+                    {
+                        case ConsoleKey.Enter:
+                            exit = true;
+                            continue;
+                        case ConsoleKey.RightArrow:
+                            nextLeft = ++__Cursor_Left;
+                            if (nextLeft >= (__Valid_Lefts.Last() - loadedPopBounds.Width) + 2)
+                            {
+                                nextLeft = __Valid_Lefts.Min();
+                            }
+                            __Cursor_Left = nextLeft;
+                            break;
+                        case ConsoleKey.LeftArrow:
+                            nextLeft = --__Cursor_Left;
+                            if (!__Valid_Lefts.Contains(nextLeft))
+                            {
+                                nextLeft = (__Valid_Lefts.Last() - loadedPopBounds.Width) + 1;
+                            }
+                            __Cursor_Left = nextLeft;
+                            break;
+
+                        case ConsoleKey.UpArrow:
+                            nextTop = --__Cursor_Top;
+                            if (!__Valid_Tops.Contains(nextTop))
+                            {
+                                nextTop = (__Valid_Tops.Last() - loadedPopBounds.Height) + 1;
+                            }
+                            __Cursor_Top = nextTop;
+                            break;
+
+                        case ConsoleKey.DownArrow:
+                            nextTop = ++__Cursor_Top;
+                            if (nextTop >= (__Valid_Tops.Last() - loadedPopBounds.Height) + 2)
+                            {
+                                nextTop = __Valid_Tops.Min();
+                            }
+                            __Cursor_Top = nextTop;
+                            break;
+                        case ConsoleKey.Spacebar:
+                            Console.SetCursorPosition(0, 0);
+                            int popRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
+                            int popCols = (loadedPopBounds.Right - loadedPopBounds.Left);
+
+                            for (int r = __Cursor_Top; r < __Cursor_Top + popRows; r++)
+                            {
+                                for (int c = __Cursor_Left; c < __Cursor_Left + popCols; c++)
+                                {
+                                    Console.SetCursorPosition(c, r);
+                                    if (smallPopVals[r - __Cursor_Top][c - __Cursor_Left])
+                                    {
+                                        if (tempBoard[r - MenuText.Space, c - MenuText.Space])
+                                        {
+                                            Console.ForegroundColor = MenuText.Default_FG;
+                                            Console.Write('*');
+                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = false;
+                                        }
+                                        else
+                                        {
+                                            Console.ForegroundColor = MenuText.Builder_FG;
+                                            Console.Write('█');
+                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = true;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case ConsoleKey.D1:
+                        case ConsoleKey.D2:
+                        case ConsoleKey.D3:
+                        case ConsoleKey.D4:
+                            var keyNum = pressed.Key.ToString()[1];
+                            var keyVal = Int32.Parse("" + keyNum);
+                            if (loadedPop != MenuText.Builder_Pops[keyVal - 1])
+                            {
+                                string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[keyVal - 1]);
+                                if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
+                                {
+                                    loadedPop = MenuText.Builder_Pops[keyVal - 1];
+                                    popLoaderMode = true;
+                                }
+                                else
+                                {
+                                    Console.SetCursorPosition(0, 0);
+                                    Console.ForegroundColor = MenuText.Info_FG;
+                                    Console.Write("Cannot load pop outside of bounds");
+                                }
+                            }
+                            else // Population is already loaded, either rotate or mirror
+                            {
+                                if (pressed.Modifiers == ConsoleModifiers.Control)
+                                {
+                                    if (!MirrorBuilderPop(ref smallPopVals, ref loadedPopBounds))
+                                    {
+                                        Console.SetCursorPosition(0, 0);
+                                        Console.ForegroundColor = MenuText.Info_FG;
+                                        Console.Write("Error while trying to mirror");
+                                    }
+
+                                }
+                                else
+                                {
+                                    // Just check if the pop is not rotated, if it is rotated we do nothing
+                                    if (!RotateBuilderPop(ref smallPopVals, ref loadedPopBounds))
+                                    {
+                                        Console.SetCursorPosition(0, 0);
+                                        Console.ForegroundColor = MenuText.Info_FG;
+                                        Console.Write("Rotating will go out of bounds");
+                                    }
+                                }
+                            }
+                            break;
+                        case ConsoleKey.S:
+                            SaveBoard(__Valid_Tops.Count(), __Valid_Lefts.Count(), tempBoard);
+                            break;
+                        case ConsoleKey.C:
+                            popLoaderMode = false;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            StringBuilder popString = new StringBuilder();
+            for (int r = 0; r < __Valid_Tops.Count(); r++)
+            {
+                for (int c = 0; c < __Valid_Lefts.Count(); c++)
+                {
+                    if (tempBoard[r, c])
+                        popString.Append('O');
+                    else
+                        popString.Append('.');
+                }
+                if (r != __Valid_Tops.Count() - 1)
+                    popString.AppendLine();
+            }
+
+            Console.SetWindowSize(currentGame.OrigConsWidth, currentGame.OrigConsHeight);
+            Console.SetBufferSize(currentGame.OrigConsWidth, currentGame.OrigConsHeight);
+
+            Console.ForegroundColor = MenuText.Default_FG;
+            MenuText.ClearUnderBoard();
+            MenuText.DrawBorder();
+
+            MenuText.ClearLine(positionPrintRow);
+            return ConsoleRunHelper.FillBoard(popString.ToString(), currentGame.Rows, currentGame.Cols);
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Loads the selected builder pop into the board
+        /// </summary>
+        /// <param name="startingPop"></param>
+        /// <returns>Bounds of the pop loaded</returns>
+        private static bool BuilderLoadPop(string pop, ref bool[][] popVals, ref Rect bounds)
+        {
+            string[] popByLine = Regex.Split(pop, Environment.NewLine);
+
+            int midRow = Console.BufferHeight / 2;
+            int midCol = Console.BufferWidth - 25;
+
+            int rowsNum = popByLine.Count();
+            int colsNum = popByLine[0].Length;
+
+            Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
+
+            bool loaded = false;
+
+            // Checks if the loaded pop is going to fit in the window at the current cursor position
+            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            {
+                popVals = new bool[rowsNum][];
+                for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
+                {
+                    int popRow = r - tempBounds.Top;
+                    popVals[popRow] = new bool[colsNum];
+                    for (int c = tempBounds.Left; c < tempBounds.Right; c++)
+                    {
+                        int popCol = c - tempBounds.Left;
+
+                        Console.SetCursorPosition(c, r);
+                        Console.ForegroundColor = MenuText.Info_FG;
+                        if (popByLine[popRow][popCol] == 'O')
+                        {
+                            Console.Write('█');
+                            popVals[popRow][popCol] = true;
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                            popVals[popRow][popCol] = false;
+                        }
+                    }
+                }
+                bounds = tempBounds;
+                loaded = true;
+            }
+            return loaded;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Rotates the loaded builder pop 90 degrees clockwise
+        /// </summary>
+        /// <param name="oldVals"></param>
+        /// <returns></returns>
+        private static bool RotateBuilderPop(ref bool[][] popVals, ref Rect bounds)
+        {
+            bool[][] rotated = GenericHelp<bool>.Rotate90(popVals);
+
+            int midRow = Console.BufferHeight / 2;
+            int midCol = Console.BufferWidth - 25;
+
+            int rowsNum = rotated.Length;
+            int colsNum = rotated[0].Length;
+
+            bool loaded = false;
+            Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
+
+            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            {
+                for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
+                {
+                    int popRow = r - tempBounds.Top;
+                    for (int c = tempBounds.Left; c < tempBounds.Right; c++)
+                    {
+                        int popCol = c - tempBounds.Left;
+                        Console.SetCursorPosition(c, r);
+                        Console.ForegroundColor = MenuText.Info_FG;
+                        if (rotated[popRow][popCol])
+                        {
+                            Console.Write('█');
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                        }
+                    }
+                }
+                popVals = rotated;
+                bounds = tempBounds;
+                loaded = true;
+            }
+
+            return loaded;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Mirrors the loaded builder pop
+        /// </summary>
+        /// <param name="oldVals"></param>
+        /// <returns></returns>
+        private static bool MirrorBuilderPop(ref bool[][] popVals, ref Rect bounds)
+        {
+            bool[][] rotated = GenericHelp<bool>.Mirror(popVals);
+
+            int midRow = Console.BufferHeight / 2;
+            int midCol = Console.BufferWidth - 25;
+
+            int rowsNum = rotated.Length;
+            int colsNum = rotated[0].Length;
+
+            bool loaded = false;
+
+            Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
+
+            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            {
+                for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
+                {
+                    int popRow = r - tempBounds.Top;
+                    for (int c = tempBounds.Left; c < tempBounds.Right; c++)
+                    {
+                        int popCol = c - tempBounds.Left;
+                        Console.SetCursorPosition(c, r);
+                        Console.ForegroundColor = MenuText.Info_FG;
+                        if (rotated[popRow][popCol])
+                        {
+                            Console.Write('█');
+                        }
+                        else
+                        {
+                            Console.Write(' ');
+                        }
+                    }
+                }
+                popVals = rotated;
+                bounds = tempBounds;
+                loaded = true;
+            }
+            return loaded;
+        }
+//------------------------------------------------------------------------------
         /// <summary>
         /// Used by files to fill the game board, centered
         /// </summary>
@@ -382,10 +848,10 @@ namespace GHGameOfLife
 
         }
         //------------------------------------------------------------------------------
-        public static void CalcBuilderBounds(int origHeight, int origWidth)
+        public static void CalcBuilderBounds(GoL currentBoard)
         {
-            __Valid_Lefts = Enumerable.Range(MenuText.Space, origWidth - 2 * MenuText.Space);
-            __Valid_Tops = Enumerable.Range(MenuText.Space, origHeight - 2 * MenuText.Space);
+            __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.OrigConsWidth - 2 * MenuText.Space);
+            __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.OrigConsHeight - 2 * MenuText.Space);
         }
         //------------------------------------------------------------------------------
         /// <summary>
