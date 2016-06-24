@@ -285,8 +285,9 @@ namespace GHGameOfLife
 
             if(tryAuto)
             {
+                MenuText.ClearAllInBorder();
                 var autoBoard = new AutomataRule(Current_Rows - 10,Current_Cols - 10,AutomataRule.RuleTypes.rule90);
-                autoBoard.Run();
+                ConsoleRunHelper.GoLRunner(autoBoard);
             }
             else
             {
@@ -294,22 +295,23 @@ namespace GHGameOfLife
                 MenuText.ClearAllInBorder();
 
                 //Move out into the main loop maybe
-                RunGoL(buildType, res);
+                GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, buildType, res);
+                ConsoleRunHelper.GoLRunner(game);
             }
            
         }
 //------------------------------------------------------------------------------
-        /// <summary>
-        /// This starts the game going by getting the starting population loaded
-        /// </summary>
-        /// <param name="pop">The type of population to build</param>
-        /// <param name="res">Resource to load, if needed</param>
-        /// 
-        private static void RunGoL(GoL.BuildType bType, string res = null)
-        {
-            GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
-            ConsoleRunHelper.GoLRunner(game);
-        }
+        ///// <summary>
+        ///// This starts the game going by getting the starting population loaded
+        ///// </summary>
+        ///// <param name="pop">The type of population to build</param>
+        ///// <param name="res">Resource to load, if needed</param>
+        ///// 
+        //private static void RunGoL(GoL.BuildType bType, string res = null)
+        //{
+        //    GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
+        //    ConsoleRunHelper.GoLRunner(game);
+        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Display a list of all resources built in to the program

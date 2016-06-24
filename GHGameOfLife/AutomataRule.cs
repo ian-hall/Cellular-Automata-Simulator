@@ -8,37 +8,55 @@ namespace GHGameOfLife
     /// Class to support drawing 2D automata rules
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    class AutomataRule
+    class AutomataRule : IConsoleAutomata
     {
-        delegate bool RuleFN(bool p, bool q, bool r);
+        delegate bool Rule1D(bool p, bool q, bool r);
 
-        private bool[] Current_Row;
-        private int Num_Cols;
-        private int Num_Rows;
-        private int Print_Row;
-        private int OrigConsHeight;
-        private int OrigConsWidth;
-        private char Live_Cell = '█';
-        private int Generation;
-        private RuleFN Rule;
+        private bool[] __Current_Row;
+        private bool __Is_Initialized;
+        private int __Num_Cols;
+        private int __Num_Rows;
+        private int __Print_Row;
+        private int __Orig_Console_Height;
+        private int __Orig_Console_Width;
+        private const char LIVE_CELL = '█';
+        private int __Generation;
+        private Rule1D __Rule;
+
+        public bool Is_Initialized { get { return this.__Is_Initialized; } }
+        public int Rows { get { return this.__Num_Rows; } }
+        public int Cols { get { return this.__Num_Cols; } }
+        public int Console_Height { get { return this.__Orig_Console_Height; } }
+        public int Console_Width { get { return this.__Orig_Console_Width; } }
+        public bool Is_Wrapping { get; set; }
+        //TODO: Change this to actually be a copy of the current console display
+        public bool[,] Board
+        {
+            get
+            {
+                return new bool[0, 0];
+            }
+        }
 
         public enum RuleTypes { rule90 };
 //-----------------------------------------------------------------------------
         public AutomataRule(int rows, int cols, RuleTypes rule)
         {
-            this.Num_Cols = cols;
-            this.Num_Rows = rows;
-            this.Print_Row = 0;
-            OrigConsHeight = Console.WindowHeight;
-            OrigConsWidth = Console.WindowWidth;
-            this.Current_Row = new bool[this.Num_Cols];
+            this.Is_Wrapping = true;
+            this.__Num_Cols = cols;
+            this.__Num_Rows = rows;
+            this.__Print_Row = 0;
+            __Orig_Console_Height = Console.WindowHeight;
+            __Orig_Console_Width = Console.WindowWidth;
+            this.__Current_Row = new bool[this.__Num_Cols];
             var rand = new Random();
-            for (int i = 0; i < this.Num_Cols; i++)
+            for (int i = 0; i < this.__Num_Cols; i++)
             {
-                this.Current_Row[i] = (rand.Next() % 2 == 0) ? false : false;
+                this.__Current_Row[i] = (rand.Next() % 2 == 0) ? false : false;
             }
-            this.Current_Row[this.Num_Cols / 2] = true;
-            this.Rule = new RuleFN(Rule30);
+            this.__Current_Row[this.__Num_Cols / 2] = true;
+            this.__Rule = new Rule1D(Rule90);
+            this.__Is_Initialized = true;
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -48,8 +66,8 @@ namespace GHGameOfLife
         {
             for( int i = 0; i < 500; i++ )
             {
-                this.PrintRule();
-                this.Next(this.Rule);
+                this.PrintBoard();
+                this.NextGeneration();
             }
         }
 //-----------------------------------------------------------------------------
@@ -58,30 +76,30 @@ namespace GHGameOfLife
          /// </summary>
          /// <param name="rule">A function of form (bool,bool,bool) -> bool that takes the 
          /// current cell and it's neighbors and returns the next value of the cell.</param>
-        private void Next(RuleFN rule)
+        public void NextGeneration()
         {
-            var nextRow = new bool[this.Num_Cols];
-            for( int i = 0; i < Num_Cols; i++ )
+            var nextRow = new bool[this.__Num_Cols];
+            for( int i = 0; i < __Num_Cols; i++ )
             {
-                bool p = this.Current_Row[(i + this.Num_Cols) % this.Num_Cols];
-                bool q = this.Current_Row[(i + 1 + this.Num_Cols) % this.Num_Cols];
-                bool r = this.Current_Row[(i + 2 + this.Num_Cols) % this.Num_Cols];
+                bool p = this.__Current_Row[(i + this.__Num_Cols) % this.__Num_Cols];
+                bool q = this.__Current_Row[(i + 1 + this.__Num_Cols) % this.__Num_Cols];
+                bool r = this.__Current_Row[(i + 2 + this.__Num_Cols) % this.__Num_Cols];
 
-                nextRow[(i + 1 + this.Num_Cols) % this.Num_Cols] = rule(p, q, r);
+                nextRow[(i + 1 + this.__Num_Cols) % this.__Num_Cols] = this.__Rule(p, q, r);
             }
-            this.Current_Row = nextRow;
-            this.Generation++;
+            this.__Current_Row = nextRow;
+            this.__Generation++;
         }
 //-----------------------------------------------------------------------------
         /// <summary>
         /// Prings the automata rule within the boarders of the console
         /// </summary>
-        private void PrintRule()
+        public void PrintBoard()
         {
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Board_FG;
 
-            if( this.Print_Row >= this.Num_Rows )
+            if( this.__Print_Row >= this.__Num_Rows )
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
@@ -89,22 +107,22 @@ namespace GHGameOfLife
                 //Magic numbers: 
                 //          1 -> copy from the second line to the bottom
                 //          5 -> heck if I know, something to do with menutext.space 
-                Console.MoveBufferArea(0, MenuText.Space + 1, this.Num_Cols+MenuText.Space, this.Num_Rows-1, 0, MenuText.Space);
-                --this.Print_Row;
+                Console.MoveBufferArea(0, MenuText.Space + 1, this.__Num_Cols+MenuText.Space, this.__Num_Rows-1, 0, MenuText.Space);
+                --this.__Print_Row;
             }
-            Console.SetCursorPosition(0, MenuText.Space + this.Print_Row);
+            Console.SetCursorPosition(0, MenuText.Space + this.__Print_Row);
             var printRow = new StringBuilder();
             printRow.Append("    ║");
-            foreach (bool val in this.Current_Row)
+            foreach (bool val in this.__Current_Row)
             {
                 if (val)
-                    printRow.Append(Live_Cell);
+                    printRow.Append(LIVE_CELL);
                 else
                     printRow.Append(" ");
             }
             printRow.Append("║");
             Console.Write(printRow);
-            this.Print_Row++;
+            this.__Print_Row++;
 
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Default_FG;

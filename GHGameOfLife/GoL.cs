@@ -9,25 +9,25 @@ namespace GHGameOfLife
     /// does all the checking for living/dying of the population.
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    partial class GoL
+    class GoL : IConsoleAutomata
     {
 
         private bool[,] __Board;
         private int Generation;
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
-        private bool __IsInitialized;
+        private bool __Is_Initialized;
         private int __Rows;
         private int __Cols;
-        private int __OrigConsHeight;
-        private int __OrigConsWidth;
+        private int __Orig_Console_Height;
+        private int __Orig_Console_Width;
 
-        public bool IsInitialized { get { return this.__IsInitialized; } }
+        public bool Is_Initialized { get { return this.__Is_Initialized; } }
         public int Rows { get { return this.__Rows; } }
         public int Cols { get { return this.__Cols; } }
-        public int OrigConsHeight { get { return this.__OrigConsHeight; } }
-        public int OrigConsWidth { get { return this.__OrigConsWidth; } }
-        public bool Wrapping { get; set; }
+        public int Console_Height { get { return this.__Orig_Console_Height; } }
+        public int Console_Width { get { return this.__Orig_Console_Width; } }
+        public bool Is_Wrapping { get; set; }
         public bool[,] Board {
             get
             {
@@ -57,11 +57,11 @@ namespace GHGameOfLife
                         
             this.__Rows = rowMax;
             this.__Cols = colMax;
-            this.__OrigConsHeight = Console.WindowHeight;
-            this.__OrigConsWidth = Console.WindowWidth;
-            this.__IsInitialized = false;
+            this.__Orig_Console_Height = Console.WindowHeight;
+            this.__Orig_Console_Width = Console.WindowWidth;
+            this.__Is_Initialized = false;
             this.Generation = 1;
-            this.Wrapping = true;
+            this.Is_Wrapping = true;
 
             ConsoleRunHelper.CalcBuilderBounds(this);
 
@@ -89,7 +89,7 @@ namespace GHGameOfLife
         private void BuildDefaultPop() 
         {
             this.__Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
-            this.__IsInitialized = true;
+            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -100,7 +100,7 @@ namespace GHGameOfLife
         private void BuildFromFile()
         {          
             this.__Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
-            this.__IsInitialized = true;            
+            this.__Is_Initialized = true;            
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -113,7 +113,7 @@ namespace GHGameOfLife
         private void BuildFromResource(string res)
         {
             this.__Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
-            this.__IsInitialized = true;
+            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -122,13 +122,13 @@ namespace GHGameOfLife
         private void BuildFromUser()
         {
             this.__Board = ConsoleRunHelper.BuildGOLBoardUser(this);
-            this.__IsInitialized = true;
+            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
-        public void NextBoard()
+        public void NextGeneration()
         {
             var lastBoard = this.__Board;
             var nextBoard = new bool[Rows, Cols];

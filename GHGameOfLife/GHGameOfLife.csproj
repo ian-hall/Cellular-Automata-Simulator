@@ -63,8 +63,8 @@
     <Compile Include="ClassStructHelpers.cs" />
     <Compile Include="ConsoleRunHelper.cs" />
     <Compile Include="GoL.cs" />
-    <Compile Include="GoLHelper.cs" />
     <Compile Include="GenericHelp.cs" />
+    <Compile Include="IConsoleAutomata.cs" />
     <Compile Include="MenuText.cs" />
     <Compile Include="LargePops.Designer.cs">
       <AutoGen>True</AutoGen>

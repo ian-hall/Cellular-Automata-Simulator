@@ -292,7 +292,7 @@ namespace GHGameOfLife
         /// </summary>
         public static bool[,] BuildGOLBoardUser(GoL currentGame)
         {
-            Console.SetBufferSize(currentGame.OrigConsWidth + 50, currentGame.OrigConsHeight);
+            Console.SetBufferSize(currentGame.Console_Width + 50, currentGame.Console_Height);
             Console.ForegroundColor = ConsoleColor.White;
 
             //char horiz = '═';       // '\u2550'
@@ -318,7 +318,7 @@ namespace GHGameOfLife
 
             MenuText.PrintCreationControls();
 
-            int blinkLeft = currentGame.OrigConsWidth + 5;
+            int blinkLeft = currentGame.Console_Width + 5;
             int charLeft = blinkLeft + 1;
             int extraTop = 2;
 
@@ -340,7 +340,7 @@ namespace GHGameOfLife
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 MenuText.ClearLine(MenuText.Space - 3);
                 string positionStr = String.Format("Current position: ({0},{1})", __Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space);
-                Console.SetCursorPosition(currentGame.OrigConsWidth / 2 - positionStr.Length / 2, positionPrintRow);
+                Console.SetCursorPosition(currentGame.Console_Width / 2 - positionStr.Length / 2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
 
@@ -598,8 +598,8 @@ namespace GHGameOfLife
                     popString.AppendLine();
             }
 
-            Console.SetWindowSize(currentGame.OrigConsWidth, currentGame.OrigConsHeight);
-            Console.SetBufferSize(currentGame.OrigConsWidth, currentGame.OrigConsHeight);
+            Console.SetWindowSize(currentGame.Console_Width, currentGame.Console_Height);
+            Console.SetBufferSize(currentGame.Console_Width, currentGame.Console_Height);
 
             Console.ForegroundColor = MenuText.Default_FG;
             MenuText.ClearUnderBoard();
@@ -854,9 +854,9 @@ namespace GHGameOfLife
         /// Wrapping is always on in this case.
         /// </summary>
         /// <param name="game">The board to start with</param>
-        public static void GoLRunner(GoL game)
+        public static void GoLRunner(IConsoleAutomata game)
         {
-            if (!game.IsInitialized)
+            if (!game.Is_Initialized)
             {
                 Console.ForegroundColor = MenuText.Info_FG;
                 Console.Write("ERROR");
@@ -869,7 +869,7 @@ namespace GHGameOfLife
             statusValues["Go"] = true;
             statusValues["Continuous"] = false;
             statusValues["Paused"] = true;
-            statusValues["Wrapping"] = game.Wrapping;
+            statusValues["Wrapping"] = game.Is_Wrapping;
             statusValues["ExitPause"] = false;
 
             MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
@@ -885,7 +885,7 @@ namespace GHGameOfLife
                 // if it IS running, and no keys are pressed
                 while (!Console.KeyAvailable && statusValues["Continuous"])
                 {
-                    game.NextBoard();
+                    game.NextGeneration();
                     game.PrintBoard();
                     Thread.Sleep(__Speeds[__Curr_Speed_Index]);
                 }
@@ -897,7 +897,7 @@ namespace GHGameOfLife
                     //If space is pressed and the game is not running continuously
                     if (!statusValues["Continuous"])
                     {
-                        game.NextBoard();
+                        game.NextGeneration();
                         game.PrintBoard();
                     }
                     else //if space is pressed, pausing the game
@@ -933,7 +933,7 @@ namespace GHGameOfLife
         /// <param name="pressed"></param>
         /// <param name="pauseLoop"></param>
         /// <returns></returns>
-        private static void HandleRunningInput(ConsoleKey pressed, GoL currentGame, ref Dictionary<string, bool> currentStatus)
+        private static void HandleRunningInput(ConsoleKey pressed, IConsoleAutomata currentGame, ref Dictionary<string, bool> currentStatus)
         {
             switch (pressed)
             {
@@ -1019,8 +1019,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         public static void CalcBuilderBounds(GoL currentBoard)
         {
-            __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.OrigConsWidth - 2 * MenuText.Space);
-            __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.OrigConsHeight - 2 * MenuText.Space);
+            __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.Console_Width - 2 * MenuText.Space);
+            __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.Console_Height - 2 * MenuText.Space);
         }
 //------------------------------------------------------------------------------
     }
