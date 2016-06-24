@@ -45,6 +45,21 @@
             return rotatedVals;
         }
 //-----------------------------------------------------------------------------
+        /// <summary>
+        /// Shifts all values of a 2d jagged array up one row
+        /// </summary>
+        /// <param name="oldVals">The 2d jagged array to be shifted</param>
+        /// <returns>A new jagged array with the shifted values</returns>
+        public static T[][] ShiftUp(T[][] oldVals)
+        {
+            var shiftedVals = new T[oldVals.Length][];
+            for (int r = 1; r < oldVals.Length; r++)
+            {
+                shiftedVals[r - 1] = oldVals[r];
+            }
+            return shiftedVals;
+        }
+//-----------------------------------------------------------------------------
     } //End Class
-///////////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////
 }

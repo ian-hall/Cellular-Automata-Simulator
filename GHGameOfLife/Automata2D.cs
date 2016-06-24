@@ -9,7 +9,7 @@ namespace GHGameOfLife
     /// does all the checking for living/dying of the population.
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    class GoL : IConsoleAutomata
+    class Automata2D : IConsoleAutomata
     {
 
         private bool[,] __Board;
@@ -51,7 +51,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        public GoL(int rowMax, int colMax, BuildType bType, string res = null)
+        public Automata2D(int rowMax, int colMax, BuildType bType, string res = null)
         {
             this.__Board = new bool[rowMax, colMax];
                         
@@ -64,66 +64,34 @@ namespace GHGameOfLife
             this.Is_Wrapping = true;
 
             ConsoleRunHelper.CalcBuilderBounds(this);
-
+            this.InitializeBoard(bType,res);
+        }
+//------------------------------------------------------------------------------
+        private void InitializeBoard(BuildType bType, string res)
+        {
             switch (bType)
             {
+                //Build a random population
                 case BuildType.Random:
-                    BuildDefaultPop();
+                    this.__Board = ConsoleRunHelper.Build2DBoard_Random(this);
                     break;
+                //Build a population from a CELLS-style file
+                //defaults to random in case of an error
                 case BuildType.File:
-                    BuildFromFile();
+                    this.__Board = ConsoleRunHelper.Build2DBoard_File(this);
                     break;
+                //Build a population using one of the CELLS files that is stored as a resource
+                //defaults to random in case of an error
                 case BuildType.Resource:
-                    BuildFromResource(res);
+                    this.__Board = ConsoleRunHelper.Build2DBoard_Resource(res, this);
                     break;
+                //Build a population based on user input
                 case BuildType.User:
-                    BuildFromUser();
+                    this.__Board = ConsoleRunHelper.Build2DBoard_User(this);
                     break;
             }
-        }
-//------------------------------------------------------------------------------        
-        /// <summary>
-        /// Default population is a random spattering of 0s and 1s
-        /// Easy enough to get using (random int)%2
-        /// </summary>
-        private void BuildDefaultPop() 
-        {
-            this.__Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
             this.__Is_Initialized = true;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Load the initial population from a file of 0s and 1s.
-        /// This uses a Windows Forms OpenFileDialog to let the user select
-        /// a file. The file is loaded into the center of the console window.
-        /// </summary>
-        private void BuildFromFile()
-        {          
-            this.__Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
-            this.__Is_Initialized = true;            
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Builds the board from a resource
-        /// TODO: Don't really need to validate built in stuff, but probably 
-        /// need to add the ability to resize the window if for some reason
-        /// it is set smaller than a preloaded population can display in.
-        /// </summary>
-        /// <param name="res"></param>
-        private void BuildFromResource(string res)
-        {
-            this.__Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
-            this.__Is_Initialized = true;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Builds the board from user input. This is going to be ugly...
-        /// </summary>
-        private void BuildFromUser()
-        {
-            this.__Board = ConsoleRunHelper.BuildGOLBoardUser(this);
-            this.__Is_Initialized = true;
-        }
+        } 
 //------------------------------------------------------------------------------
         /// <summary>
         /// Adds the next board values to a queue to be read from
@@ -169,11 +137,11 @@ namespace GHGameOfLife
                 {
                     if (!__Board[r, c])
                     {
-                        sb.Append(GoL.DEAD_CELL);
+                        sb.Append(Automata2D.DEAD_CELL);
                     }
                     else
                     {
-                        sb.Append(GoL.LIVE_CELL);
+                        sb.Append(Automata2D.LIVE_CELL);
                     }
                 }
                 sb.AppendLine("║");

@@ -21,7 +21,7 @@ namespace GHGameOfLife
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
         /// </summary>
-        public static bool[,] BuildGOLBoardRandom(GoL currentGame)
+        public static bool[,] Build2DBoard_Random(Automata2D currentGame)
         {
             var rand = new Random();
             var newBoard = new bool[currentGame.Rows, currentGame.Cols];
@@ -40,7 +40,7 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        public static bool[,] BuildGOLBoardFile(GoL currentGame)
+        public static bool[,] Build2DBoard_File(Automata2D currentGame)
         {
             MenuText.FileError errType = MenuText.FileError.Not_Loaded;
             var isValidFile = false;
@@ -72,7 +72,7 @@ namespace GHGameOfLife
                             keyPressed = true;
                     }
                 }
-                return ConsoleRunHelper.BuildGOLBoardRandom(currentGame);
+                return ConsoleRunHelper.Build2DBoard_Random(currentGame);
             }
         }
         //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ namespace GHGameOfLife
         /// TODO: Add the name of the resource to the screen
         /// </summary>
         /// <param name="res"></param>
-        public static bool[,] BuildGOLBoardResource(string res, GoL currentGame)
+        public static bool[,] Build2DBoard_Resource(string res, Automata2D currentGame)
         {
             string startingPop;
             MenuText.FileError errType = MenuText.FileError.Not_Loaded;
@@ -105,7 +105,7 @@ namespace GHGameOfLife
                             keyPressed = true;
                     }
                 }
-                return ConsoleRunHelper.BuildGOLBoardRandom(currentGame);
+                return ConsoleRunHelper.Build2DBoard_Random(currentGame);
             }
         }
         //------------------------------------------------------------------------------
@@ -118,66 +118,12 @@ namespace GHGameOfLife
         /// <param name="filename">Path to a file to be checked, or resource to be loaded</param>
         /// <param name="popToLoad">Out set if the filename or resource are valid</param>
         /// <param name="fromRes">Set True if loading from a resource file</param>
-        private static bool IsValidFileOrResource(string filename, GoL currentGame, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
+        private static bool IsValidFileOrResource(string filename, Automata2D currentGame, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
         {
             popToLoad = "";
             error = MenuText.FileError.None;
-            if (fromRes)
-            {
-                var resourceByLine = Regex.Split(GHGameOfLife.LargePops.ResourceManager.GetString(filename), Environment.NewLine);
-                var fileByLine = new List<string>();
-                foreach (var line in resourceByLine)
-                {
-                    string temp = line.Trim();
-                    if (temp == String.Empty)
-                    {
-                        fileByLine.Add(temp);
-                        continue;
-                    }
-                    switch (temp[0])
-                    {
-                        case '!':
-                        case '#':
-                        case '/':
-                            // Ignore these lines
-                            break;
-                        default:
-                            fileByLine.Add(temp);
-                            break;
-                    }
-                }
-
-                var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
-                var fileRows = fileByLine.Count;
-
-                if (fileRows > currentGame.Rows)
-                {
-                    error = MenuText.FileError.Length;
-                    return false;
-                }
-                if (longestLine > currentGame.Rows)
-                {
-                    error = MenuText.FileError.Width;
-                    return false;
-                }
-
-                var sb = new StringBuilder();
-                foreach (var line in fileByLine)
-                {
-                    //Pad all lines to the same length as the longest for loading into the game board.
-                    var newLine = line.PadRight(longestLine, '.');
-                    if (!ValidLine(newLine))
-                    {
-                        error = MenuText.FileError.Contents;
-                        return false;
-                    }
-                    sb.AppendLine(newLine);
-                }
-                popToLoad = sb.ToString();
-                error = MenuText.FileError.None;
-                return true;
-            }
-            else
+            var wholeFile = new List<string>();
+            if (!fromRes)
             {
                 // File should exist, but its good to make sure.
                 FileInfo file = new FileInfo(filename);
@@ -194,66 +140,70 @@ namespace GHGameOfLife
                     return false;
                 }
 
-                List<string> fileByLine = new List<string>();
                 using (StreamReader reader = new StreamReader(filename))
                 {
-                    // New way to read all the lines for checking...
-                    // Skips newlines, also skips lines that are 
-                    // probably comments
                     while (!reader.EndOfStream)
                     {
                         string temp = reader.ReadLine().Trim();
-                        if (temp == String.Empty)
-                        {
-                            fileByLine.Add(temp);
-                            continue;
-                        }
-                        switch (temp[0])
-                        {
-                            case '!':
-                            case '#':
-                            case '/':
-                                // Ignore these lines
-                                break;
-                            default:
-                                fileByLine.Add(temp);
-                                break;
-                        }
-
+                        wholeFile.Add(temp);
                     }
                 }
-
-                //Find the longest line in the file
-                var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
-                var fileRows = fileByLine.Count;
-
-                if (fileRows > currentGame.Rows)
-                {
-                    error = MenuText.FileError.Length;
-                    return false;
-                }
-                if (longestLine > currentGame.Cols)
-                {
-                    error = MenuText.FileError.Width;
-                    return false;
-                }
-
-                var sb = new StringBuilder();
-                foreach (var line in fileByLine)
-                {
-                    //Pad all lines to the same length as the longest for loading into the game board.
-                    var newLine = line.PadRight(longestLine, '.');
-                    if (!ValidLine(newLine))
-                    {
-                        error = MenuText.FileError.Contents;
-                        return false;
-                    }
-                    sb.AppendLine(newLine);
-                }
-                popToLoad = sb.ToString();
-                error = MenuText.FileError.None;
-                return true;
             }
+            else
+            {
+                wholeFile = Regex.Split(GHGameOfLife.LargePops.ResourceManager.GetString(filename), Environment.NewLine).ToList();
+            }
+            var fileByLine = new List<string>();
+            foreach (var line in wholeFile)
+            {
+                string temp = line.Trim();
+                if (temp == String.Empty)
+                {
+                    fileByLine.Add(temp);
+                    continue;
+                }
+                switch (temp[0])
+                {
+                    case '!':
+                    case '#':
+                    case '/':
+                        // Ignore these lines
+                        break;
+                    default:
+                        fileByLine.Add(temp);
+                        break;
+                }
+            }
+
+            var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
+            var fileRows = fileByLine.Count;
+
+            if (fileRows > currentGame.Rows)
+            {
+                error = MenuText.FileError.Length;
+                return false;
+            }
+            if (longestLine > currentGame.Cols)
+            {
+                error = MenuText.FileError.Width;
+                return false;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var line in fileByLine)
+            {
+                //Pad all lines to the same length as the longest for loading into the game board.
+                var newLine = line.PadRight(longestLine, '.');
+                if (!ValidLine(newLine))
+                {
+                    error = MenuText.FileError.Contents;
+                    return false;
+                }
+                sb.AppendLine(newLine);
+            }
+            popToLoad = sb.ToString();
+            error = MenuText.FileError.None;
+            return true;           
         }
         //------------------------------------------------------------------------------
         /// <summary>
@@ -290,14 +240,10 @@ namespace GHGameOfLife
         /// Builds the board from user input. This is going to be ugly...
         /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
         /// </summary>
-        public static bool[,] BuildGOLBoardUser(GoL currentGame)
+        public static bool[,] Build2DBoard_User(Automata2D currentGame)
         {
             Console.SetBufferSize(currentGame.Console_Width + 50, currentGame.Console_Height);
             Console.ForegroundColor = ConsoleColor.White;
-
-            //char horiz = '═';       // '\u2550'
-            //char botLeft = '╚';     // '\u255A'
-            //char botRight = '╝';    // '\u255D'
 
             bool[,] tempBoard = new bool[__Valid_Tops.Count(), __Valid_Lefts.Count()];
 
@@ -756,7 +702,7 @@ namespace GHGameOfLife
         /// Used by files to fill the game board, centered
         /// </summary>
         /// <param name="startingPop"></param>
-        public static bool[,] FillBoard(string startingPop,int rows, int cols)
+        private static bool[,] FillBoard(string startingPop,int rows, int cols)
         {
             string[] popByLine = Regex.Split(startingPop, Environment.NewLine);
             var newBoard = new bool[rows, cols];
@@ -854,7 +800,7 @@ namespace GHGameOfLife
         /// Wrapping is always on in this case.
         /// </summary>
         /// <param name="game">The board to start with</param>
-        public static void GoLRunner(IConsoleAutomata game)
+        public static void ConsoleAutomataRunner(IConsoleAutomata game)
         {
             if (!game.Is_Initialized)
             {
@@ -1017,7 +963,7 @@ namespace GHGameOfLife
             return bounds;
         }
 //------------------------------------------------------------------------------
-        public static void CalcBuilderBounds(GoL currentBoard)
+        public static void CalcBuilderBounds(Automata2D currentBoard)
         {
             __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.Console_Width - 2 * MenuText.Space);
             __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.Console_Height - 2 * MenuText.Space);

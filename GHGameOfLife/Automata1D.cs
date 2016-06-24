@@ -8,11 +8,12 @@ namespace GHGameOfLife
     /// Class to support drawing 2D automata rules
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    class AutomataRule : IConsoleAutomata
+    class Automata1D : IConsoleAutomata
     {
         delegate bool Rule1D(bool p, bool q, bool r);
 
         private bool[] __Current_Row;
+        private bool[][] __Entire_Board;
         private bool __Is_Initialized;
         private int __Num_Cols;
         private int __Num_Rows;
@@ -29,18 +30,25 @@ namespace GHGameOfLife
         public int Console_Height { get { return this.__Orig_Console_Height; } }
         public int Console_Width { get { return this.__Orig_Console_Width; } }
         public bool Is_Wrapping { get; set; }
-        //TODO: Change this to actually be a copy of the current console display
         public bool[,] Board
         {
             get
             {
-                return new bool[0, 0];
+                var temp = new bool[this.__Num_Rows, this.__Num_Cols];
+                for( int r = 0; r < this.__Num_Rows; r++ )
+                {
+                    for( int c = 0; c < this.__Num_Cols; c++ )
+                    {
+                        temp[r, c] = this.__Entire_Board[r][c];
+                    }
+                }
+                return temp;
             }
         }
 
         public enum RuleTypes { rule90 };
 //-----------------------------------------------------------------------------
-        public AutomataRule(int rows, int cols, RuleTypes rule)
+        public Automata1D(int rows, int cols, RuleTypes rule)
         {
             this.Is_Wrapping = true;
             this.__Num_Cols = cols;
@@ -49,33 +57,24 @@ namespace GHGameOfLife
             __Orig_Console_Height = Console.WindowHeight;
             __Orig_Console_Width = Console.WindowWidth;
             this.__Current_Row = new bool[this.__Num_Cols];
+            this.__Entire_Board = new bool[this.__Num_Rows][];
+            this.__Rule = new Rule1D(Rule90);
+
+            //This will eventually move to a separate function for building the board
             var rand = new Random();
             for (int i = 0; i < this.__Num_Cols; i++)
             {
                 this.__Current_Row[i] = (rand.Next() % 2 == 0) ? false : false;
             }
             this.__Current_Row[this.__Num_Cols / 2] = true;
-            this.__Rule = new Rule1D(Rule90);
+            this.__Entire_Board[0] = this.__Current_Row;
             this.__Is_Initialized = true;
-        }
-//-----------------------------------------------------------------------------
-        /// <summary>
-        /// Function for handling the running of the AutomataRule
-        /// </summary>
-        public void Run()
-        {
-            for( int i = 0; i < 500; i++ )
-            {
-                this.PrintBoard();
-                this.NextGeneration();
-            }
         }
 //-----------------------------------------------------------------------------
          /// <summary>
          /// Function to calculate the next value for all the cells in this.Current_Row
+         /// using this.__Rule
          /// </summary>
-         /// <param name="rule">A function of form (bool,bool,bool) -> bool that takes the 
-         /// current cell and it's neighbors and returns the next value of the cell.</param>
         public void NextGeneration()
         {
             var nextRow = new bool[this.__Num_Cols];
@@ -86,6 +85,15 @@ namespace GHGameOfLife
                 bool r = this.__Current_Row[(i + 2 + this.__Num_Cols) % this.__Num_Cols];
 
                 nextRow[(i + 1 + this.__Num_Cols) % this.__Num_Cols] = this.__Rule(p, q, r);
+            }
+            if (this.__Print_Row >= this.__Num_Rows)
+            {
+                this.__Entire_Board = GenericHelp<bool>.ShiftUp(this.__Entire_Board);
+                this.__Entire_Board[(this.__Num_Rows - 1)] = nextRow;
+            }
+            else
+            {
+                this.__Entire_Board[this.__Print_Row] = nextRow;
             }
             this.__Current_Row = nextRow;
             this.__Generation++;

@@ -59,10 +59,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutomataRule.cs" />
+    <Compile Include="Automata1D.cs" />
     <Compile Include="ClassStructHelpers.cs" />
     <Compile Include="ConsoleRunHelper.cs" />
-    <Compile Include="GoL.cs" />
+    <Compile Include="Automata2D.cs" />
     <Compile Include="GenericHelp.cs" />
     <Compile Include="IConsoleAutomata.cs" />
     <Compile Include="MenuText.cs" />

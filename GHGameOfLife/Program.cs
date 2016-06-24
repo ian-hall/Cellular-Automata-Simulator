@@ -148,7 +148,7 @@ namespace GHGameOfLife
         ///                                          
         private static void MainMenu()
         {
-            var buildType = GoL.BuildType.Random;
+            var buildType = Automata2D.BuildType.Random;
             string res = null;
 
             int numChoices = MenuText.Menu_Choices.Count();
@@ -244,17 +244,17 @@ namespace GHGameOfLife
                 switch (choice)
                 {
                     case 1:
-                        buildType = GoL.BuildType.Random;
+                        buildType = Automata2D.BuildType.Random;
                         validEntry = true;
                         break;
                     case 2:
-                        buildType = GoL.BuildType.File;
+                        buildType = Automata2D.BuildType.File;
                         validEntry = true;
                         break;
                     case 3:
                         //Clear the line telling you how to change window size
                         MenuText.ClearLine((Console.WindowHeight) - 4);
-                        buildType = GoL.BuildType.Resource;
+                        buildType = Automata2D.BuildType.Resource;
                         res = PromptForRes();
                         if (res != null)
                             validEntry = true;
@@ -265,7 +265,7 @@ namespace GHGameOfLife
                         }
                         break;
                     case 4:
-                        buildType = GoL.BuildType.User;
+                        buildType = Automata2D.BuildType.User;
                         validEntry = true;
                         break;
                     case 5:
@@ -286,8 +286,8 @@ namespace GHGameOfLife
             if(tryAuto)
             {
                 MenuText.ClearAllInBorder();
-                var autoBoard = new AutomataRule(Current_Rows - 10,Current_Cols - 10,AutomataRule.RuleTypes.rule90);
-                ConsoleRunHelper.GoLRunner(autoBoard);
+                var autoBoard = new Automata1D(Current_Rows - 10,Current_Cols - 10,Automata1D.RuleTypes.rule90);
+                ConsoleRunHelper.ConsoleAutomataRunner(autoBoard);
             }
             else
             {
@@ -295,8 +295,8 @@ namespace GHGameOfLife
                 MenuText.ClearAllInBorder();
 
                 //Move out into the main loop maybe
-                GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, buildType, res);
-                ConsoleRunHelper.GoLRunner(game);
+                Automata2D game = new Automata2D(Current_Rows - 10, Current_Cols - 10, buildType, res);
+                ConsoleRunHelper.ConsoleAutomataRunner(game);
             }
            
         }
