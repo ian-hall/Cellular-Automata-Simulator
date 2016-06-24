@@ -44,7 +44,8 @@ namespace GHGameOfLife
             }
         }
 
-        public enum BuildType { Random, File, Resource, User };
+        public enum BuildTypes { Random, File, Resource, User };
+        public enum RuleTypes { Life };
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -52,7 +53,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        public Automata2D(int rowMax, int colMax, BuildType bType, string res = null)
+        public Automata2D(int rowMax, int colMax, BuildTypes bType, string res = null)
         {
             this.__Board = new bool[rowMax, colMax];
                         
@@ -68,26 +69,26 @@ namespace GHGameOfLife
             this.InitializeBoard(bType,res);
         }
 //------------------------------------------------------------------------------
-        private void InitializeBoard(BuildType bType, string res)
+        private void InitializeBoard(BuildTypes bType, string res)
         {
             switch (bType)
             {
                 //Build a random population
-                case BuildType.Random:
+                case BuildTypes.Random:
                     this.__Board = ConsoleRunHelper.Build2DBoard_Random(this);
                     break;
                 //Build a population from a CELLS-style file
                 //defaults to random in case of an error
-                case BuildType.File:
+                case BuildTypes.File:
                     this.__Board = ConsoleRunHelper.Build2DBoard_File(this);
                     break;
                 //Build a population using one of the CELLS files that is stored as a resource
                 //defaults to random in case of an error
-                case BuildType.Resource:
+                case BuildTypes.Resource:
                     this.__Board = ConsoleRunHelper.Build2DBoard_Resource(res, this);
                     break;
                 //Build a population based on user input
-                case BuildType.User:
+                case BuildTypes.User:
                     this.__Board = ConsoleRunHelper.Build2DBoard_User(this);
                     break;
             }

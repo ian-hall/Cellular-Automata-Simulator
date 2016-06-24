@@ -46,6 +46,7 @@ namespace GHGameOfLife
             }
         }
 
+        public enum BuildTypes { Random, Single, Single_Centered };
         public enum RuleTypes { Rule30, Rule90 };
 //-----------------------------------------------------------------------------
         public Automata1D(int rows, int cols, RuleTypes rule)

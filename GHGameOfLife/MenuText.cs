@@ -188,6 +188,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the main menu
+        /// TODO: Change this to take a list or array of strings to print
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
         public static int PrintMainMenu()
@@ -444,6 +445,47 @@ namespace GHGameOfLife
             Console.Write(MenuText.Load_Rand);
             Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
             Console.Write(MenuText.Press_Enter);
+        }
+//------------------------------------------------------------------------------
+        public static int PrintMenuFromList(IEnumerable<string> choices)
+        {
+            ClearAllInBorder();
+
+            Console.ForegroundColor = MenuText.Info_FG;
+            Console.SetCursorPosition(5, (Console.WindowHeight) - 4);
+            Console.WriteLine(Change_Size);
+
+            Console.ForegroundColor = MenuText.Default_FG;
+            Console.SetCursorPosition(Left_Align, Welcome_Row);
+            Console.Write(Welcome);
+
+            int curRow = Menu_Start_Row;
+
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Choose_Msg);
+            Console.SetCursorPosition(Left_Align, ++curRow);
+            Console.Write(Press_Enter);
+            foreach (string choice in choices)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.Write(choice);
+            }
+            return (++curRow);
+        }
+//------------------------------------------------------------------------------
+        public static List<string> EnumToChoiceStrings(Array enumVals)
+        {
+            var choiceStrings = new List<string>();
+            for (int i = 0; i < enumVals.Length; i++)
+            {
+                var enumStr = enumVals.GetValue(i).ToString();
+                enumStr = enumStr.Replace('_', ' ');
+                var choiceStr = String.Format("{0}) {1}", i + 1, enumStr);
+                choiceStrings.Add(choiceStr);
+            }
+            var backString = String.Format("{0}) Back", enumVals.Length);
+            choiceStrings.Add(backString);
+            return choiceStrings;
         }
 //------------------------------------------------------------------------------
     } // end class

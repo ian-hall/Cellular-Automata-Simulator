@@ -11,7 +11,7 @@ namespace GHGameOfLife
 {
     class ConsoleRunHelper
     {
-        private static int[] __Speeds = { 132, 100, 66, 50, 0 };
+        private static int[] __Speeds = { 125, 100, 75, 50 ,25 };
         private static int __Curr_Speed_Index = 2;
         private static IEnumerable<int> __Valid_Lefts;
         private static IEnumerable<int> __Valid_Tops;

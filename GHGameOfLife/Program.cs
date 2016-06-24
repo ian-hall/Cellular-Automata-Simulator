@@ -38,8 +38,9 @@ namespace GHGameOfLife
             InitializeConsole();
             bool exit = false;
             do
-            {              
-                MainMenu();
+            {
+                //MainMenu();
+                NewMenu();
 
                 MenuText.PromptForAnother();
                 bool validKey = false;             
@@ -146,16 +147,114 @@ namespace GHGameOfLife
         /// TODO: Change the look of this whole thing:
         ///         Prompt for 1d or 2d
         ///             if 1d   -> prompt for which rule
-        ///                     -> prompt for random board, centered cell, or random single cell
+        ///                     -> prompt for type of starting population
         ///             if 2d   -> prompt for which rule (once implemented)
-        ///                     -> prompt for type of population
+        ///                     -> prompt for type of starting population
         ///                     -> prompt for resource if needed
         /// </summary>
         private static void NewMenu()
         {
             var typePrompts = new string[] {"1) 1D Automata",
-                                            "2) 2D Automata" };
-            var rulesList1D = Enum.GetNames(typeof(Automata1D.RuleTypes));
+                                            "2) 2D Automata",
+                                            "3) Exit"};
+
+            var ruleTypes1D = Enum.GetValues(typeof(Automata1D.RuleTypes));
+            var ruleTypes1DStrings = MenuText.EnumToChoiceStrings(ruleTypes1D);
+
+            var initTypes1D = Enum.GetValues(typeof(Automata1D.BuildTypes));
+            var initTypes1DStrings = MenuText.EnumToChoiceStrings(initTypes1D);
+
+            var ruleTypes2D = Enum.GetValues(typeof(Automata2D.RuleTypes));
+            var ruleTypes2DStrings = MenuText.EnumToChoiceStrings(ruleTypes2D);
+
+            var initTypes2D = Enum.GetValues(typeof(Automata2D.BuildTypes));
+            var initTypes2DStrings = MenuText.EnumToChoiceStrings(initTypes2D);
+
+            var promptRow = MenuText.PrintMenuFromList(typePrompts);
+            var numChoices = typePrompts.Length;
+            var choice = -1;
+
+            var inputFinished = false;
+            var validEntry = false;
+            var consoleResized = false;
+            //promptRow changes when we resize the console window
+            var newPromptRow = promptRow;
+
+            while (!inputFinished)
+            {
+                if(consoleResized)
+                {
+                    promptRow = newPromptRow;
+                }
+                consoleResized = false;
+                Console.CursorVisible = true;
+                MenuText.ClearWithinBorder(promptRow);
+                Console.SetCursorPosition(MenuText.Left_Align, promptRow);
+                Console.Write(MenuText.Prompt);
+                var userInput = "";
+                var maxInputLen = 1;
+                var readingInput = true;
+                while(readingInput)
+                {
+                    var keyInfo = Console.ReadKey(true);
+                    var charIn = keyInfo.KeyChar;
+                    if (charIn == '\r')
+                    {
+                        readingInput = false;
+                        break;
+                    }
+                    if (charIn == '\b')
+                    {
+                        if (userInput != "")
+                        {
+                            userInput = userInput.Substring(0, userInput.Length - 1);
+                            Console.Write("\b \b");
+                        }
+                    }
+                    if(keyInfo.Modifiers == ConsoleModifiers.Control)
+                    {
+                        switch(keyInfo.Key)
+                        {
+                            case ConsoleKey.OemPlus:
+                            case ConsoleKey.Add:
+                                if (Curr_Size_Index < Valid_Sizes.Count() - 1)
+                                {
+                                    Curr_Size_Index++;
+                                }
+                                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
+                                consoleResized = true;
+                                break;
+                            case ConsoleKey.OemMinus:
+                            case ConsoleKey.Subtract:
+                                if (Curr_Size_Index > 0)
+                                {
+                                    Curr_Size_Index--;
+                                }
+                                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
+                                consoleResized = true;
+                                break;
+                        }
+                        if(consoleResized)
+                        {
+                            break;
+                        }
+                    }
+                    if (!(""+charIn).All(c => char.IsLetterOrDigit(c)))
+                    {
+                        //Ignore input that is not a letter or digit
+                    }
+                    else if (userInput.Length < maxInputLen)
+                    {
+                        Console.Write(charIn);
+                        userInput += charIn;
+                    }
+                    else
+                    {
+                        System.Threading.Thread.Sleep(50);
+                    }
+                }
+                inputFinished = true;
+            }
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -166,7 +265,7 @@ namespace GHGameOfLife
         ///                                          
         private static void MainMenu()
         {
-            var buildType = Automata2D.BuildType.Random;
+            var buildType = Automata2D.BuildTypes.Random;
             string res = null;
 
             int numChoices = MenuText.Menu_Choices.Count();
@@ -262,17 +361,17 @@ namespace GHGameOfLife
                 switch (choice)
                 {
                     case 1:
-                        buildType = Automata2D.BuildType.Random;
+                        buildType = Automata2D.BuildTypes.Random;
                         validEntry = true;
                         break;
                     case 2:
-                        buildType = Automata2D.BuildType.File;
+                        buildType = Automata2D.BuildTypes.File;
                         validEntry = true;
                         break;
                     case 3:
                         //Clear the line telling you how to change window size
                         MenuText.ClearLine((Console.WindowHeight) - 4);
-                        buildType = Automata2D.BuildType.Resource;
+                        buildType = Automata2D.BuildTypes.Resource;
                         res = PromptForRes();
                         if (res != null)
                             validEntry = true;
@@ -283,7 +382,7 @@ namespace GHGameOfLife
                         }
                         break;
                     case 4:
-                        buildType = Automata2D.BuildType.User;
+                        buildType = Automata2D.BuildTypes.User;
                         validEntry = true;
                         break;
                     case 5:
@@ -332,7 +431,7 @@ namespace GHGameOfLife
             int promptRow = 0;
             int pageIndex = 0;
             bool reprintPage = true;
-            bool lastPage = (MenuText.Large_Pops_Pages.Count == 1);
+            bool onLastPage = (MenuText.Large_Pops_Pages.Count == 1);
             bool onFirstPage = true;
             List<string> currPage = null;
             
@@ -344,7 +443,7 @@ namespace GHGameOfLife
                 {
                     MenuText.ClearAllInBorder();
                     currPage = (List<string>)MenuText.Large_Pops_Pages[pageIndex];
-                    promptRow = MenuText.PrintResourceMenu(currPage,lastPage,onFirstPage);                   
+                    promptRow = MenuText.PrintResourceMenu(currPage,onLastPage,onFirstPage);                   
                 }
                 reprintPage = false;
 
@@ -395,20 +494,20 @@ namespace GHGameOfLife
                         {
                             --pageIndex;
                             reprintPage = true;
-                            lastPage = false;
+                            onLastPage = false;
                             if (pageIndex == 0)
                                 onFirstPage = true;
                         }
                         break;
                     case "9":
                         MenuText.ClearWithinBorder(promptRow + 1);
-                        if (!lastPage)
+                        if (!onLastPage)
                         {
                             ++pageIndex;
                             reprintPage = true;
                             onFirstPage = false;
                             if (pageIndex == MenuText.Large_Pops_Pages.Count - 1)
-                                lastPage = true;
+                                onLastPage = true;
                         }
                         break;
                     case "0":
@@ -440,8 +539,7 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
             MenuText.DrawBorder();
-            return MenuText.PrintMainMenu();
-            
+            return MenuText.PrintMainMenu();            
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -493,6 +591,23 @@ namespace GHGameOfLife
             Console.SetBufferSize(size.Cols, size.Rows);
             Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Reinitialize the console after resizing
+        /// </summary>
+        /// <returns>Returns the new row to print the response text on</returns>
+        /// TODO: This does not seem to get run after having the user create their own population....?
+        private static int ReInitializeConsoleWithPrompts(IEnumerable<string> prompts)
+        {
+            Console.Clear();
+            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
+
+            Current_Rows = Console.WindowHeight;
+            Current_Cols = Console.WindowWidth;
+            MenuText.ReInitialize();
+            MenuText.DrawBorder();
+            return MenuText.PrintMenuFromList(prompts);
         }
 //------------------------------------------------------------------------------
     } // end class
