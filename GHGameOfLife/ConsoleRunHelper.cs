@@ -10,23 +10,23 @@ namespace GHGameOfLife
 {
     class ConsoleRunHelper
     {
-        private static int[] Speeds = { 132, 100, 66, 50, 0 };
-        private static int Curr_Speed_Index = 2;
-        private static IEnumerable<int> Valid_Left;
-        private static IEnumerable<int> Valid_Top;
-        private static int CurLeft, CurTop;
+        private static int[] __Speeds = { 132, 100, 66, 50, 0 };
+        private static int __Curr_Speed_Index = 2;
+        private static IEnumerable<int> __Valid_Lefts;
+        private static IEnumerable<int> __Valid_Tops;
+        private static int __Cursor_Left, __Cursor_Top;
         //-----------------------------------------------------------------------------
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
         /// </summary>
-        public static bool[,] BuildGOLBoardRandom(int rows, int cols)
+        public static bool[,] BuildGOLBoardRandom(GoL currentGame)
         {
             var rand = new Random();
-            var newBoard = new bool[rows, cols];
-            for (int r = 0; r < rows; r++)
+            var newBoard = new bool[currentGame.Rows, currentGame.Cols];
+            for (int r = 0; r < currentGame.Rows; r++)
             {
-                for (int c = 0; c < cols; c++)
+                for (int c = 0; c < currentGame.Cols; c++)
                 {
                     newBoard[r, c] = (rand.Next() % 2 == 0);
                 }
@@ -39,7 +39,7 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        public static bool[,] BuildGOLBoardFile(int rows, int cols)
+        public static bool[,] BuildGOLBoardFile(GoL currentGame)
         {
             MenuText.FileError errType = MenuText.FileError.Not_Loaded;
             var isValidFile = false;
@@ -49,13 +49,13 @@ namespace GHGameOfLife
             if (openWindow.ShowDialog() == DialogResult.OK)
             {
                 string filePath = openWindow.FileName;
-                isValidFile = IsValidFileOrResource(filePath, rows, cols, out startingPop, out errType);
+                isValidFile = IsValidFileOrResource(filePath, currentGame, out startingPop, out errType);
             }
             //no ELSE because it defaults to a file not loaded error
 
             if (isValidFile)
             {
-                return ConsoleRunHelper.FillBoard(startingPop,rows,cols);
+                return ConsoleRunHelper.FillBoard(startingPop,currentGame.Rows,currentGame.Cols);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace GHGameOfLife
                             keyPressed = true;
                     }
                 }
-                return ConsoleRunHelper.BuildGOLBoardRandom(rows,cols);
+                return ConsoleRunHelper.BuildGOLBoardRandom(currentGame);
             }
         }
         //------------------------------------------------------------------------------
@@ -80,15 +80,15 @@ namespace GHGameOfLife
         /// TODO: Add the name of the resource to the screen
         /// </summary>
         /// <param name="res"></param>
-        public static bool[,] BuildGOLBoardResource(string res, int rows, int cols)
+        public static bool[,] BuildGOLBoardResource(string res, GoL currentGame)
         {
             string startingPop;
             MenuText.FileError errType = MenuText.FileError.Not_Loaded;
-            var isValidResource = IsValidFileOrResource(res, rows, cols, out startingPop, out errType, true);
+            var isValidResource = IsValidFileOrResource(res, currentGame, out startingPop, out errType, true);
 
             if (isValidResource)
             {
-                return FillBoard(startingPop,rows,cols);
+                return FillBoard(startingPop,currentGame.Rows,currentGame.Cols);
             }
             else
             {
@@ -104,7 +104,7 @@ namespace GHGameOfLife
                             keyPressed = true;
                     }
                 }
-                return ConsoleRunHelper.BuildGOLBoardRandom(rows, cols);
+                return ConsoleRunHelper.BuildGOLBoardRandom(currentGame);
             }
         }
         //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace GHGameOfLife
         /// <param name="filename">Path to a file to be checked, or resource to be loaded</param>
         /// <param name="popToLoad">Out set if the filename or resource are valid</param>
         /// <param name="fromRes">Set True if loading from a resource file</param>
-        private static bool IsValidFileOrResource(string filename, int rows, int cols, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
+        private static bool IsValidFileOrResource(string filename, GoL currentGame, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
         {
             popToLoad = "";
             error = MenuText.FileError.None;
@@ -149,12 +149,12 @@ namespace GHGameOfLife
                 var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
                 var fileRows = fileByLine.Count;
 
-                if (fileRows > rows)
+                if (fileRows > currentGame.Rows)
                 {
                     error = MenuText.FileError.Length;
                     return false;
                 }
-                if (longestLine > cols)
+                if (longestLine > currentGame.Rows)
                 {
                     error = MenuText.FileError.Width;
                     return false;
@@ -226,12 +226,12 @@ namespace GHGameOfLife
                 var longestLine = fileByLine.Select(line => line.Length).Max(len => len);
                 var fileRows = fileByLine.Count;
 
-                if (fileRows > rows)
+                if (fileRows > currentGame.Rows)
                 {
                     error = MenuText.FileError.Length;
                     return false;
                 }
-                if (longestLine > cols)
+                if (longestLine > currentGame.Cols)
                 {
                     error = MenuText.FileError.Width;
                     return false;
@@ -289,7 +289,7 @@ namespace GHGameOfLife
         /// Used by files to fill the game board, centered
         /// </summary>
         /// <param name="startingPop"></param>
-        private static bool[,] FillBoard(string startingPop,int rows, int cols)
+        public static bool[,] FillBoard(string startingPop,int rows, int cols)
         {
             string[] popByLine = Regex.Split(startingPop, Environment.NewLine);
             var newBoard = new bool[rows, cols];
@@ -300,10 +300,7 @@ namespace GHGameOfLife
             int rowsNum = popByLine.Count();
             int colsNum = popByLine[0].Length;
 
-            /* I somehow introduced a bug here where I'm getting a newline
-             * at the end of the string when I am loading a file from the
-             * user. This simply throws that line away. 
-             */
+            /* toss the last line if its empty */
             if (popByLine.Last() == String.Empty)
                 rowsNum -= 1;
 
@@ -387,8 +384,8 @@ namespace GHGameOfLife
         //------------------------------------------------------------------------------
         public static void CalcBuilderBounds(int origHeight, int origWidth)
         {
-            Valid_Left = Enumerable.Range(MenuText.Space, origWidth - 2 * MenuText.Space);
-            Valid_Top = Enumerable.Range(MenuText.Space, origHeight - 2 * MenuText.Space);
+            __Valid_Lefts = Enumerable.Range(MenuText.Space, origWidth - 2 * MenuText.Space);
+            __Valid_Tops = Enumerable.Range(MenuText.Space, origHeight - 2 * MenuText.Space);
         }
         //------------------------------------------------------------------------------
         /// <summary>
@@ -396,7 +393,7 @@ namespace GHGameOfLife
         /// centered on the given boardRow and boardCol.
         /// </summary>
         /// <returns></returns>
-        private static Rect Center(int popRows, int popCols,
+        public static Rect Center(int popRows, int popCols,
                                             int centerRow, int centerCol)
         {
             Rect bounds = new Rect();

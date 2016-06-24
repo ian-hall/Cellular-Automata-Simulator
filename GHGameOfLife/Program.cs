@@ -314,23 +314,6 @@ namespace GHGameOfLife
         private static void RunGame(GoL.BuildType bType, string res = null)
         {
             GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
-            /*
-            switch (pop)
-            {
-                case PopType.Random:
-                    game.BuildDefaultPop();
-                    break;
-                case PopType.File:
-                    game.BuildFromFile();
-                    break;
-                case PopType.Premade:
-                    game.BuildFromResource(res);
-                    break;
-                case PopType.Build:
-                    game.BuildFromUser();
-                    break;
-            }*/
-
             game.RunGame();
         }
 //------------------------------------------------------------------------------

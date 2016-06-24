@@ -20,23 +20,22 @@ namespace GHGameOfLife
     partial class GoL
     {
 
-        private static bool[,] Board;
+        private bool[,] Board;
         private int Generation;
-        private const char Live_Cell = '☺';
-        //private const char _DeadCell = ' ';
+        private const char LIVE_CELL = '☺';
+        //private const char DEAD_CELL = ' ';
         private bool Wrap { get; set; }
-        
-        private static bool IsInitialized;
-        private static int Rows;
-        private static int Cols;
-        private static int OrigConsHeight;
-        private static int OrigConsWidth;
 
-        private static bool StopNext;
-        private static AutoResetEvent NextStopped;
-        private static Mutex StopLock;
-        private const int Max_Boards = 100;
-        private static ConcurrentQueue<bool[,]> Next_Boards;
+        private bool __IsInitialized;
+        private int __Rows;
+        private int __Cols;
+        private int __OrigConsHeight;
+        private int __OrigConsWidth;
+        public bool IsInitialized { get { return this.__IsInitialized; } }
+        public int Rows { get { return this.__Rows; } }
+        public int Cols { get { return this.__Cols; } }
+        public int OrigConsHeight { get { return this.__OrigConsHeight; } }
+        public int OrigConsWidth { get { return this.__OrigConsWidth; } }
 
         public enum BuildType { Random, File, Resource, User };
 //------------------------------------------------------------------------------
@@ -50,21 +49,15 @@ namespace GHGameOfLife
         {
             Board = new bool[rowMax, colMax];
                         
-            Rows = rowMax;
-            Cols = colMax;
-            OrigConsHeight = Console.WindowHeight;
-            OrigConsWidth = Console.WindowWidth;
-            IsInitialized = false;
+            this.__Rows = rowMax;
+            this.__Cols = colMax;
+            this.__OrigConsHeight = Console.WindowHeight;
+            this.__OrigConsWidth = Console.WindowWidth;
+            this.__IsInitialized = false;
             this.Generation = 1;
             Wrap = true;
 
-
-            StopNext = false;
-            StopLock = new Mutex(false);
-            NextStopped = new AutoResetEvent(false);
-            Next_Boards = new ConcurrentQueue<bool[,]>();
-
-            GoLHelper.CalcBuilderBounds();
+            GoLHelper.CalcBuilderBounds(this);
 
             switch (bType)
             {
@@ -89,9 +82,8 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildDefaultPop() 
         {
-            Board = ConsoleRunHelper.BuildGOLBoardRandom(Rows, Cols);
-            Next_Boards.Enqueue(Board);
-            IsInitialized = true;
+            Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
+            this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -101,9 +93,8 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromFile()
         {          
-            Board = ConsoleRunHelper.BuildGOLBoardFile(Rows,Cols);          
-            Next_Boards.Enqueue(Board);
-            IsInitialized = true;            
+            Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
+            this.__IsInitialized = true;            
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -115,9 +106,8 @@ namespace GHGameOfLife
         /// <param name="res"></param>
         private void BuildFromResource(string res)
         {
-            Board = ConsoleRunHelper.BuildGOLBoardResource(res, Rows, Cols);
-            Next_Boards.Enqueue(Board);
-            IsInitialized = true;
+            Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
+            this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -125,9 +115,8 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromUser()
         {
-            GoLHelper.BuildBoardUser();
-            Next_Boards.Enqueue(Board);
-            IsInitialized = true;
+            GoLHelper.BuildBoardUser(this);
+            this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
         public void RunGame()
@@ -138,49 +127,19 @@ namespace GHGameOfLife
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
-        private static void ThreadedNext()
+        private void ThreadedNext()
         {
-            var go = true;
-            while(go)
+            var lastBoard = this.Board;
+            var nextBoard = new bool[Rows, Cols];
+            for (int r = 0; r < Rows; r++)
             {
-                while(Next_Boards.Count >= Max_Boards)
+                for (int c = 0; c < Cols; c++)
                 {
-                    StopLock.WaitOne();
-                    if(StopNext)
-                    {
-                        go = false;
-                        break;
-                    }
-                    StopLock.ReleaseMutex();
-                    Thread.Sleep(10);
+                    nextBoard[r, c] = ThreadedNextCellState(r, c, ref lastBoard);
                 }
-
-                if (Next_Boards.Count < Max_Boards && IsInitialized && go)
-                {
-                    var lastBoard = Next_Boards.Last();
-                    var nextBoard = new bool[Rows, Cols];
-
-                    for (int r = 0; r < Rows; r++)
-                    {
-                        for (int c = 0; c < Cols; c++)
-                        {
-                            nextBoard[r, c] = ThreadedNextCellState(r, c, ref lastBoard);
-                        }
-                    }
-                    Next_Boards.Enqueue(nextBoard);
-                }
-                else
-                {
-                    Thread.Sleep(10);
-                }
-
-                StopLock.WaitOne();
-                if (StopNext)
-                {
-                    go = false;
-                }
-                StopLock.ReleaseMutex();
             }
+            this.Generation++;
+            this.Board = nextBoard;                  
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -190,64 +149,52 @@ namespace GHGameOfLife
         /// </summary>
         private void ThreadedPrint()
         {
-            bool printed = false;
-            do
+            Console.SetCursorPosition(0, 1);
+            Console.Write(" ".PadRight(Console.WindowWidth));
+            string write = "Generation " + Generation;
+            int left = (Console.WindowWidth / 2) - (write.Length / 2);
+            Console.SetCursorPosition(left, 1);
+            Console.Write(write);
+
+            Console.BackgroundColor = MenuText.Default_BG;
+            Console.ForegroundColor = MenuText.Board_FG;
+
+            Console.SetCursorPosition(0, MenuText.Space);
+            StringBuilder sb = new StringBuilder();
+            for (int r = 0; r < this.__Rows; r++)
             {
-                if (Next_Boards.Count >= 2)
+                sb.Append("    ║");
+                for (int c = 0; c < this.__Cols; c++)
                 {
-                    if (Next_Boards.TryDequeue(out Board))
+                    if (!Board[r, c])
                     {
-                        Console.SetCursorPosition(0, 1);
-                        Console.Write(" ".PadRight(Console.WindowWidth));
-                        string write = "Generation " + Generation;
-                        int left = (Console.WindowWidth / 2) - (write.Length / 2);
-                        Console.SetCursorPosition(left, 1);
-                        Console.Write(write);
-
-                        Console.BackgroundColor = MenuText.Default_BG;
-                        Console.ForegroundColor = MenuText.Board_FG;
-
-                        Console.SetCursorPosition(0, MenuText.Space);
-                        StringBuilder sb = new StringBuilder();
-                        for (int r = 0; r < Rows; r++)
-                        {
-                            sb.Append("    ║");
-                            for (int c = 0; c < Cols; c++)
-                            {
-                                if (!Board[r, c])
-                                {
-                                    sb.Append(" ");
-                                }
-                                else
-                                {
-                                    sb.Append(Live_Cell);
-                                }
-                            }
-                            sb.AppendLine("║");
-                        }
-                        Console.Write(sb);
-
-                        Console.BackgroundColor = MenuText.Default_BG;
-                        Console.ForegroundColor = MenuText.Default_FG;
-                        printed = true;
+                        sb.Append(" ");
+                    }
+                    else
+                    {
+                        sb.Append(LIVE_CELL);
                     }
                 }
-            } while (!printed);
-            Generation++;
+                sb.AppendLine("║");
+            }
+            Console.Write(sb);
+
+            Console.BackgroundColor = MenuText.Default_BG;
+            Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
-        private static bool ThreadedNextCellState(int r, int c, ref bool[,] board)
+        private bool ThreadedNextCellState(int r, int c, ref bool[,] board)
         {
             int n = 0;
 
-            if (board[(r - 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (board[(r - 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
-            if (board[(r - 1 + Rows) % Rows, c]) n++;
-            if (board[(r + 1 + Rows) % Rows, (c - 1 + Cols) % Cols]) n++;
-            if (board[r, (c - 1 + Cols) % Cols]) n++;
-            if (board[(r + 1 + Rows) % Rows, c]) n++;
-            if (board[r, (c + 1 + Cols) % Cols]) n++;
-            if (board[(r + 1 + Rows) % Rows, (c + 1 + Cols) % Cols]) n++;
+            if (board[(r - 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (board[(r - 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (board[(r - 1 + this.__Rows) % this.__Rows, c]) n++;
+            if (board[(r + 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (board[r, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (board[(r + 1 + this.__Rows) % this.__Rows, c]) n++;
+            if (board[r, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (board[(r + 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
 
             if(board[r,c])
             {
