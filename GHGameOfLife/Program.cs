@@ -1,9 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Text;
-using System.Reflection;
-using System.Diagnostics;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,8 +9,6 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Program
     {
-        //enum PopType { Random, File, Premade, Build };
-
         // Don't go below these values or the text will be screwy
         static int Min_Cols = 100;
         static int Min_Rows = 30;
@@ -154,7 +148,7 @@ namespace GHGameOfLife
         ///                                          
         private static void MainMenu()
         {
-            var pop = GoL.BuildType.Random;
+            var buildType = GoL.BuildType.Random;
             string res = null;
 
             int numChoices = MenuText.Menu_Choices.Count();
@@ -250,17 +244,17 @@ namespace GHGameOfLife
                 switch (choice)
                 {
                     case 1:
-                        pop = GoL.BuildType.Random;
+                        buildType = GoL.BuildType.Random;
                         validEntry = true;
                         break;
                     case 2:
-                        pop = GoL.BuildType.File;
+                        buildType = GoL.BuildType.File;
                         validEntry = true;
                         break;
                     case 3:
                         //Clear the line telling you how to change window size
                         MenuText.ClearLine((Console.WindowHeight) - 4);
-                        pop = GoL.BuildType.Resource;
+                        buildType = GoL.BuildType.Resource;
                         res = PromptForRes();
                         if (res != null)
                             validEntry = true;
@@ -271,7 +265,7 @@ namespace GHGameOfLife
                         }
                         break;
                     case 4:
-                        pop = GoL.BuildType.User;
+                        buildType = GoL.BuildType.User;
                         validEntry = true;
                         break;
                     case 5:
@@ -300,7 +294,7 @@ namespace GHGameOfLife
                 MenuText.ClearAllInBorder();
 
                 //Move out into the main loop maybe
-                RunGame(pop, res);
+                RunGoL(buildType, res);
             }
            
         }
@@ -311,10 +305,10 @@ namespace GHGameOfLife
         /// <param name="pop">The type of population to build</param>
         /// <param name="res">Resource to load, if needed</param>
         /// 
-        private static void RunGame(GoL.BuildType bType, string res = null)
+        private static void RunGoL(GoL.BuildType bType, string res = null)
         {
             GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
-            game.RunGame();
+            ConsoleRunHelper.GoLRunner(game);
         }
 //------------------------------------------------------------------------------
         /// <summary>

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace GHGameOfLife
 {
@@ -289,7 +290,7 @@ namespace GHGameOfLife
         /// Builds the board from user input. This is going to be ugly...
         /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
         /// </summary>
-        public static bool[,] BuildBoardUser(GoL currentGame)
+        public static bool[,] BuildGOLBoardUser(GoL currentGame)
         {
             Console.SetBufferSize(currentGame.OrigConsWidth + 50, currentGame.OrigConsHeight);
             Console.ForegroundColor = ConsoleColor.White;
@@ -847,19 +848,145 @@ namespace GHGameOfLife
             }
 
         }
-        //------------------------------------------------------------------------------
-        public static void CalcBuilderBounds(GoL currentBoard)
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Runs the game using my half-assed threading
+        /// Wrapping is always on in this case.
+        /// </summary>
+        /// <param name="game">The board to start with</param>
+        public static void GoLRunner(GoL game)
         {
-            __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.OrigConsWidth - 2 * MenuText.Space);
-            __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.OrigConsHeight - 2 * MenuText.Space);
+            if (!game.IsInitialized)
+            {
+                Console.ForegroundColor = MenuText.Info_FG;
+                Console.Write("ERROR");
+                return;
+            }
+
+            MenuText.PrintRunControls();
+
+            var statusValues = new Dictionary<string, bool>();
+            statusValues["Go"] = true;
+            statusValues["Continuous"] = false;
+            statusValues["Paused"] = true;
+            statusValues["Wrapping"] = game.Wrapping;
+            statusValues["ExitPause"] = false;
+
+            MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
+
+            game.PrintBoard();
+            while (statusValues["Go"])
+            {
+                // If it isnt running, and no keys are pressed
+                while (!Console.KeyAvailable && !statusValues["Continuous"])
+                {
+                    Thread.Sleep(10);
+                }
+                // if it IS running, and no keys are pressed
+                while (!Console.KeyAvailable && statusValues["Continuous"])
+                {
+                    game.NextBoard();
+                    game.PrintBoard();
+                    Thread.Sleep(__Speeds[__Curr_Speed_Index]);
+                }
+
+                //Catch the key press here
+                ConsoleKeyInfo pressed = Console.ReadKey(true);
+                if (pressed.Key == ConsoleKey.Spacebar)
+                {
+                    //If space is pressed and the game is not running continuously
+                    if (!statusValues["Continuous"])
+                    {
+                        game.NextBoard();
+                        game.PrintBoard();
+                    }
+                    else //if space is pressed, pausing the game
+                    {
+                        statusValues["ExitPause"] = false;
+                        statusValues["Paused"] = true;
+                        MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
+                        while (!statusValues["ExitPause"])
+                        {
+                            while (!Console.KeyAvailable)
+                            {
+                                System.Threading.Thread.Sleep(10);
+                            }
+                            //If any key is pressed while the game is paused.
+                            ConsoleKeyInfo pauseEntry = Console.ReadKey(true);
+                            ConsoleRunHelper.HandleRunningInput(pauseEntry.Key, game, ref statusValues);
+                        }
+                    }
+                }
+                else
+                {
+                    //handle any other key pressed while the game is running.
+                    ConsoleRunHelper.HandleRunningInput(pressed.Key, game, ref statusValues);
+                }
+            }
+
+            Console.CursorVisible = false;
         }
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Handles all input while the game is running.
+        /// </summary>
+        /// <param name="pressed"></param>
+        /// <param name="pauseLoop"></param>
+        /// <returns></returns>
+        private static void HandleRunningInput(ConsoleKey pressed, GoL currentGame, ref Dictionary<string, bool> currentStatus)
+        {
+            switch (pressed)
+            {
+                case ConsoleKey.R:
+                    currentStatus["Continuous"] = !currentStatus["Continuous"];
+                    if (currentStatus["Paused"])
+                    {
+                        currentStatus["ExitPause"] = true;
+                        currentStatus["Paused"] = false;
+                    }
+                    break;
+                case ConsoleKey.S:
+                    if (!currentStatus["Continuous"] || currentStatus["Paused"])
+                    {
+                        SaveBoard(currentGame.Rows, currentGame.Cols, currentGame.Board);
+                    }
+                    break;
+                case ConsoleKey.OemMinus:
+                case ConsoleKey.Subtract:
+                    if (__Curr_Speed_Index >= 1)
+                    {
+                        __Curr_Speed_Index -= 1;
+                    }
+                    break;
+                case ConsoleKey.OemPlus:
+                case ConsoleKey.Add:
+                    if (__Curr_Speed_Index <= 3)
+                    {
+                        __Curr_Speed_Index += 1;
+                    }
+                    break;
+                case ConsoleKey.Spacebar: 
+                    //Unpause, will only hit if game is already paused.
+                    currentStatus["ExitPause"] = true;
+                    currentStatus["Paused"] = false;
+                    break;
+                case ConsoleKey.Escape:
+                    currentStatus["Go"] = false;
+                    currentStatus["ExitPause"] = true;
+                    currentStatus["Paused"] = false;
+                    break;
+                default:
+                    break;
+            }
+            MenuText.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], ConsoleRunHelper.__Curr_Speed_Index);
+        }
+//------------------------------------------------------------------------------
         /// <summary>
         /// Gives the bounds of a rectangle of width popCols and height popRows
         /// centered on the given boardRow and boardCol.
         /// </summary>
         /// <returns></returns>
-        public static Rect Center(int popRows, int popCols,
+        private static Rect Center(int popRows, int popCols,
                                             int centerRow, int centerCol)
         {
             Rect bounds = new Rect();
@@ -889,7 +1016,13 @@ namespace GHGameOfLife
 
             return bounds;
         }
-        //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        public static void CalcBuilderBounds(GoL currentBoard)
+        {
+            __Valid_Lefts = Enumerable.Range(MenuText.Space, currentBoard.OrigConsWidth - 2 * MenuText.Space);
+            __Valid_Tops = Enumerable.Range(MenuText.Space, currentBoard.OrigConsHeight - 2 * MenuText.Space);
+        }
+//------------------------------------------------------------------------------
     }
     //////////////////////////////////////////////////////////////////////////////////
 }

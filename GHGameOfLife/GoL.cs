@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.IO;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using System.Drawing;
-using System.Threading;
-using System.Collections.Concurrent;
 
 namespace GHGameOfLife
 {
@@ -20,22 +12,36 @@ namespace GHGameOfLife
     partial class GoL
     {
 
-        private bool[,] Board;
+        private bool[,] __Board;
         private int Generation;
         private const char LIVE_CELL = '☺';
-        //private const char DEAD_CELL = ' ';
-        private bool Wrap { get; set; }
-
+        private const char DEAD_CELL = ' ';
         private bool __IsInitialized;
         private int __Rows;
         private int __Cols;
         private int __OrigConsHeight;
         private int __OrigConsWidth;
+
         public bool IsInitialized { get { return this.__IsInitialized; } }
         public int Rows { get { return this.__Rows; } }
         public int Cols { get { return this.__Cols; } }
         public int OrigConsHeight { get { return this.__OrigConsHeight; } }
         public int OrigConsWidth { get { return this.__OrigConsWidth; } }
+        public bool Wrapping { get; set; }
+        public bool[,] Board {
+            get
+            {
+                var temp = new bool[this.__Rows, this.__Cols];
+                for(int r = 0; r < this.__Rows; r++)
+                {
+                    for( int c = 0; c < this.__Cols; c++ )
+                    {
+                        temp[r, c] = this.__Board[r, c];
+                    }
+                }
+                return temp;
+            }
+        }
 
         public enum BuildType { Random, File, Resource, User };
 //------------------------------------------------------------------------------
@@ -47,7 +53,7 @@ namespace GHGameOfLife
         /// <param name="colMax">Number of columns</param>
         public GoL(int rowMax, int colMax, BuildType bType, string res = null)
         {
-            Board = new bool[rowMax, colMax];
+            this.__Board = new bool[rowMax, colMax];
                         
             this.__Rows = rowMax;
             this.__Cols = colMax;
@@ -55,7 +61,7 @@ namespace GHGameOfLife
             this.__OrigConsWidth = Console.WindowWidth;
             this.__IsInitialized = false;
             this.Generation = 1;
-            Wrap = true;
+            this.Wrapping = true;
 
             ConsoleRunHelper.CalcBuilderBounds(this);
 
@@ -82,7 +88,7 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildDefaultPop() 
         {
-            this.Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
+            this.__Board = ConsoleRunHelper.BuildGOLBoardRandom(this);
             this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -93,7 +99,7 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromFile()
         {          
-            this.Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
+            this.__Board = ConsoleRunHelper.BuildGOLBoardFile(this);          
             this.__IsInitialized = true;            
         }
 //------------------------------------------------------------------------------
@@ -106,7 +112,7 @@ namespace GHGameOfLife
         /// <param name="res"></param>
         private void BuildFromResource(string res)
         {
-            this.Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
+            this.__Board = ConsoleRunHelper.BuildGOLBoardResource(res, this);
             this.__IsInitialized = true;
         }
 //------------------------------------------------------------------------------
@@ -115,31 +121,26 @@ namespace GHGameOfLife
         /// </summary>
         private void BuildFromUser()
         {
-            this.Board = ConsoleRunHelper.BuildBoardUser(this);
+            this.__Board = ConsoleRunHelper.BuildGOLBoardUser(this);
             this.__IsInitialized = true;
-        }
-//------------------------------------------------------------------------------
-        public void RunGame()
-        {
-            GoLHelper.ThreadedRunner(this);
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
-        private void ThreadedNext()
+        public void NextBoard()
         {
-            var lastBoard = this.Board;
+            var lastBoard = this.__Board;
             var nextBoard = new bool[Rows, Cols];
             for (int r = 0; r < Rows; r++)
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = ThreadedNextCellState(r, c, ref lastBoard);
+                    nextBoard[r, c] = NextCellState(r, c, ref lastBoard);
                 }
             }
             this.Generation++;
-            this.Board = nextBoard;                  
+            this.__Board = nextBoard;                  
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -147,7 +148,7 @@ namespace GHGameOfLife
         /// Waits until there are at least 2 boards in the board queue and then 
         /// prints the next board in the queue. 
         /// </summary>
-        private void ThreadedPrint()
+        public void PrintBoard()
         {
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
@@ -166,13 +167,13 @@ namespace GHGameOfLife
                 sb.Append("    ║");
                 for (int c = 0; c < this.__Cols; c++)
                 {
-                    if (!Board[r, c])
+                    if (!__Board[r, c])
                     {
-                        sb.Append(" ");
+                        sb.Append(GoL.DEAD_CELL);
                     }
                     else
                     {
-                        sb.Append(LIVE_CELL);
+                        sb.Append(GoL.LIVE_CELL);
                     }
                 }
                 sb.AppendLine("║");
@@ -183,7 +184,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
-        private bool ThreadedNextCellState(int r, int c, ref bool[,] board)
+        private bool NextCellState(int r, int c, ref bool[,] board)
         {
             int n = 0;
 
