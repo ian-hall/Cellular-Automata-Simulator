@@ -109,7 +109,7 @@ namespace GHGameOfLife
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
                                         "[R] Toggle running",
                                         "[ESC] Exit",
-                                        "[+/-] Speed adjust",
+                                        "[+/-] Adjust speed",
                                         "[S] Save board",
                                         "(while stepping/paused)"};
 

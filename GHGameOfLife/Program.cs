@@ -29,7 +29,8 @@ namespace GHGameOfLife
             int initBuffWidth = Console.BufferWidth;
             int initBuffHeight = Console.BufferHeight;
             int initConsWidth = Console.WindowWidth;
-            int initConsHeight = Console.WindowHeight;            
+            int initConsHeight = Console.WindowHeight;
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
 
             int[] initialValues = new int[] { initBuffWidth, initBuffHeight, 
                                               initConsWidth, initConsHeight };     
@@ -141,6 +142,23 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
+        /// Displays the main menu for starting the game running.
+        /// TODO: Change the look of this whole thing:
+        ///         Prompt for 1d or 2d
+        ///             if 1d   -> prompt for which rule
+        ///                     -> prompt for random board, centered cell, or random single cell
+        ///             if 2d   -> prompt for which rule (once implemented)
+        ///                     -> prompt for type of population
+        ///                     -> prompt for resource if needed
+        /// </summary>
+        private static void NewMenu()
+        {
+            var typePrompts = new string[] {"1) 1D Automata",
+                                            "2) 2D Automata" };
+            var rulesList1D = Enum.GetNames(typeof(Automata1D.RuleTypes));
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
         /// Displays the main menu. Pick how to load the population.
         /// Display the choice and ask for confirmation instead of just
         /// jumping to the next screen incase someone hits a wrong button
@@ -157,7 +175,7 @@ namespace GHGameOfLife
 
             //Only allow letters and numbers to be written as a choice
             //TODO: Add this to the resource selection menu
-            string allCharDec = "abcdefghijklmnopqrstuvwxyz1234567890";
+            string allCharDec =  "abcdefghijklmnopqrstuvwxyz1234567890";
 
             bool validEntry = false;
             int newPromptRow = currPromptRow;
@@ -286,7 +304,7 @@ namespace GHGameOfLife
             if(tryAuto)
             {
                 MenuText.ClearAllInBorder();
-                var autoBoard = new Automata1D(Current_Rows - 10,Current_Cols - 10,Automata1D.RuleTypes.rule90);
+                var autoBoard = new Automata1D(Current_Rows - 10,Current_Cols - 10,Automata1D.RuleTypes.Rule90);
                 ConsoleRunHelper.ConsoleAutomataRunner(autoBoard);
             }
             else
@@ -300,18 +318,6 @@ namespace GHGameOfLife
             }
            
         }
-//------------------------------------------------------------------------------
-        ///// <summary>
-        ///// This starts the game going by getting the starting population loaded
-        ///// </summary>
-        ///// <param name="pop">The type of population to build</param>
-        ///// <param name="res">Resource to load, if needed</param>
-        ///// 
-        //private static void RunGoL(GoL.BuildType bType, string res = null)
-        //{
-        //    GoL game = new GoL(Current_Rows - 10, Current_Cols - 10, bType, res);
-        //    ConsoleRunHelper.GoLRunner(game);
-        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Display a list of all resources built in to the program
@@ -327,7 +333,7 @@ namespace GHGameOfLife
             int pageIndex = 0;
             bool reprintPage = true;
             bool lastPage = (MenuText.Large_Pops_Pages.Count == 1);
-            bool firstPage = true;
+            bool onFirstPage = true;
             List<string> currPage = null;
             
             
@@ -338,7 +344,7 @@ namespace GHGameOfLife
                 {
                     MenuText.ClearAllInBorder();
                     currPage = (List<string>)MenuText.Large_Pops_Pages[pageIndex];
-                    promptRow = MenuText.PrintResourceMenu(currPage,lastPage,firstPage);                   
+                    promptRow = MenuText.PrintResourceMenu(currPage,lastPage,onFirstPage);                   
                 }
                 reprintPage = false;
 
@@ -385,13 +391,13 @@ namespace GHGameOfLife
                         break;
                     case "8":
                         MenuText.ClearWithinBorder(promptRow + 1);
-                        if (!firstPage)
+                        if (!onFirstPage)
                         {
                             --pageIndex;
                             reprintPage = true;
                             lastPage = false;
                             if (pageIndex == 0)
-                                firstPage = true;
+                                onFirstPage = true;
                         }
                         break;
                     case "9":
@@ -400,7 +406,7 @@ namespace GHGameOfLife
                         {
                             ++pageIndex;
                             reprintPage = true;
-                            firstPage = false;
+                            onFirstPage = false;
                             if (pageIndex == MenuText.Large_Pops_Pages.Count - 1)
                                 lastPage = true;
                         }

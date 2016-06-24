@@ -5,12 +5,12 @@ namespace GHGameOfLife
 {
 ///////////////////////////////////////////////////////////////////////////////
     /// <summary>
-    /// Class to support drawing 2D automata rules
+    /// Class to support drawing 1D automata rules
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
     class Automata1D : IConsoleAutomata
     {
-        delegate bool Rule1D(bool p, bool q, bool r);
+        delegate bool Rule1D(int col);
 
         private bool[] __Current_Row;
         private bool[][] __Entire_Board;
@@ -21,7 +21,7 @@ namespace GHGameOfLife
         private int __Orig_Console_Height;
         private int __Orig_Console_Width;
         private const char LIVE_CELL = '█';
-        private int __Generation;
+        private const char DEAD_CELL = ' ';
         private Rule1D __Rule;
 
         public bool Is_Initialized { get { return this.__Is_Initialized; } }
@@ -46,7 +46,7 @@ namespace GHGameOfLife
             }
         }
 
-        public enum RuleTypes { rule90 };
+        public enum RuleTypes { Rule30, Rule90 };
 //-----------------------------------------------------------------------------
         public Automata1D(int rows, int cols, RuleTypes rule)
         {
@@ -80,12 +80,11 @@ namespace GHGameOfLife
             var nextRow = new bool[this.__Num_Cols];
             for( int i = 0; i < __Num_Cols; i++ )
             {
-                bool p = this.__Current_Row[(i + this.__Num_Cols) % this.__Num_Cols];
-                bool q = this.__Current_Row[(i + 1 + this.__Num_Cols) % this.__Num_Cols];
-                bool r = this.__Current_Row[(i + 2 + this.__Num_Cols) % this.__Num_Cols];
-
-                nextRow[(i + 1 + this.__Num_Cols) % this.__Num_Cols] = this.__Rule(p, q, r);
+                nextRow[(i + this.__Num_Cols) % this.__Num_Cols] = this.__Rule(i);
             }
+
+            //Shift the entire board up if it is already filled, and place this new row
+            //at the bottom
             if (this.__Print_Row >= this.__Num_Rows)
             {
                 this.__Entire_Board = GenericHelp<bool>.ShiftUp(this.__Entire_Board);
@@ -95,8 +94,8 @@ namespace GHGameOfLife
             {
                 this.__Entire_Board[this.__Print_Row] = nextRow;
             }
+
             this.__Current_Row = nextRow;
-            this.__Generation++;
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -126,7 +125,7 @@ namespace GHGameOfLife
                 if (val)
                     printRow.Append(LIVE_CELL);
                 else
-                    printRow.Append(" ");
+                    printRow.Append(DEAD_CELL);
             }
             printRow.Append("║");
             Console.Write(printRow);
@@ -138,14 +137,22 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
 //  Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
 //-----------------------------------------------------------------------------
-        private bool Rule90(bool p, bool q, bool r)
+        private bool Rule90(int col)
         {
-            return p ^ r;
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return left ^ right;
         }
 //-----------------------------------------------------------------------------
-        private bool Rule30(bool p, bool q, bool r)
+        private bool Rule30(int col)
         {
-            return p ^ (q || r);
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return left ^ (center || right);
         }
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

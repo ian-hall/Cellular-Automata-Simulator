@@ -11,6 +11,7 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata2D : IConsoleAutomata
     {
+        delegate bool Rule2D(int row, int col);
 
         private bool[,] __Board;
         private int Generation;
@@ -104,7 +105,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = NextCellState(r, c, ref lastBoard);
+                    nextBoard[r, c] = NextCellState(r, c);
                 }
             }
             this.Generation++;
@@ -152,20 +153,20 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
-        private bool NextCellState(int r, int c, ref bool[,] board)
+        private bool NextCellState(int r, int c)
         {
             int n = 0;
 
-            if (board[(r - 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (board[(r - 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
-            if (board[(r - 1 + this.__Rows) % this.__Rows, c]) n++;
-            if (board[(r + 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (board[r, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (board[(r + 1 + this.__Rows) % this.__Rows, c]) n++;
-            if (board[r, (c + 1 + this.__Cols) % this.__Cols]) n++;
-            if (board[(r + 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, c]) n++;
+            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[r, (c - 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, c]) n++;
+            if (this.__Board[r, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
 
-            if(board[r,c])
+            if(this.__Board[r,c])
             {
                 return ((n == 2) || (n == 3));
             }
