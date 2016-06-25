@@ -19,7 +19,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="/">{imhall.com}</a>
+					<a class="navbar-brand" href="http://www.imhall.com">{imhall.com}</a>
 				</div>
 				<div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -30,56 +30,67 @@
 			</div>
 		</div>
 
-	    <div class="container body-content">
-			<h2>Ian's Conway's Game Of Life</h2>
-            <div class="col-md-12">           
-				What was once a basic program written for CS101 has turned into this console implementation of Conway's Game Of Life. 
-				<a href="https://github.com/ian-hall/GHGameOfLife">You can find it here on GitHub.</a> Just look at these awesome features:
-				<br />
-				<h4>Full-featured menus</h4>
-				<img class="img-responsive" width=750 src="https://github.com/ian-hall/GHGameOfLife/blob/master/Screenshots/screen1.png?raw=true" alt="main menu">		
-				<br /><br />
-				<h4>Supports loading of CELLS-style files of populations</h4>
-				<video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop">
-					<source src="https://i.imgur.com/jXuPl9r.mp4" type="video/mp4" />
-				</video>
-				<br /><br />
-				<h4>Advanced population creation functionality</h4>
-				<video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop">
-					<source src="https://i.imgur.com/utHpCxp.mp4" type="video/mp4" />
-				</video>
-				<br /><br />
-				<h4>Robust error handling</h4>
-				<video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop">
-					<source src="https://i.imgur.com/CUuTaOG.mp4" type="video/mp4" />
-				</video>
-				<br /><br />
-				<h4>Now also supports 1D Automata rules</h4>
-				<video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop">
-					<source src="https://i.imgur.com/sWtH7Po.mp4" type="video/mp4" />
-				</video>
-				<br />
+        <div class="container body-content">
+            <h2>Ian's Conway's Game Of Life</h2>
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <p class="lead">
+                            What was once a basic program written for CS101 has turned into this console implementation of Conway's Game Of Life.
+                            Written in C#, I have harnessed the power of the console to bring a robust, full-featured, retro-styled, buzzword described
+                            implementation of Conway's Game Of Life. I am currently working to add more support for 1D automata, as well as different
+                            rule sets for both 1D automata and 2D automata, such as Conway's.
+                            <a href="https://github.com/ian-hall/GHGameOfLife">You can find it here on GitHub.</a>
+                            <br /><br />
+                            Just look at these awesome features:
+                        </p>
+                    </div>
+                </div>
+                <br />
+                <h4>Full-featured menus</h4>
+                <img class="img-responsive" width=750 src="https://i.imgur.com/hpqe2Tx.png" alt="main menu">
+                <br /><br />
+                <h4>Supports loading of CELLS-style files of populations</h4>
+                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="https://i.imgur.com/hpqe2Tx.png">
+                    <source src="https://i.imgur.com/jXuPl9r.mp4" type="video/mp4" />
+                </video>
+                <br /><br />
+                <h4>Advanced population creation functionality</h4>
+                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="https://i.imgur.com/hpqe2Tx.png">
+                    <source src="https://i.imgur.com/utHpCxp.mp4" type="video/mp4" />
+                </video>
+                <br /><br />
+                <h4>Robust error handling</h4>
+                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="https://i.imgur.com/hpqe2Tx.png">
+                    <source src="https://i.imgur.com/CUuTaOG.mp4" type="video/mp4" />
+                </video>
+                <br /><br />
+                <h4>Now also supports 1D automata rules</h4>
+                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="https://i.imgur.com/hpqe2Tx.png">
+                    <source src="https://i.imgur.com/sWtH7Po.mp4" type="video/mp4" />
+                </video>
+                <br />
             </div>
-		</div>
+        </div>
 
-		<footer class="footer">
-			<div class="container">
-				<div class="row">
-					<p class="text-footer">
-						<ul class="list-inline">
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <p class="text-footer">
+                        <ul class="list-inline">
                             <li>&copy; 2016 - <a href="http://www.github.com/ian-hall">Ian Hall<img src="http://www.imhall.com/images/blacktocat.png"></a></li>
-							<li class="btn-group pull-right">
-								<button type="submit" onclick="switch_style('base');return false;" name="theme" value="Light Theme" id="base" class="btn btn-default">Light</button>
-								<button type="submit" onclick="switch_style('219');return false;" name="theme" value="Dark Theme" id="219" class="btn btn-default">Dark</button>
-							</li>
-						</ul>
-					</p>
-				</div>
-			</div>
-		</footer>
+                            <li class="btn-group pull-right">
+                                <button type="submit" onclick="switch_style('base');return false;" name="theme" value="Light Theme" id="base" class="btn btn-default">Light</button>
+                                <button type="submit" onclick="switch_style('219');return false;" name="theme" value="Dark Theme" id="219" class="btn btn-default">Dark</button>
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+        </footer>
         <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
-		<script src="http://www.imhall.com/scripts/themeswitch.js"></script>
-	</body>
+        <script src="http://www.imhall.com/scripts/themeswitch.js"></script>
+</body>
 </html>
