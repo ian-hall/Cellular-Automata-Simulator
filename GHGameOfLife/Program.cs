@@ -39,8 +39,8 @@ namespace GHGameOfLife
             bool exit = false;
             do
             {
-                //MainMenu();
-                NewMenu();
+                MainMenu();
+                //NewMenu();
 
                 MenuText.PromptForAnother();
                 bool validKey = false;             

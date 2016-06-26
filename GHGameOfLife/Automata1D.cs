@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GHGameOfLife
 {
@@ -8,29 +10,22 @@ namespace GHGameOfLife
     /// Class to support drawing 1D automata rules
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    class Automata1D : IConsoleAutomata
+    class Automata1D : ConsoleAutomata
     {
         delegate bool Rule1D(int col);
+        public enum BuildTypes { Random, Single };
+        public enum RuleTypes { Rule30, Rule90 };
 
         private bool[] __Current_Row;
         private bool[][] __Entire_Board;
-        private bool __Is_Initialized;
-        private int __Num_Cols;
-        private int __Num_Rows;
-        private int __Print_Row;
-        private int __Orig_Console_Height;
-        private int __Orig_Console_Width;
         private const char LIVE_CELL = '█';
         private const char DEAD_CELL = ' ';
+        private int __Print_Row;
         private Rule1D __Rule;
+        private List<ConsoleColor> __Print_Colors;
+        private Random __Rand;
 
-        public bool Is_Initialized { get { return this.__Is_Initialized; } }
-        public int Rows { get { return this.__Num_Rows; } }
-        public int Cols { get { return this.__Num_Cols; } }
-        public int Console_Height { get { return this.__Orig_Console_Height; } }
-        public int Console_Width { get { return this.__Orig_Console_Width; } }
-        public bool Is_Wrapping { get; set; }
-        public bool[,] Board
+        public override bool[,] Board
         {
             get
             {
@@ -45,21 +40,24 @@ namespace GHGameOfLife
                 return temp;
             }
         }
-
-        public enum BuildTypes { Random, Single, Single_Centered };
-        public enum RuleTypes { Rule30, Rule90 };
 //-----------------------------------------------------------------------------
-        public Automata1D(int rows, int cols, RuleTypes rule)
+        public Automata1D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
         {
-            this.Is_Wrapping = true;
-            this.__Num_Cols = cols;
-            this.__Num_Rows = rows;
             this.__Print_Row = 0;
-            __Orig_Console_Height = Console.WindowHeight;
-            __Orig_Console_Width = Console.WindowWidth;
             this.__Current_Row = new bool[this.__Num_Cols];
             this.__Entire_Board = new bool[this.__Num_Rows][];
             this.__Rule = new Rule1D(Rule90);
+            this.__Rand = new Random();
+
+            var allColors = Enum.GetValues(typeof(ConsoleColor));
+            this.__Print_Colors = new List<ConsoleColor>();
+            foreach(ConsoleColor color in allColors)
+            {
+                if(color != ConsoleColor.Black)
+                {
+                    this.__Print_Colors.Add(color);
+                }
+            }
 
             //This will eventually move to a separate function for building the board
             var rand = new Random();
@@ -76,7 +74,7 @@ namespace GHGameOfLife
          /// Function to calculate the next value for all the cells in this.Current_Row
          /// using this.__Rule
          /// </summary>
-        public void NextGeneration()
+        public override void NextGeneration()
         {
             var nextRow = new bool[this.__Num_Cols];
             for( int i = 0; i < __Num_Cols; i++ )
@@ -102,7 +100,7 @@ namespace GHGameOfLife
         /// <summary>
         /// Prings the automata rule within the boarders of the console
         /// </summary>
-        public void PrintBoard()
+        public override void PrintBoard()
         {
             Console.BackgroundColor = MenuText.Default_BG;
             Console.ForegroundColor = MenuText.Board_FG;
@@ -113,9 +111,11 @@ namespace GHGameOfLife
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
                 //Magic numbers: 
-                //          1 -> copy from the second line to the bottom
-                //          5 -> heck if I know, something to do with menutext.space 
-                Console.MoveBufferArea(0, MenuText.Space + 1, this.__Num_Cols+MenuText.Space, this.__Num_Rows-1, 0, MenuText.Space);
+                //      srcLeft, destLeft -> -1 so we also scroll the colored border
+                //      srcTop -> +1 because we skip the first row of data
+                //      srcWidth -> cols+2 so we scroll the colored border on the right side
+                //      srcHeight -> -1 because we skip the first row of data
+                Console.MoveBufferArea(MenuText.Space-1, MenuText.Space+1, this.__Num_Cols+2, this.__Num_Rows-1, MenuText.Space-1, MenuText.Space);
                 --this.__Print_Row;
             }
             Console.SetCursorPosition(0, MenuText.Space + this.__Print_Row);
@@ -129,6 +129,8 @@ namespace GHGameOfLife
                     printRow.Append(DEAD_CELL);
             }
             printRow.Append("║");
+
+            Console.ForegroundColor = this.__Print_Colors[this.__Rand.Next(this.__Print_Colors.Count)];
             Console.Write(printRow);
             this.__Print_Row++;
 

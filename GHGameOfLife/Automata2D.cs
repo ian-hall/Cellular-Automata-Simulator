@@ -9,33 +9,23 @@ namespace GHGameOfLife
     /// does all the checking for living/dying of the population.
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
-    class Automata2D : IConsoleAutomata
+    class Automata2D : ConsoleAutomata
     {
         delegate bool Rule2D(int row, int col);
+        public enum BuildTypes { Random, File, Resource, User };
+        public enum RuleTypes { Life };
 
         private bool[,] __Board;
-        private int Generation;
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
-        private bool __Is_Initialized;
-        private int __Rows;
-        private int __Cols;
-        private int __Orig_Console_Height;
-        private int __Orig_Console_Width;
 
-        public bool Is_Initialized { get { return this.__Is_Initialized; } }
-        public int Rows { get { return this.__Rows; } }
-        public int Cols { get { return this.__Cols; } }
-        public int Console_Height { get { return this.__Orig_Console_Height; } }
-        public int Console_Width { get { return this.__Orig_Console_Width; } }
-        public bool Is_Wrapping { get; set; }
-        public bool[,] Board {
+        public override bool[,] Board {
             get
             {
-                var temp = new bool[this.__Rows, this.__Cols];
-                for(int r = 0; r < this.__Rows; r++)
+                var temp = new bool[this.__Num_Rows, this.__Num_Cols];
+                for(int r = 0; r < this.__Num_Rows; r++)
                 {
-                    for( int c = 0; c < this.__Cols; c++ )
+                    for( int c = 0; c < this.__Num_Cols; c++ )
                     {
                         temp[r, c] = this.__Board[r, c];
                     }
@@ -43,9 +33,6 @@ namespace GHGameOfLife
                 return temp;
             }
         }
-
-        public enum BuildTypes { Random, File, Resource, User };
-        public enum RuleTypes { Life };
 //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -53,18 +40,9 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        public Automata2D(int rowMax, int colMax, BuildTypes bType, string res = null)
+        public Automata2D(int rowMax, int colMax, BuildTypes bType, string res = null) : base(rowMax,colMax)
         {
             this.__Board = new bool[rowMax, colMax];
-                        
-            this.__Rows = rowMax;
-            this.__Cols = colMax;
-            this.__Orig_Console_Height = Console.WindowHeight;
-            this.__Orig_Console_Width = Console.WindowWidth;
-            this.__Is_Initialized = false;
-            this.Generation = 1;
-            this.Is_Wrapping = true;
-
             ConsoleRunHelper.CalcBuilderBounds(this);
             this.InitializeBoard(bType,res);
         }
@@ -98,7 +76,7 @@ namespace GHGameOfLife
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
-        public void NextGeneration()
+        public override void NextGeneration()
         {
             var lastBoard = this.__Board;
             var nextBoard = new bool[Rows, Cols];
@@ -109,7 +87,7 @@ namespace GHGameOfLife
                     nextBoard[r, c] = NextCellState(r, c);
                 }
             }
-            this.Generation++;
+            this.__Generation++;
             this.__Board = nextBoard;                  
         }
 //------------------------------------------------------------------------------
@@ -118,11 +96,11 @@ namespace GHGameOfLife
         /// Waits until there are at least 2 boards in the board queue and then 
         /// prints the next board in the queue. 
         /// </summary>
-        public void PrintBoard()
+        public override void PrintBoard()
         {
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
-            string write = "Generation " + Generation;
+            string write = "Generation " + __Generation;
             int left = (Console.WindowWidth / 2) - (write.Length / 2);
             Console.SetCursorPosition(left, 1);
             Console.Write(write);
@@ -132,10 +110,10 @@ namespace GHGameOfLife
 
             Console.SetCursorPosition(0, MenuText.Space);
             StringBuilder sb = new StringBuilder();
-            for (int r = 0; r < this.__Rows; r++)
+            for (int r = 0; r < this.__Num_Rows; r++)
             {
                 sb.Append("    ║");
-                for (int c = 0; c < this.__Cols; c++)
+                for (int c = 0; c < this.__Num_Cols; c++)
                 {
                     if (!__Board[r, c])
                     {
@@ -158,14 +136,14 @@ namespace GHGameOfLife
         {
             int n = 0;
 
-            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Rows) % this.__Rows, c]) n++;
-            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (this.__Board[r, (c - 1 + this.__Cols) % this.__Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, c]) n++;
-            if (this.__Board[r, (c + 1 + this.__Cols) % this.__Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Rows) % this.__Rows, (c + 1 + this.__Cols) % this.__Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
 
             if(this.__Board[r,c])
             {

@@ -11,7 +11,7 @@ namespace GHGameOfLife
 {
     class ConsoleRunHelper
     {
-        private static int[] __Speeds = { 125, 100, 75, 50 ,25 };
+        private static int[] __Speeds = { 125, 100, 75, 50, 25 };
         private static int __Curr_Speed_Index = 2;
         private static IEnumerable<int> __Valid_Lefts;
         private static IEnumerable<int> __Valid_Tops;
@@ -800,7 +800,7 @@ namespace GHGameOfLife
         /// Wrapping is always on in this case.
         /// </summary>
         /// <param name="game">The board to start with</param>
-        public static void ConsoleAutomataRunner(IConsoleAutomata game)
+        public static void ConsoleAutomataRunner(ConsoleAutomata game)
         {
             if (!game.Is_Initialized)
             {
@@ -879,7 +879,7 @@ namespace GHGameOfLife
         /// <param name="pressed"></param>
         /// <param name="pauseLoop"></param>
         /// <returns></returns>
-        private static void HandleRunningInput(ConsoleKey pressed, IConsoleAutomata currentGame, ref Dictionary<string, bool> currentStatus)
+        private static void HandleRunningInput(ConsoleKey pressed, ConsoleAutomata currentGame, ref Dictionary<string, bool> currentStatus)
         {
             switch (pressed)
             {
