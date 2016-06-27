@@ -23,6 +23,7 @@ namespace GHGameOfLife
         private bool[,] __Board;
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
+        private Rule2D __Rule;
 
         public override bool[,] Board
         {
@@ -51,16 +52,17 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        private Automata2D(int rowMax, int colMax) : base(rowMax,colMax)
+        private Automata2D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
         {
             this.__Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
-            //this.InitializeBoard(bType,res);
+            //TODO: set __Rule based on rule arg
+            this.__Rule = new Rule2D(Life);
         }
 //------------------------------------------------------------------------------
-        public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string res = null)
+        public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType, string res = null)
         {
-            var newAutomata2D = new Automata2D(rowMax, colMax);
+            var newAutomata2D = new Automata2D(rowMax, colMax, rType);
             switch (bType)
             {
                 //Build a random population
@@ -97,7 +99,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = NextCellState(r, c);
+                    nextBoard[r, c] = this.__Rule(r, c);
                 }
             }
             this.__Generation++;
@@ -145,7 +147,7 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //------------------------------------------------------------------------------
-        private bool NextCellState(int r, int c)
+        private bool Life(int r, int c)
         {
             int n = 0;
 

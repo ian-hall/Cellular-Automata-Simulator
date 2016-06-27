@@ -41,11 +41,12 @@ namespace GHGameOfLife
             }
         }
 //-----------------------------------------------------------------------------
-        public Automata1D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
+        private Automata1D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
         {
             this.__Print_Row = 0;
             this.__Current_Row = new bool[this.__Num_Cols];
             this.__Entire_Board = new bool[this.__Num_Rows][];
+            //TODO: Set __Rule based on rule arg
             this.__Rule = new Rule1D(Rule90);
             this.__Rand = new Random();
 
@@ -58,22 +59,27 @@ namespace GHGameOfLife
                     this.__Print_Colors.Add(color);
                 }
             }
-
-            //This will eventually move to a separate function for building the board
-            var rand = new Random();
-            for (int i = 0; i < this.__Num_Cols; i++)
-            {
-                this.__Current_Row[i] = (rand.Next() % 2 == 0) ? false : false;
-            }
-            this.__Current_Row[this.__Num_Cols / 2] = true;
-            this.__Entire_Board[0] = this.__Current_Row;
-            this.__Is_Initialized = true;
         }
 //-----------------------------------------------------------------------------
-         /// <summary>
-         /// Function to calculate the next value for all the cells in this.Current_Row
-         /// using this.__Rule
-         /// </summary>
+        public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType)
+        {
+            var newAutomata1D = new Automata1D(rowMax, colMax, rType);
+            switch(bType)
+            {
+                case BuildTypes.Random:
+                    newAutomata1D.Build1DBoard_Random();
+                    break;
+                case BuildTypes.Single:
+                    newAutomata1D.Build1DBoard_Single();
+                    break;
+            }
+            return newAutomata1D;
+        }
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Function to calculate the next value for all the cells in this.Current_Row
+        /// using this.__Rule
+        /// </summary>
         public override void NextGeneration()
         {
             var nextRow = new bool[this.__Num_Cols];
@@ -138,6 +144,26 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuText.Default_FG;
         }
 //-----------------------------------------------------------------------------
+        /// <summary>
+        /// Builds a random initial board
+        /// </summary>
+        private void Build1DBoard_Random()
+        {
+            for (int i = 0; i < this.__Num_Cols; i++)
+            {
+                this.__Current_Row[i] = (this.__Rand.Next() % 2 == 0);
+            }
+            this.__Entire_Board[0] = this.__Current_Row;
+            this.__Is_Initialized = true;
+        }
+//-----------------------------------------------------------------------------
+        private void Build1DBoard_Single()
+        {
+            this.__Current_Row[this.__Num_Cols / 2] = true;
+            this.__Entire_Board[0] = this.__Current_Row;
+            this.__Is_Initialized = true;
+        }
+//-----------------------------------------------------------------------------
 //  Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
 //-----------------------------------------------------------------------------
         private bool Rule90(int col)
@@ -157,6 +183,7 @@ namespace GHGameOfLife
 
             return left ^ (center || right);
         }
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------

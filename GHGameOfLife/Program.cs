@@ -403,7 +403,7 @@ namespace GHGameOfLife
             if(tryAuto)
             {
                 MenuText.ClearAllInBorder();
-                var autoBoard = new Automata1D(Current_Rows - 10,Current_Cols - 10,Automata1D.RuleTypes.Rule90);
+                var autoBoard = Automata1D.InitializeAutomata(Current_Rows - 10,Current_Cols - 10,Automata1D.BuildTypes.Single,Automata1D.RuleTypes.Rule90);
                 ConsoleRunHelper.ConsoleAutomataRunner(autoBoard);
             }
             else
@@ -412,7 +412,7 @@ namespace GHGameOfLife
                 MenuText.ClearAllInBorder();
 
                 //Move out into the main loop maybe
-                Automata2D game = Automata2D.InitializeAutomata(Current_Rows-10, Current_Cols-10, buildType, res);
+                Automata2D game = Automata2D.InitializeAutomata(Current_Rows-10, Current_Cols-10, buildType, Automata2D.RuleTypes.Life, res);
                 ConsoleRunHelper.ConsoleAutomataRunner(game);
             }
            

@@ -28,7 +28,7 @@
         public bool Is_Wrapping { get; set; }
         public abstract bool[,] Board { get; }
 //-----------------------------------------------------------------------------
-        public ConsoleAutomata(int rows, int cols)
+        protected ConsoleAutomata(int rows, int cols)
         {
             this.__Num_Rows = rows;
             this.__Num_Cols = cols;
