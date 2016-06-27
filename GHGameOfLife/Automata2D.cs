@@ -19,7 +19,8 @@ namespace GHGameOfLife
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
 
-        public override bool[,] Board {
+        public override bool[,] Board
+        {
             get
             {
                 var temp = new bool[this.__Num_Rows, this.__Num_Cols];
