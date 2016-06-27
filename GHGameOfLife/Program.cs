@@ -412,7 +412,7 @@ namespace GHGameOfLife
                 MenuText.ClearAllInBorder();
 
                 //Move out into the main loop maybe
-                Automata2D game = new Automata2D(Current_Rows - 10, Current_Cols - 10, buildType, res);
+                Automata2D game = Automata2D.InitializeAutomata(Current_Rows-10, Current_Cols-10, buildType, res);
                 ConsoleRunHelper.ConsoleAutomataRunner(game);
             }
            
