@@ -464,7 +464,7 @@ namespace GHGameOfLife
             Console.SetCursorPosition(Left_Align, curRow);
             Console.Write(Choose_Msg);
             Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
+            //Console.Write(Press_Enter);
             foreach (string choice in choices)
             {
                 Console.SetCursorPosition(Left_Align + 4, ++curRow);
@@ -483,7 +483,7 @@ namespace GHGameOfLife
                 var choiceStr = String.Format("{0}) {1}", i + 1, enumStr);
                 choiceStrings.Add(choiceStr);
             }
-            var backString = String.Format("{0}) Back", enumVals.Length);
+            var backString = String.Format("{0}) Back", enumVals.Length+1);
             choiceStrings.Add(backString);
             return choiceStrings;
         }

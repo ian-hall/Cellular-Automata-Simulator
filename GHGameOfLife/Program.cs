@@ -39,8 +39,8 @@ namespace GHGameOfLife
             bool exit = false;
             do
             {
-                MainMenu();
-                //NewMenu();
+                //MainMenu();
+                NewMenu();
 
                 MenuText.PromptForAnother();
                 bool validKey = false;             
@@ -154,9 +154,9 @@ namespace GHGameOfLife
         /// </summary>
         private static void NewMenu()
         {
-            var typePrompts = new string[] {"1) 1D Automata",
-                                            "2) 2D Automata",
-                                            "3) Exit"};
+            var typePrompts = new List<string>() {"1) 1D Automata",
+                                                  "2) 2D Automata",
+                                                  "3) Exit"};
 
             var ruleTypes1D = Enum.GetValues(typeof(Automata1D.RuleTypes));
             var ruleTypes1DStrings = MenuText.EnumToChoiceStrings(ruleTypes1D);
@@ -170,90 +170,263 @@ namespace GHGameOfLife
             var initTypes2D = Enum.GetValues(typeof(Automata2D.BuildTypes));
             var initTypes2DStrings = MenuText.EnumToChoiceStrings(initTypes2D);
 
-            var promptRow = MenuText.PrintMenuFromList(typePrompts);
-            var numChoices = typePrompts.Length;
-            var choice = -1;
+            var isTypeChosen = false;
+            var isRuleChosen = false;
+            var isInitChosen = false;
+
+            var typeChoice = -1;
+            var ruleChoice = -1;
+            var initChoice = -1;
+
+            var currentPrompts = typePrompts;
+            var promptRow = -1;
+            var numChoices = -1;
 
             var inputFinished = false;
-            var validEntry = false;
             var consoleResized = false;
-            //promptRow changes when we resize the console window
-            var newPromptRow = promptRow;
-
+            var exitGame = false;
+            string res2D = null;
+            Console.CursorVisible = false;
             while (!inputFinished)
             {
-                if(consoleResized)
+                if(!isTypeChosen)
                 {
-                    promptRow = newPromptRow;
+                    currentPrompts = typePrompts;
                 }
-                consoleResized = false;
-                Console.CursorVisible = true;
-                MenuText.ClearWithinBorder(promptRow);
-                Console.SetCursorPosition(MenuText.Left_Align, promptRow);
-                Console.Write(MenuText.Prompt);
-                var userInput = "";
-                var maxInputLen = 1;
-                var readingInput = true;
-                while(readingInput)
+                else if(!isRuleChosen)
                 {
-                    var keyInfo = Console.ReadKey(true);
-                    var charIn = keyInfo.KeyChar;
-                    if (charIn == '\r')
+                    if(typeChoice == 1)
                     {
-                        readingInput = false;
-                        break;
-                    }
-                    if (charIn == '\b')
-                    {
-                        if (userInput != "")
-                        {
-                            userInput = userInput.Substring(0, userInput.Length - 1);
-                            Console.Write("\b \b");
-                        }
-                    }
-                    if(keyInfo.Modifiers == ConsoleModifiers.Control)
-                    {
-                        switch(keyInfo.Key)
-                        {
-                            case ConsoleKey.OemPlus:
-                            case ConsoleKey.Add:
-                                if (Curr_Size_Index < Valid_Sizes.Count() - 1)
-                                {
-                                    Curr_Size_Index++;
-                                }
-                                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
-                                consoleResized = true;
-                                break;
-                            case ConsoleKey.OemMinus:
-                            case ConsoleKey.Subtract:
-                                if (Curr_Size_Index > 0)
-                                {
-                                    Curr_Size_Index--;
-                                }
-                                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
-                                consoleResized = true;
-                                break;
-                        }
-                        if(consoleResized)
-                        {
-                            break;
-                        }
-                    }
-                    if (!(""+charIn).All(c => char.IsLetterOrDigit(c)))
-                    {
-                        //Ignore input that is not a letter or digit
-                    }
-                    else if (userInput.Length < maxInputLen)
-                    {
-                        Console.Write(charIn);
-                        userInput += charIn;
+                        currentPrompts = ruleTypes1DStrings;
                     }
                     else
                     {
-                        System.Threading.Thread.Sleep(50);
+                        currentPrompts = ruleTypes2DStrings;
                     }
                 }
-                inputFinished = true;
+                else
+                {
+                    if( typeChoice == 1)
+                    {
+                        currentPrompts = initTypes1DStrings;
+                    }
+                    else
+                    {
+                        currentPrompts = initTypes2DStrings;
+                    }
+                }
+                promptRow = MenuText.PrintMenuFromList(currentPrompts);
+                numChoices = currentPrompts.Count;
+                consoleResized = false;
+                //Console.CursorVisible = true;
+                //MenuText.ClearWithinBorder(promptRow);
+                //Console.SetCursorPosition(MenuText.Left_Align, promptRow);
+                //Console.Write(MenuText.Prompt);
+                //var userInput = "";
+                //var maxInputLen = 1;
+                //var readingInput = true;
+                while (!Console.KeyAvailable)
+                    System.Threading.Thread.Sleep(50);
+
+                var keyInfo = Console.ReadKey(true);
+                var charIn = keyInfo.KeyChar;
+                //First, handle resizing the console
+                if (keyInfo.Modifiers == ConsoleModifiers.Control)
+                {
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.OemPlus:
+                        case ConsoleKey.Add:
+                            if (Curr_Size_Index < Valid_Sizes.Count() - 1)
+                            {
+                                Curr_Size_Index++;
+                            }
+                            ReinitializeConsole_NoPrinting();
+                            consoleResized = true;
+                            break;
+                        case ConsoleKey.OemMinus:
+                        case ConsoleKey.Subtract:
+                            if (Curr_Size_Index > 0)
+                            {
+                                Curr_Size_Index--;
+                            }
+                            ReinitializeConsole_NoPrinting();
+                            consoleResized = true;
+                            break;
+                    }
+                    if (consoleResized)
+                    {
+                        continue;
+                    }
+                }
+                //At this point, user has hit Return and we should process the input
+                //start with chosing type, then rules, then board init type
+                if(!isTypeChosen)
+                {
+                    switch (keyInfo.Key)
+                    {
+                        case ConsoleKey.D1:
+                            isTypeChosen = true;
+                            typeChoice = 1;
+                            break;
+                        case ConsoleKey.D2:
+                            isTypeChosen = true;
+                            typeChoice = 2;
+                            break;
+                        case ConsoleKey.D3:
+                            inputFinished = true;
+                            exitGame = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else if(!isRuleChosen)
+                {
+                    //These can have different sizes and maybe even be paged...
+                    //TODO: support paging like when chosing a resource 
+                    if(char.IsDigit(keyInfo.KeyChar))
+                    {
+                        var keyVal = Int32.Parse(keyInfo.Key.ToString()[1]+"");
+                        if (keyVal >= 1 && keyVal <= numChoices)
+                        {
+                            if(keyVal == numChoices)
+                            {
+                                //We hit the last option which will be Cancel or Back or something
+                                isTypeChosen = false;
+                                continue;
+                            }
+                            isRuleChosen = true;
+                            ruleChoice = keyVal;
+                        }
+                    }
+                }
+                else if(!isInitChosen)
+                {
+                    //Rule and Type are set, now we prompt for the initial board conditions
+                    if (char.IsDigit(keyInfo.KeyChar))
+                    {
+                        var keyVal = Int32.Parse(keyInfo.Key.ToString()[1] + "");
+                        if (keyVal >= 1 && keyVal <= numChoices)
+                        {
+                            if (keyVal == numChoices)
+                            {
+                                //We hit the last option which will be Cancel or Back or something
+                                //go up one menu level
+                                isRuleChosen = false;
+                                continue;
+                            }
+
+                            //Going to check if user wants to choose a resource
+                            if(typeChoice == 2)
+                            {
+                                if( (Automata2D.BuildTypes)(keyVal-1) == Automata2D.BuildTypes.Resource)
+                                {
+                                    res2D = PromptForRes();
+                                    if( string.IsNullOrEmpty(res2D) )
+                                    {
+                                        isInitChosen = false;
+                                        continue;
+                                    }
+                                }
+                            }
+                            isInitChosen = true;
+                            initChoice = keyVal;
+                        }
+                    }
+                }
+                if (isTypeChosen && isRuleChosen && isInitChosen)
+                {
+                    inputFinished = true;
+                }
+                //inputFinished = true;
+
+                //while (readingInput)
+                //{
+                //    var keyInfo = Console.ReadKey(true);
+                //    var charIn = keyInfo.KeyChar;
+                //    if (charIn == '\r')
+                //    {
+                //        readingInput = false;
+                //        break;
+                //    }
+                //    if (charIn == '\b')
+                //    {
+                //        if (userInput != "")
+                //        {
+                //            userInput = userInput.Substring(0, userInput.Length - 1);
+                //            Console.Write("\b \b");
+                //        }
+                //    }
+                //    if(keyInfo.Modifiers == ConsoleModifiers.Control)
+                //    {
+                //        switch(keyInfo.Key)
+                //        {
+                //            case ConsoleKey.OemPlus:
+                //            case ConsoleKey.Add:
+                //                if (Curr_Size_Index < Valid_Sizes.Count() - 1)
+                //                {
+                //                    Curr_Size_Index++;
+                //                }
+                //                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
+                //                consoleResized = true;
+                //                break;
+                //            case ConsoleKey.OemMinus:
+                //            case ConsoleKey.Subtract:
+                //                if (Curr_Size_Index > 0)
+                //                {
+                //                    Curr_Size_Index--;
+                //                }
+                //                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
+                //                consoleResized = true;
+                //                break;
+                //        }
+                //        if(consoleResized)
+                //        {
+                //            break;
+                //        }
+                //    }
+                //    if (!(""+charIn).All(c => char.IsLetterOrDigit(c)))
+                //    {
+                //        //Ignore input that is not a letter or digit
+                //    }
+                //    else if (userInput.Length < maxInputLen)
+                //    {
+                //        Console.Write(charIn);
+                //        userInput += charIn;
+                //    }
+                //    else
+                //    {
+                //        System.Threading.Thread.Sleep(50);
+                //    }
+                //}
+                }
+            if (!exitGame)
+            {
+                //run this sucker or handle extra input, like resource choice
+                switch(typeChoice)
+                {
+                    case 1:
+                        //1D automata
+                        var ruleVal1D = (Automata1D.RuleTypes)(ruleChoice - 1);
+                        var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
+                        MenuText.ClearAllInBorder();
+                        var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D ,ruleVal1D);
+                        ConsoleRunHelper.ConsoleAutomataRunner(autoBoard1D);
+                        break;
+                    case 2:
+                        //2D automata
+                        var ruleVal2D = (Automata2D.RuleTypes)(ruleChoice - 1);
+                        var initVal2D = (Automata2D.BuildTypes)(initChoice - 1);
+                        MenuText.ClearAllInBorder();
+                        var autoBoard2D = Automata2D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal2D, ruleVal2D, res2D);
+                        ConsoleRunHelper.ConsoleAutomataRunner(autoBoard2D);
+                        break;
+                    default:
+                        //Start over if stuffs broke
+                        NewMenu();
+                        break;
+                }
             }
         }
 //------------------------------------------------------------------------------
@@ -598,7 +771,7 @@ namespace GHGameOfLife
         /// </summary>
         /// <returns>Returns the new row to print the response text on</returns>
         /// TODO: This does not seem to get run after having the user create their own population....?
-        private static int ReInitializeConsoleWithPrompts(IEnumerable<string> prompts)
+        private static void ReinitializeConsole_NoPrinting()
         {
             Console.Clear();
             AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
@@ -607,7 +780,7 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuText.ReInitialize();
             MenuText.DrawBorder();
-            return MenuText.PrintMenuFromList(prompts);
+            //return MenuText.PrintMenuFromList(prompts);
         }
 //------------------------------------------------------------------------------
     } // end class

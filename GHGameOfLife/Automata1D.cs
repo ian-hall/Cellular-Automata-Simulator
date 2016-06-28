@@ -46,8 +46,6 @@ namespace GHGameOfLife
             this.__Print_Row = 0;
             this.__Current_Row = new bool[this.__Num_Cols];
             this.__Entire_Board = new bool[this.__Num_Rows][];
-            //TODO: Set __Rule based on rule arg
-            this.__Rule = new Rule1D(Rule90);
             this.__Rand = new Random();
 
             var allColors = Enum.GetValues(typeof(ConsoleColor));
@@ -58,6 +56,19 @@ namespace GHGameOfLife
                 {
                     this.__Print_Colors.Add(color);
                 }
+            }
+
+            switch(rule)
+            {
+                case RuleTypes.Rule30:
+                    this.__Rule = new Rule1D(Rule30);
+                    break;
+                case RuleTypes.Rule90:
+                    this.__Rule = new Rule1D(Rule90);
+                    break;
+                default:
+                    this.__Rule = new Rule1D(Rule90);
+                    break;
             }
         }
 //-----------------------------------------------------------------------------
@@ -117,16 +128,14 @@ namespace GHGameOfLife
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
                 //Magic numbers: 
-                //      srcLeft, destLeft -> -1 so we also scroll the colored border
                 //      srcTop -> +1 because we skip the first row of data
-                //      srcWidth -> cols+2 so we scroll the colored border on the right side
                 //      srcHeight -> -1 because we skip the first row of data
-                Console.MoveBufferArea(MenuText.Space-1, MenuText.Space+1, this.__Num_Cols+2, this.__Num_Rows-1, MenuText.Space-1, MenuText.Space);
+                Console.MoveBufferArea(MenuText.Space, MenuText.Space+1, this.__Num_Cols, this.__Num_Rows-1, MenuText.Space, MenuText.Space);
                 --this.__Print_Row;
             }
-            Console.SetCursorPosition(0, MenuText.Space + this.__Print_Row);
+            Console.SetCursorPosition(MenuText.Space, MenuText.Space + this.__Print_Row);
             var printRow = new StringBuilder();
-            printRow.Append("    ║");
+            //printRow.Append("    ║");
             foreach (bool val in this.__Current_Row)
             {
                 if (val)
@@ -134,7 +143,7 @@ namespace GHGameOfLife
                 else
                     printRow.Append(DEAD_CELL);
             }
-            printRow.Append("║");
+            //printRow.Append("║");
 
             Console.ForegroundColor = this.__Print_Colors[this.__Rand.Next(this.__Print_Colors.Count)];
             Console.Write(printRow);
