@@ -30,7 +30,6 @@ namespace GHGameOfLife
             int initBuffHeight = Console.BufferHeight;
             int initConsWidth = Console.WindowWidth;
             int initConsHeight = Console.WindowHeight;
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
 
             InitializeConsole();
             bool exit = false;

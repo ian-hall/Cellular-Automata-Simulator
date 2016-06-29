@@ -18,7 +18,7 @@ namespace GHGameOfLife
     {
         delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
-        public enum RuleTypes { Life };
+        public enum RuleTypes { Life, Life_Without_Death };
 
         private bool[,] __Board;
         private const char LIVE_CELL = '☺';
@@ -57,7 +57,18 @@ namespace GHGameOfLife
             this.__Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
             //TODO: set __Rule based on rule arg
-            this.__Rule = new Rule2D(Life);
+            switch(rule)
+            {
+                case RuleTypes.Life:
+                    this.__Rule = Life;
+                    break;
+                case RuleTypes.Life_Without_Death:
+                    this.__Rule = LifeWithoutDeath;
+                    break;
+                default:
+                    this.__Rule = Life;
+                    break;
+            }
         }
 //------------------------------------------------------------------------------
         public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType, string res = null)
@@ -147,6 +158,14 @@ namespace GHGameOfLife
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Game of Life rules.
+        /// Live cells stay alive if they have 2 or 3 neighbors.
+        /// Dead cells turn live if they have 3 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
         private bool Life(int r, int c)
         {
             int n = 0;
@@ -170,8 +189,39 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-//private methods used to construct the game board
+        /// <summary>
+        /// Life without Death rules.
+        /// Live cells always stay alive.
+        /// Dead cells turn live if they have 3 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool LifeWithoutDeath(int r, int c)
+        {
+            int n = 0;
+
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+
+            if (this.__Board[r, c])
+            {
+                return true;
+            }
+            else
+            {
+                return (n == 3);
+            }
+        }
 //------------------------------------------------------------------------------
+        //private methods used to construct the game board
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2

@@ -61,13 +61,13 @@ namespace GHGameOfLife
             switch(rule)
             {
                 case RuleTypes.Rule30:
-                    this.__Rule = new Rule1D(Rule30);
+                    this.__Rule = Rule30;
                     break;
                 case RuleTypes.Rule90:
-                    this.__Rule = new Rule1D(Rule90);
+                    this.__Rule = Rule90;
                     break;
                 default:
-                    this.__Rule = new Rule1D(Rule90);
+                    this.__Rule = Rule90;
                     break;
             }
         }
