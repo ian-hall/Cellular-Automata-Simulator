@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GHGameOfLife
 {
@@ -12,23 +13,22 @@ namespace GHGameOfLife
     {
         // TODO: Change this to be less ugly maybe?
         //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
-        public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
+        public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
         public const ConsoleColor Default_FG = ConsoleColor.White;
         public const ConsoleColor Board_FG   = ConsoleColor.White;
         public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
         
-        public const string Msg_Welcome      = "Welcome to the GAME OF LIFE!!!!";
-        public const string Msg_Choose   = "Please choose an option!";
-        public const string Msg_Change_Size   = "[Ctrl + [+/-]] Change board size";
-        public const string Prompt = "Your choice: ";
-        public const string Msg_Entry_Error = "**Invalid entry**";
-        public const string Msg_Press_Enter = "Press ENTER to confirm";
-        public const string Msg_Loading_Rand = "Loading random pop.";
+        public const string Msg_Welcome         = "Welcome to Ian's Automata Whatever";
+        public const string Msg_Choose          = "Please choose an option!";
+        public const string Msg_Change_Size     = "[Ctrl + [+/-]] Change board size";
+        public const string Prompt              = "Your choice: ";
+        public const string Msg_Entry_Error     = "**Invalid entry**";
+        public const string Msg_Press_Enter     = "Press ENTER to confirm";
+        public const string Msg_Loading_Rand    = "Loading random pop.";
 
         public static string[] Run_Ctrls;
-        //public static string[] Menu_Choices; 
         public static string[] Create_Ctrls;
         
         public static int Window_Center; // Center Row
@@ -36,13 +36,13 @@ namespace GHGameOfLife
        
         public static List<string> Large_Pops;
         public static List<string> Builder_Pops;
-        public static ArrayList Large_Pops_Pages;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
         private static int Menu_Start_Row;
 
-        public static int Space = 5;         
+        public static int Space = 5;
+        public static int Choices_Per_Page = 7;   
 //------------------------------------------------------------------------------
         public static void Initialize()
         {           
@@ -65,29 +65,6 @@ namespace GHGameOfLife
             }
 
             Large_Pops.Sort();
-            Large_Pops_Pages = new ArrayList();
-
-            List<string> temp = new List<string>();
-            int count = 0;
-            int elementNum = 0;
-            bool addPage = false;
-            while (elementNum != Large_Pops.Count)
-            {
-                temp.Add(Large_Pops[elementNum]);
-                count++;
-                elementNum++;
-                if (count == 7 || elementNum == Large_Pops.Count)
-                    addPage = true;
-
-                if (addPage)
-                {
-                    Large_Pops_Pages.Add(temp);
-                    temp = new List<string>();
-                    addPage = false;
-                    count = 0;
-                }
-            }
-            //End testing for pop list
 
             rm = GHGameOfLife.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
@@ -97,15 +74,6 @@ namespace GHGameOfLife
             {
                 Builder_Pops.Add(res.Key.ToString());
             }
-
-
-            //Menu_Choices = new string[] {   "1) Random population",
-            //                                "2) Load population from a file",
-            //                                "3) Load a premade population",
-            //                                "4) Create your own population",
-            //                                "5) Automata Rules",
-            //                                "6) Exit"};
-            
             
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
                                         "[R] Toggle running",
@@ -188,78 +156,6 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Prints the main menu
-        /// TODO: Change this to take a list or array of strings to print
-        /// </summary>
-        /// <returns>Returns the line to print the choice prompt on</returns>
-        //public static int PrintMainMenu()
-        //{
-        //    ClearAllInBorder();
-
-        //    Console.ForegroundColor = MenuText.Info_FG;
-        //    Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
-        //    Console.WriteLine(Change_Size);
-
-        //    Console.ForegroundColor = MenuText.Default_FG;
-        //    Console.SetCursorPosition(Left_Align, Welcome_Row);
-        //    Console.Write(Welcome);
-
-        //    int curRow = Menu_Start_Row;
-
-        //    Console.SetCursorPosition(Left_Align, curRow);
-        //    Console.Write(Choose_Msg);
-        //    Console.SetCursorPosition(Left_Align, ++curRow);
-        //    Console.Write(Press_Enter);
-        //    foreach( string choice in Menu_Choices )
-        //    {
-        //        Console.SetCursorPosition(Left_Align + 4, ++curRow);
-        //        Console.Write(choice);
-        //    }
-        //    return (++curRow);
-        //}
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Prints the resource menu
-        /// </summary>
-        /// <param name="resCount">Outputs the number of resources printed</param>
-        /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintResourceMenu(List<string> list, bool lastPage, bool firstPage)
-        {
-            int curRow = Menu_Start_Row;
-
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Msg_Choose);
-            Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Msg_Press_Enter);
-
-            int count = 1;
-            string[] defaultPrompts = new string[] {    "8) Prev Page",
-                                                        "9) Next Page",
-                                                        "0) Cancel"};
-            foreach (string s in list)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.Write("{0}) {1}", count, s.Replace("_"," "));
-                count++;
-            }
-
-            if (!firstPage)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.WriteLine(defaultPrompts[0]);
-            }
-            if (!lastPage)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.WriteLine(defaultPrompts[1]);
-            }
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.WriteLine(defaultPrompts[2]);
-
-            return ++curRow;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
         /// Prints the controls for controlling the game while running
         /// </summary>
         public static void PrintRunControls()
@@ -279,10 +175,10 @@ namespace GHGameOfLife
         /// <summary>
         /// Prints the game status while running
         /// </summary>
-        /// <param name="running"></param>
-        /// <param name="paused"></param>
-        /// <param name="wrapping"></param>
-        /// <param name="speed"></param>
+        /// <param name="running">if the game is looping or stepping</param>
+        /// <param name="paused">if the game is paused</param>
+        /// <param name="wrapping">if the board has wrapping on</param>
+        /// <param name="speed">the speed the board is running at</param>
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
@@ -406,6 +302,10 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints a user friendly error message
+        /// </summary>
+        /// <param name="err">the error to get friendly with</param>
         public static void PrintFileError(MenuHelper.FileError err)
         {
             string errorStr;
@@ -425,9 +325,6 @@ namespace GHGameOfLife
                     break;
                 case FileError.Width:
                     errorStr = "Too many characters per line";
-                    break;
-                case FileError.Uneven:
-                    errorStr = "Lines are not of even length";
                     break;
                 default:
                     errorStr = "Generic file error...";
@@ -503,6 +400,61 @@ namespace GHGameOfLife
             return choiceStrings;
         }
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Displays options in a paged fashion.
+        /// TODO: 1-7 are used to select an option
+        ///       8 goes back to prev page
+        ///       9 goes to next page
+        ///       0 cancels
+        /// </summary>
+        /// <returns>the index of the chosen choice</returns>
+        public static int PrintPagedMenu(List<string> choices, int pageNum, out bool onLastPage)
+        {
+            onLastPage = false;
+            MenuHelper.ClearLine((Console.WindowHeight - 4));
+            var totalNumChoices = choices.Count;
+            var totalPages = totalNumChoices / MenuHelper.Choices_Per_Page;
+            var lo = pageNum * MenuHelper.Choices_Per_Page;
+            var hi = -1;
+            if ((lo + MenuHelper.Choices_Per_Page) < totalNumChoices)
+            {
+                hi = (lo + MenuHelper.Choices_Per_Page);
+            }
+            else
+            {
+                hi = totalNumChoices;
+                onLastPage = true;
+            }
+
+            string[] defaultPrompts = new string[] {    "8) Prev Page",
+                                                        "9) Next Page",
+                                                        "0) Back"};
+
+            var currentPage = new List<string>();
+            for (int i = lo; i < hi; i++)
+            {
+                //the strings in choices might or might not have keys (ex 1), 2), etc) associated with them
+                //we need to add these prompts if they are not there.
+                var hasPrompt = Regex.IsMatch(choices[i], "^[0-9][)] ");
+                if(hasPrompt)
+                {
+                    currentPage.Add(choices[i]);
+                }
+                else
+                {
+                    currentPage.Add(String.Format("{0}) {1}",(i-lo)+1,choices[i]));
+                }
+            }
+            foreach (var prompt in defaultPrompts)
+            {
+                currentPage.Add(prompt);
+            }
+
+            MenuHelper.PrintMenuFromList(currentPage);
+            return hi - 1;
+        }
+//------------------------------------------------------------------------------
     } // end class
-///////////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////
 }

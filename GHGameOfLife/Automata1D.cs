@@ -14,7 +14,7 @@ namespace GHGameOfLife
     {
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes { Rule30, Rule90 };
+        public enum RuleTypes { Rule30, Rule90, q, w, e, r, t, y, u, a, s, d };
 
         private bool[] __Current_Row;
         private bool[][] __Entire_Board;
