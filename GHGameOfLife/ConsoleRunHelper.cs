@@ -22,12 +22,12 @@ namespace GHGameOfLife
         {
             if (!game.Is_Initialized)
             {
-                Console.ForegroundColor = MenuText.Info_FG;
+                Console.ForegroundColor = MenuHelper.Info_FG;
                 Console.Write("ERROR");
                 return;
             }
 
-            MenuText.PrintRunControls();
+            MenuHelper.PrintRunControls();
 
             var statusValues = new Dictionary<string, bool>();
             statusValues["Go"] = true;
@@ -36,7 +36,7 @@ namespace GHGameOfLife
             statusValues["Wrapping"] = game.Is_Wrapping;
             statusValues["ExitPause"] = false;
 
-            MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
+            MenuHelper.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
 
             game.PrintBoard();
             while (statusValues["Go"])
@@ -68,7 +68,7 @@ namespace GHGameOfLife
                     {
                         statusValues["ExitPause"] = false;
                         statusValues["Paused"] = true;
-                        MenuText.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
+                        MenuHelper.PrintStatus(statusValues["Continuous"], statusValues["Paused"], statusValues["Wrapping"], __Curr_Speed_Index);
                         while (!statusValues["ExitPause"])
                         {
                             while (!Console.KeyAvailable)
@@ -142,7 +142,7 @@ namespace GHGameOfLife
                 default:
                     break;
             }
-            MenuText.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], ConsoleRunHelper.__Curr_Speed_Index);
+            MenuHelper.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], ConsoleRunHelper.__Curr_Speed_Index);
         }
 //------------------------------------------------------------------------------
         /// <summary>

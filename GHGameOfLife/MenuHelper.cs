@@ -8,9 +8,10 @@ using System.Text;
 namespace GHGameOfLife
 {
 ///////////////////////////////////////////////////////////////////////////////
-    class MenuText
+    class MenuHelper
     {
         // TODO: Change this to be less ugly maybe?
+        //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
         public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
@@ -18,16 +19,16 @@ namespace GHGameOfLife
         public const ConsoleColor Board_FG   = ConsoleColor.White;
         public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
         
-        public const string Welcome      = "Welcome to the GAME OF LIFE!!!!";
-        public const string Choose_Msg   = "Please choose an option!";
-        public const string Change_Size   = "[Ctrl + [+/-]] Change board size";
+        public const string Msg_Welcome      = "Welcome to the GAME OF LIFE!!!!";
+        public const string Msg_Choose   = "Please choose an option!";
+        public const string Msg_Change_Size   = "[Ctrl + [+/-]] Change board size";
         public const string Prompt = "Your choice: ";
-        public const string Entry_Error = "**Invalid entry**";
-        public const string Press_Enter = "Press ENTER to confirm";
-        public const string Load_Rand = "Loading random pop.";
+        public const string Msg_Entry_Error = "**Invalid entry**";
+        public const string Msg_Press_Enter = "Press ENTER to confirm";
+        public const string Msg_Loading_Rand = "Loading random pop.";
 
         public static string[] Run_Ctrls;
-        public static string[] Menu_Choices; 
+        //public static string[] Menu_Choices; 
         public static string[] Create_Ctrls;
         
         public static int Window_Center; // Center Row
@@ -46,7 +47,7 @@ namespace GHGameOfLife
         public static void Initialize()
         {           
             Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth/2) - (Welcome.Length/2);
+            Left_Align = (Console.WindowWidth/2) - (Msg_Welcome.Length/2);
             
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight/3 + 1;
@@ -98,12 +99,12 @@ namespace GHGameOfLife
             }
 
 
-            Menu_Choices = new string[] {   "1) Random population",
-                                            "2) Load population from a file",
-                                            "3) Load a premade population",
-                                            "4) Create your own population",
-                                            "5) Automata Rules",
-                                            "6) Exit"};
+            //Menu_Choices = new string[] {   "1) Random population",
+            //                                "2) Load population from a file",
+            //                                "3) Load a premade population",
+            //                                "4) Create your own population",
+            //                                "5) Automata Rules",
+            //                                "6) Exit"};
             
             
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
@@ -129,7 +130,7 @@ namespace GHGameOfLife
         public static void ReInitialize()
         {
             Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth / 2) - (Welcome.Length / 2);
+            Left_Align = (Console.WindowWidth / 2) - (Msg_Welcome.Length / 2);
 
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight / 3 + 1;
@@ -227,9 +228,9 @@ namespace GHGameOfLife
             int curRow = Menu_Start_Row;
 
             Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
+            Console.Write(Msg_Choose);
             Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
+            Console.Write(Msg_Press_Enter);
 
             int count = 1;
             string[] defaultPrompts = new string[] {    "8) Prev Page",
@@ -263,7 +264,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void PrintRunControls()
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
@@ -272,7 +273,7 @@ namespace GHGameOfLife
             Console.Write("{0,-25}{1,-25}",Run_Ctrls[1],Run_Ctrls[4]);
             Console.SetCursorPosition(5, ++printRow);
             Console.Write("{0,-25}{1,-25}",Run_Ctrls[2],Run_Ctrls[5]);
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -285,7 +286,7 @@ namespace GHGameOfLife
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
@@ -313,7 +314,7 @@ namespace GHGameOfLife
             ClearLine(Info_Row);
             Console.SetCursorPosition(5, Info_Row);
             Console.Write(sb);
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -321,7 +322,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void PrintCreationControls()
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             int printStart = (Console.WindowHeight) - 4;
             int printRow = printStart;
 
@@ -349,7 +350,7 @@ namespace GHGameOfLife
                 ++printRow;
             }
              
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -405,7 +406,7 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-        public static void PrintFileError(MenuText.FileError err)
+        public static void PrintFileError(MenuHelper.FileError err)
         {
             string errorStr;
             switch (err)
@@ -435,34 +436,38 @@ namespace GHGameOfLife
 
             int windowCenter = Console.WindowHeight / 2; //Vert position
             int welcomeLeft = (Console.WindowWidth / 2) -
-                (MenuText.Welcome.Length / 2);
+                (MenuHelper.Msg_Welcome.Length / 2);
             int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
 
-            MenuText.ClearWithinBorder(windowCenter);
+            MenuHelper.ClearWithinBorder(windowCenter);
             Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
             Console.Write(errorStr);
             Console.SetCursorPosition(welcomeLeft, windowCenter);
-            Console.Write(MenuText.Load_Rand);
+            Console.Write(MenuHelper.Msg_Loading_Rand);
             Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-            Console.Write(MenuText.Press_Enter);
+            Console.Write(MenuHelper.Msg_Press_Enter);
         }
 //------------------------------------------------------------------------------
-        public static int PrintMenuFromList(IEnumerable<string> choices)
+        /// <summary>
+        /// Prints a menu from the given choses
+        /// </summary>
+        /// <param name="choices">IEnumerable<string> of choices to display</param>
+        public static void PrintMenuFromList(IEnumerable<string> choices)
         {
             ClearAllInBorder();
 
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             Console.SetCursorPosition(5, (Console.WindowHeight) - 4);
-            Console.WriteLine(Change_Size);
+            Console.WriteLine(Msg_Change_Size);
 
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
             Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);
+            Console.Write(Msg_Welcome);
 
             int curRow = Menu_Start_Row;
 
             Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
+            Console.Write(Msg_Choose);
             Console.SetCursorPosition(Left_Align, ++curRow);
             //Console.Write(Press_Enter);
             foreach (string choice in choices)
@@ -470,9 +475,13 @@ namespace GHGameOfLife
                 Console.SetCursorPosition(Left_Align + 4, ++curRow);
                 Console.Write(choice);
             }
-            return (++curRow);
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Changes enums to a list of strings prefixed by numbers 1-7
+        /// </summary>
+        /// <param name="enumVals"></param>
+        /// <returns></returns>
         public static List<string> EnumToChoiceStrings(Array enumVals)
         {
             var choiceStrings = new List<string>();
@@ -480,10 +489,16 @@ namespace GHGameOfLife
             {
                 var enumStr = enumVals.GetValue(i).ToString();
                 enumStr = enumStr.Replace('_', ' ');
-                var choiceStr = String.Format("{0}) {1}", i + 1, enumStr);
+                var choiceStr = String.Format("{0}) {1}", (i%7)+1, enumStr);
                 choiceStrings.Add(choiceStr);
             }
-            var backString = String.Format("{0}) Back", enumVals.Length+1);
+            return choiceStrings;
+        }
+//------------------------------------------------------------------------------
+        public static List<string> EnumToChoiceStrings_WithBack(Array enumVals)
+        {
+            var choiceStrings = EnumToChoiceStrings(enumVals);
+            var backString = String.Format("{0}) Back", enumVals.Length + 1);
             choiceStrings.Add(backString);
             return choiceStrings;
         }

@@ -120,10 +120,10 @@ namespace GHGameOfLife
             Console.SetCursorPosition(left, 1);
             Console.Write(write);
 
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Board_FG;
+            Console.BackgroundColor = MenuHelper.Default_BG;
+            Console.ForegroundColor = MenuHelper.Board_FG;
 
-            Console.SetCursorPosition(0, MenuText.Space);
+            Console.SetCursorPosition(0, MenuHelper.Space);
             StringBuilder sb = new StringBuilder();
             for (int r = 0; r < this.__Num_Rows; r++)
             {
@@ -143,8 +143,8 @@ namespace GHGameOfLife
             }
             Console.Write(sb);
 
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.BackgroundColor = MenuHelper.Default_BG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         private bool Life(int r, int c)
@@ -196,7 +196,7 @@ namespace GHGameOfLife
         /// </summary>
         private void Build2DBoard_File()
         {
-            MenuText.FileError errType = MenuText.FileError.Not_Loaded;
+            MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;
             var isValidFile = false;
 
             OpenFileDialog openWindow = new OpenFileDialog();
@@ -214,7 +214,7 @@ namespace GHGameOfLife
             }
             else
             {
-                MenuText.PrintFileError(errType);
+                MenuHelper.PrintFileError(errType);
                 bool keyPressed = false;
                 while (!keyPressed)
                 {
@@ -238,7 +238,7 @@ namespace GHGameOfLife
         private void Build2DBoard_Resource(string res)
         {
             string startingPop;
-            MenuText.FileError errType = MenuText.FileError.Not_Loaded;
+            MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;
             var isValidResource = IsValidFileOrResource(res, this, out startingPop, out errType, true);
 
             if (isValidResource)
@@ -247,7 +247,7 @@ namespace GHGameOfLife
             }
             else
             {
-                MenuText.PrintFileError(errType);
+                MenuHelper.PrintFileError(errType);
                 bool keyPressed = false;
                 while (!keyPressed)
                 {
@@ -272,10 +272,10 @@ namespace GHGameOfLife
         /// <param name="filename">Path to a file to be checked, or resource to be loaded</param>
         /// <param name="popToLoad">Out set if the filename or resource are valid</param>
         /// <param name="fromRes">Set True if loading from a resource file</param>
-        private bool IsValidFileOrResource(string filename, Automata2D currentGame, out string popToLoad, out MenuText.FileError error, bool fromRes = false)
+        private bool IsValidFileOrResource(string filename, Automata2D currentGame, out string popToLoad, out MenuHelper.FileError error, bool fromRes = false)
         {
             popToLoad = "";
-            error = MenuText.FileError.None;
+            error = MenuHelper.FileError.None;
             var wholeFile = new List<string>();
             if (!fromRes)
             {
@@ -283,14 +283,14 @@ namespace GHGameOfLife
                 FileInfo file = new FileInfo(filename);
                 if (!file.Exists)
                 {
-                    error = MenuText.FileError.Not_Loaded;
+                    error = MenuHelper.FileError.Not_Loaded;
                     return false;
                 }
 
                 // Checks if the file is empty or too large ( > 20KB )
                 if (file.Length == 0 || file.Length > 20480)
                 {
-                    error = MenuText.FileError.Size;
+                    error = MenuHelper.FileError.Size;
                     return false;
                 }
 
@@ -335,12 +335,12 @@ namespace GHGameOfLife
 
             if (fileRows > currentGame.Rows)
             {
-                error = MenuText.FileError.Length;
+                error = MenuHelper.FileError.Length;
                 return false;
             }
             if (longestLine > currentGame.Cols)
             {
-                error = MenuText.FileError.Width;
+                error = MenuHelper.FileError.Width;
                 return false;
             }
 
@@ -351,13 +351,13 @@ namespace GHGameOfLife
                 var newLine = line.PadRight(longestLine, '.');
                 if (!ValidLine(newLine))
                 {
-                    error = MenuText.FileError.Contents;
+                    error = MenuHelper.FileError.Contents;
                     return false;
                 }
                 sb.AppendLine(newLine);
             }
             popToLoad = sb.ToString();
-            error = MenuText.FileError.None;
+            error = MenuHelper.FileError.None;
             return true;
         }
 //------------------------------------------------------------------------------
@@ -411,13 +411,13 @@ namespace GHGameOfLife
                     tempBoard[i, j] = false;
                 }
             }
-            MenuText.DrawBorder();
-            Console.ForegroundColor = MenuText.Info_FG;
+            MenuHelper.DrawBorder();
+            Console.ForegroundColor = MenuHelper.Info_FG;
 
 
-            int positionPrintRow = MenuText.Space - 3;
+            int positionPrintRow = MenuHelper.Space - 3;
 
-            MenuText.PrintCreationControls();
+            MenuHelper.PrintCreationControls();
 
             int blinkLeft = this.Console_Width + 5;
             int charLeft = blinkLeft + 1;
@@ -439,8 +439,8 @@ namespace GHGameOfLife
             while (!exit)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                MenuText.ClearLine(MenuText.Space - 3);
-                string positionStr = String.Format("Current position: ({0},{1})", __Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space);
+                MenuHelper.ClearLine(MenuHelper.Space - 3);
+                string positionStr = String.Format("Current position: ({0},{1})", __Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space);
                 Console.SetCursorPosition(this.Console_Width / 2 - positionStr.Length / 2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
@@ -472,7 +472,7 @@ namespace GHGameOfLife
 
                 }
 
-                MenuText.ClearLine(0);
+                MenuHelper.ClearLine(0);
                 ConsoleKeyInfo pressed = Console.ReadKey(true);
 
                 switch (pressed.Key)
@@ -559,17 +559,17 @@ namespace GHGameOfLife
                                     Console.SetCursorPosition(c, r);
                                     if (smallPopVals[r - __Cursor_Top][c - __Cursor_Left])
                                     {
-                                        if (tempBoard[r - MenuText.Space, c - MenuText.Space])
+                                        if (tempBoard[r - MenuHelper.Space, c - MenuHelper.Space])
                                         {
-                                            Console.ForegroundColor = MenuText.Default_FG;
+                                            Console.ForegroundColor = MenuHelper.Default_FG;
                                             Console.Write('*');
-                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = false;
+                                            tempBoard[r - MenuHelper.Space, c - MenuHelper.Space] = false;
                                         }
                                         else
                                         {
-                                            Console.ForegroundColor = MenuText.Builder_FG;
+                                            Console.ForegroundColor = MenuHelper.Builder_FG;
                                             Console.Write('█');
-                                            tempBoard[r - MenuText.Space, c - MenuText.Space] = true;
+                                            tempBoard[r - MenuHelper.Space, c - MenuHelper.Space] = true;
                                         }
                                     }
                                 }
@@ -578,28 +578,31 @@ namespace GHGameOfLife
                         else
                         {
                             Console.SetCursorPosition(__Cursor_Left, __Cursor_Top);
-                            bool boardVal = !tempBoard[__Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space];
+                            bool boardVal = !tempBoard[__Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space];
                             if (boardVal)
                             {
-                                Console.ForegroundColor = MenuText.Builder_FG;
+                                Console.ForegroundColor = MenuHelper.Builder_FG;
                                 Console.Write('█');
                             }
                             else
                             {
-                                Console.ForegroundColor = MenuText.Default_FG;
+                                Console.ForegroundColor = MenuHelper.Default_FG;
                                 Console.Write('*');
                             }
-                            tempBoard[__Cursor_Top - MenuText.Space, __Cursor_Left - MenuText.Space] = boardVal;
+                            tempBoard[__Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space] = boardVal;
                         }
                         break;
                     case ConsoleKey.D1:
+                    case ConsoleKey.NumPad1:
                     case ConsoleKey.D2:
+                    case ConsoleKey.NumPad2:
                     case ConsoleKey.D3:
+                    case ConsoleKey.NumPad3:
                     case ConsoleKey.D4:
-                        var keyNum = pressed.Key.ToString()[1];
-                        var keyVal = Int32.Parse("" + keyNum);
-                        string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuText.Builder_Pops[keyVal - 1]);
-                        if (popLoaderMode && (loadedPop == MenuText.Builder_Pops[keyVal - 1]))
+                    case ConsoleKey.NumPad4:
+                        var keyVal = Int32.Parse("" + pressed.Key.ToString().Last());
+                        string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuHelper.Builder_Pops[keyVal - 1]);
+                        if (popLoaderMode && (loadedPop == MenuHelper.Builder_Pops[keyVal - 1]))
                         {
                             //if the button is pressed that corresponds to the already loaded population we either rotate or mirror
                             if (pressed.Modifiers == ConsoleModifiers.Control)
@@ -607,7 +610,7 @@ namespace GHGameOfLife
                                 if (!MirrorBuilderPop(ref smallPopVals, ref loadedPopBounds))
                                 {
                                     Console.SetCursorPosition(0, 0);
-                                    Console.ForegroundColor = MenuText.Info_FG;
+                                    Console.ForegroundColor = MenuHelper.Info_FG;
                                     Console.Write("Error while trying to mirror");
                                 }
 
@@ -618,7 +621,7 @@ namespace GHGameOfLife
                                 if (!RotateBuilderPop(ref smallPopVals, ref loadedPopBounds))
                                 {
                                     Console.SetCursorPosition(0, 0);
-                                    Console.ForegroundColor = MenuText.Info_FG;
+                                    Console.ForegroundColor = MenuHelper.Info_FG;
                                     Console.Write("Rotating will go out of bounds");
                                 }
                             }
@@ -627,13 +630,13 @@ namespace GHGameOfLife
                         {
                             if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                             {
-                                loadedPop = MenuText.Builder_Pops[keyVal - 1];
+                                loadedPop = MenuHelper.Builder_Pops[keyVal - 1];
                                 popLoaderMode = true;
                             }
                             else
                             {
                                 Console.SetCursorPosition(0, 0);
-                                Console.ForegroundColor = MenuText.Info_FG;
+                                Console.ForegroundColor = MenuHelper.Info_FG;
                                 Console.Write("Cannot load pop outside of bounds");
                             }
                         }
@@ -667,11 +670,11 @@ namespace GHGameOfLife
             Console.SetWindowSize(this.Console_Width, this.Console_Height);
             Console.SetBufferSize(this.Console_Width, this.Console_Height);
 
-            Console.ForegroundColor = MenuText.Default_FG;
-            MenuText.ClearUnderBoard();
-            MenuText.DrawBorder();
+            Console.ForegroundColor = MenuHelper.Default_FG;
+            MenuHelper.ClearUnderBoard();
+            MenuHelper.DrawBorder();
 
-            MenuText.ClearLine(positionPrintRow);
+            MenuHelper.ClearLine(positionPrintRow);
             this.FillBoard(popString.ToString());
         }
 //------------------------------------------------------------------------------
@@ -707,7 +710,7 @@ namespace GHGameOfLife
                         int popCol = c - tempBounds.Left;
 
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuText.Info_FG;
+                        Console.ForegroundColor = MenuHelper.Info_FG;
                         if (popByLine[popRow][popCol] == 'O')
                         {
                             Console.Write('█');
@@ -753,7 +756,7 @@ namespace GHGameOfLife
                     {
                         int popCol = c - tempBounds.Left;
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuText.Info_FG;
+                        Console.ForegroundColor = MenuHelper.Info_FG;
                         if (rotated[popRow][popCol])
                         {
                             Console.Write('█');
@@ -800,7 +803,7 @@ namespace GHGameOfLife
                     {
                         int popCol = c - tempBounds.Left;
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuText.Info_FG;
+                        Console.ForegroundColor = MenuHelper.Info_FG;
                         if (rotated[popRow][popCol])
                         {
                             Console.Write('█');
@@ -892,8 +895,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         private void CalcBuilderBounds()
         {
-            this.__Valid_Lefts = Enumerable.Range(MenuText.Space, this.Console_Width - 2 * MenuText.Space);
-            this.__Valid_Tops = Enumerable.Range(MenuText.Space, this.Console_Height - 2 * MenuText.Space);
+            this.__Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
+            this.__Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
         }
 //------------------------------------------------------------------------------
     } // end class

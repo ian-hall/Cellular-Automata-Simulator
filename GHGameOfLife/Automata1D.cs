@@ -120,8 +120,8 @@ namespace GHGameOfLife
         /// </summary>
         public override void PrintBoard()
         {
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Board_FG;
+            Console.BackgroundColor = MenuHelper.Default_BG;
+            Console.ForegroundColor = MenuHelper.Board_FG;
 
             if( this.__Print_Row >= this.__Num_Rows )
             {
@@ -131,10 +131,10 @@ namespace GHGameOfLife
                 //Magic numbers: 
                 //      srcTop -> +1 because we skip the first row of data
                 //      srcHeight -> -1 because we skip the first row of data
-                Console.MoveBufferArea(MenuText.Space, MenuText.Space+1, this.__Num_Cols, this.__Num_Rows-1, MenuText.Space, MenuText.Space);
+                Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.__Num_Cols, this.__Num_Rows-1, MenuHelper.Space, MenuHelper.Space);
                 --this.__Print_Row;
             }
-            Console.SetCursorPosition(MenuText.Space, MenuText.Space + this.__Print_Row);
+            Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.__Print_Row);
             var printRow = new StringBuilder();
             //printRow.Append("    ║");
             foreach (bool val in this.__Current_Row)
@@ -150,8 +150,8 @@ namespace GHGameOfLife
             Console.Write(printRow);
             this.__Print_Row++;
 
-            Console.BackgroundColor = MenuText.Default_BG;
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.BackgroundColor = MenuHelper.Default_BG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //-----------------------------------------------------------------------------
         /// <summary>

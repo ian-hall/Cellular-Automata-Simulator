@@ -65,7 +65,7 @@
     <Compile Include="Automata2D.cs" />
     <Compile Include="GenericHelp.cs" />
     <Compile Include="ConsoleAutomata.cs" />
-    <Compile Include="MenuText.cs" />
+    <Compile Include="MenuHelper.cs" />
     <Compile Include="LargePops.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
