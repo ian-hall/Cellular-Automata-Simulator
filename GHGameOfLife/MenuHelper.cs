@@ -4,30 +4,31 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GHGameOfLife
 {
 ///////////////////////////////////////////////////////////////////////////////
-    class MenuText
+    class MenuHelper
     {
         // TODO: Change this to be less ugly maybe?
-        public enum FileError { None, Length, Width, Uneven, Contents, Size, Not_Loaded };
+        //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
+        public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
         public const ConsoleColor Default_FG = ConsoleColor.White;
         public const ConsoleColor Board_FG   = ConsoleColor.White;
         public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
         
-        public const string Welcome      = "Welcome to the GAME OF LIFE!!!!";
-        public const string Choose_Msg   = "Please choose an option!";
-        public const string Change_Size   = "[Ctrl + [+/-]] Change board size";
-        public const string Prompt = "Your choice: ";
-        public const string Entry_Error = "**Invalid entry**";
-        public const string Press_Enter = "Press ENTER to confirm";
-        public const string Load_Rand = "Loading random pop.";
+        public const string Msg_Welcome         = "Welcome to Ian's Automata Whatever";
+        public const string Msg_Choose          = "Please choose an option!";
+        public const string Msg_Change_Size     = "[Ctrl + [+/-]] Change board size";
+        public const string Prompt              = "Your choice: ";
+        public const string Msg_Entry_Error     = "**Invalid entry**";
+        public const string Msg_Press_Enter     = "Press ENTER to confirm";
+        public const string Msg_Loading_Rand    = "Loading random pop.";
 
         public static string[] Run_Ctrls;
-        public static string[] Menu_Choices; 
         public static string[] Create_Ctrls;
         
         public static int Window_Center; // Center Row
@@ -35,18 +36,18 @@ namespace GHGameOfLife
        
         public static List<string> Large_Pops;
         public static List<string> Builder_Pops;
-        public static ArrayList Large_Pops_Pages;
 
         private const int Info_Row = 3;
         private const int Welcome_Row = 6;
         private static int Menu_Start_Row;
 
-        public static int Space = 5;         
+        public static int Space = 5;
+        public static int Choices_Per_Page = 7;   
 //------------------------------------------------------------------------------
         public static void Initialize()
         {           
             Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth/2) - (Welcome.Length/2);
+            Left_Align = (Console.WindowWidth/2) - (Msg_Welcome.Length/2);
             
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight/3 + 1;
@@ -64,29 +65,6 @@ namespace GHGameOfLife
             }
 
             Large_Pops.Sort();
-            Large_Pops_Pages = new ArrayList();
-
-            List<string> temp = new List<string>();
-            int count = 0;
-            int elementNum = 0;
-            bool addPage = false;
-            while (elementNum != Large_Pops.Count)
-            {
-                temp.Add(Large_Pops[elementNum]);
-                count++;
-                elementNum++;
-                if (count == 7 || elementNum == Large_Pops.Count)
-                    addPage = true;
-
-                if (addPage)
-                {
-                    Large_Pops_Pages.Add(temp);
-                    temp = new List<string>();
-                    addPage = false;
-                    count = 0;
-                }
-            }
-            //End testing for pop list
 
             rm = GHGameOfLife.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
@@ -96,20 +74,11 @@ namespace GHGameOfLife
             {
                 Builder_Pops.Add(res.Key.ToString());
             }
-
-
-            Menu_Choices = new string[] {   "1) Random population",
-                                            "2) Load population from a file",
-                                            "3) Load a premade population",
-                                            "4) Create your own population",
-                                            "5) Automata Rules",
-                                            "6) Exit"};
-            
             
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
                                         "[R] Toggle running",
                                         "[ESC] Exit",
-                                        "[+/-] Speed adjust",
+                                        "[+/-] Adjust speed",
                                         "[S] Save board",
                                         "(while stepping/paused)"};
 
@@ -129,7 +98,7 @@ namespace GHGameOfLife
         public static void ReInitialize()
         {
             Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth / 2) - (Welcome.Length / 2);
+            Left_Align = (Console.WindowWidth / 2) - (Msg_Welcome.Length / 2);
 
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight / 3 + 1;
@@ -187,82 +156,11 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Prints the main menu
-        /// </summary>
-        /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintMainMenu()
-        {
-            ClearAllInBorder();
-
-            Console.ForegroundColor = MenuText.Info_FG;
-            Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
-            Console.WriteLine(Change_Size);
-
-            Console.ForegroundColor = MenuText.Default_FG;
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);
-
-            int curRow = Menu_Start_Row;
-
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
-            Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
-            foreach( string choice in Menu_Choices )
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.Write(choice);
-            }
-            return (++curRow);
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Prints the resource menu
-        /// </summary>
-        /// <param name="resCount">Outputs the number of resources printed</param>
-        /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintResourceMenu(List<string> list, bool lastPage, bool firstPage)
-        {
-            int curRow = Menu_Start_Row;
-
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
-            Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
-
-            int count = 1;
-            string[] defaultPrompts = new string[] {    "8) Prev Page",
-                                                        "9) Next Page",
-                                                        "0) Cancel"};
-            foreach (string s in list)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.Write("{0}) {1}", count, s.Replace("_"," "));
-                count++;
-            }
-
-            if (!firstPage)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.WriteLine(defaultPrompts[0]);
-            }
-            if (!lastPage)
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.WriteLine(defaultPrompts[1]);
-            }
-            Console.SetCursorPosition(Left_Align + 4, ++curRow);
-            Console.WriteLine(defaultPrompts[2]);
-
-            return ++curRow;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
         /// Prints the controls for controlling the game while running
         /// </summary>
         public static void PrintRunControls()
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
@@ -271,20 +169,20 @@ namespace GHGameOfLife
             Console.Write("{0,-25}{1,-25}",Run_Ctrls[1],Run_Ctrls[4]);
             Console.SetCursorPosition(5, ++printRow);
             Console.Write("{0,-25}{1,-25}",Run_Ctrls[2],Run_Ctrls[5]);
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the game status while running
         /// </summary>
-        /// <param name="running"></param>
-        /// <param name="paused"></param>
-        /// <param name="wrapping"></param>
-        /// <param name="speed"></param>
+        /// <param name="running">if the game is looping or stepping</param>
+        /// <param name="paused">if the game is paused</param>
+        /// <param name="wrapping">if the board has wrapping on</param>
+        /// <param name="speed">the speed the board is running at</param>
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
@@ -312,7 +210,7 @@ namespace GHGameOfLife
             ClearLine(Info_Row);
             Console.SetCursorPosition(5, Info_Row);
             Console.Write(sb);
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -320,7 +218,7 @@ namespace GHGameOfLife
         /// </summary>
         public static void PrintCreationControls()
         {
-            Console.ForegroundColor = MenuText.Info_FG;
+            Console.ForegroundColor = MenuHelper.Info_FG;
             int printStart = (Console.WindowHeight) - 4;
             int printRow = printStart;
 
@@ -348,7 +246,7 @@ namespace GHGameOfLife
                 ++printRow;
             }
              
-            Console.ForegroundColor = MenuText.Default_FG;
+            Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -404,7 +302,11 @@ namespace GHGameOfLife
             }
         }
 //------------------------------------------------------------------------------
-        public static void PrintFileError(MenuText.FileError err)
+        /// <summary>
+        /// Prints a user friendly error message
+        /// </summary>
+        /// <param name="err">the error to get friendly with</param>
+        public static void PrintFileError(MenuHelper.FileError err)
         {
             string errorStr;
             switch (err)
@@ -424,9 +326,6 @@ namespace GHGameOfLife
                 case FileError.Width:
                     errorStr = "Too many characters per line";
                     break;
-                case FileError.Uneven:
-                    errorStr = "Lines are not of even length";
-                    break;
                 default:
                     errorStr = "Generic file error...";
                     break;
@@ -434,18 +333,128 @@ namespace GHGameOfLife
 
             int windowCenter = Console.WindowHeight / 2; //Vert position
             int welcomeLeft = (Console.WindowWidth / 2) -
-                (MenuText.Welcome.Length / 2);
+                (MenuHelper.Msg_Welcome.Length / 2);
             int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
 
-            MenuText.ClearWithinBorder(windowCenter);
+            MenuHelper.ClearWithinBorder(windowCenter);
             Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
             Console.Write(errorStr);
             Console.SetCursorPosition(welcomeLeft, windowCenter);
-            Console.Write(MenuText.Load_Rand);
+            Console.Write(MenuHelper.Msg_Loading_Rand);
             Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-            Console.Write(MenuText.Press_Enter);
+            Console.Write(MenuHelper.Msg_Press_Enter);
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Prints a menu from the given choses
+        /// </summary>
+        /// <param name="choices">IEnumerable<string> of choices to display</param>
+        public static void PrintMenuFromList(IEnumerable<string> choices)
+        {
+            ClearAllInBorder();
+
+            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.SetCursorPosition(5, (Console.WindowHeight) - 4);
+            Console.WriteLine(Msg_Change_Size);
+
+            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.SetCursorPosition(Left_Align, Welcome_Row);
+            Console.Write(Msg_Welcome);
+
+            int curRow = Menu_Start_Row;
+
+            Console.SetCursorPosition(Left_Align, curRow);
+            Console.Write(Msg_Choose);
+            Console.SetCursorPosition(Left_Align, ++curRow);
+            //Console.Write(Press_Enter);
+            foreach (string choice in choices)
+            {
+                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.Write(choice);
+            }
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Changes enums to a list of strings prefixed by numbers 1-7
+        /// </summary>
+        /// <param name="enumVals"></param>
+        /// <returns></returns>
+        public static List<string> EnumToChoiceStrings(Array enumVals)
+        {
+            var choiceStrings = new List<string>();
+            for (int i = 0; i < enumVals.Length; i++)
+            {
+                var enumStr = enumVals.GetValue(i).ToString();
+                enumStr = enumStr.Replace('_', ' ');
+                var choiceStr = String.Format("{0}) {1}", (i%7)+1, enumStr);
+                choiceStrings.Add(choiceStr);
+            }
+            return choiceStrings;
+        }
+//------------------------------------------------------------------------------
+        public static List<string> EnumToChoiceStrings_WithBack(Array enumVals)
+        {
+            var choiceStrings = EnumToChoiceStrings(enumVals);
+            var backString = String.Format("{0}) Back", enumVals.Length + 1);
+            choiceStrings.Add(backString);
+            return choiceStrings;
+        }
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Displays options in a paged fashion.
+        /// TODO: 1-7 are used to select an option
+        ///       8 goes back to prev page
+        ///       9 goes to next page
+        ///       0 cancels
+        /// </summary>
+        /// <returns>the index of the chosen choice</returns>
+        public static int PrintPagedMenu(List<string> choices, int pageNum, out bool onLastPage)
+        {
+            onLastPage = false;
+            MenuHelper.ClearLine((Console.WindowHeight - 4));
+            var totalNumChoices = choices.Count;
+            var totalPages = totalNumChoices / MenuHelper.Choices_Per_Page;
+            var lo = pageNum * MenuHelper.Choices_Per_Page;
+            var hi = -1;
+            if ((lo + MenuHelper.Choices_Per_Page) < totalNumChoices)
+            {
+                hi = (lo + MenuHelper.Choices_Per_Page);
+            }
+            else
+            {
+                hi = totalNumChoices;
+                onLastPage = true;
+            }
+
+            string[] defaultPrompts = new string[] {    "8) Prev Page",
+                                                        "9) Next Page",
+                                                        "0) Back"};
+
+            var currentPage = new List<string>();
+            for (int i = lo; i < hi; i++)
+            {
+                //the strings in choices might or might not have keys (ex 1), 2), etc) associated with them
+                //we need to add these prompts if they are not there.
+                var hasPrompt = Regex.IsMatch(choices[i], "^[0-9][)] ");
+                if(hasPrompt)
+                {
+                    currentPage.Add(choices[i]);
+                }
+                else
+                {
+                    currentPage.Add(String.Format("{0}) {1}",(i-lo)+1,choices[i]));
+                }
+            }
+            foreach (var prompt in defaultPrompts)
+            {
+                currentPage.Add(prompt);
+            }
+
+            MenuHelper.PrintMenuFromList(currentPage);
+            return hi - 1;
         }
 //------------------------------------------------------------------------------
     } // end class
-///////////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////
 }
