@@ -39,7 +39,6 @@ namespace GHGameOfLife
             bool exit = false;
             do
             {
-                //MainMenu();
                 NewMenu();
 
                 MenuText.PromptForAnother();
@@ -144,13 +143,14 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Displays the main menu for starting the game running.
-        /// TODO: Change the look of this whole thing:
+        /// 
         ///         Prompt for 1d or 2d
         ///             if 1d   -> prompt for which rule
         ///                     -> prompt for type of starting population
         ///             if 2d   -> prompt for which rule (once implemented)
         ///                     -> prompt for type of starting population
-        ///                     -> prompt for resource if needed
+        ///                         -> prompt for resource if needed
+        /// TODO: Change rule selection to be paged
         /// </summary>
         private static void NewMenu()
         {
@@ -218,13 +218,6 @@ namespace GHGameOfLife
                 promptRow = MenuText.PrintMenuFromList(currentPrompts);
                 numChoices = currentPrompts.Count;
                 consoleResized = false;
-                //Console.CursorVisible = true;
-                //MenuText.ClearWithinBorder(promptRow);
-                //Console.SetCursorPosition(MenuText.Left_Align, promptRow);
-                //Console.Write(MenuText.Prompt);
-                //var userInput = "";
-                //var maxInputLen = 1;
-                //var readingInput = true;
                 while (!Console.KeyAvailable)
                     System.Threading.Thread.Sleep(50);
 
@@ -259,7 +252,7 @@ namespace GHGameOfLife
                         continue;
                     }
                 }
-                //At this point, user has hit Return and we should process the input
+                //After checking for the resize we should process the input
                 //start with chosing type, then rules, then board init type
                 if(!isTypeChosen)
                 {
@@ -284,7 +277,7 @@ namespace GHGameOfLife
                 else if(!isRuleChosen)
                 {
                     //These can have different sizes and maybe even be paged...
-                    //TODO: support paging like when chosing a resource 
+                    //TODO: support paging like when choosing a resource 
                     if(char.IsDigit(keyInfo.KeyChar))
                     {
                         var keyVal = Int32.Parse(keyInfo.Key.ToString()[1]+"");
@@ -338,72 +331,11 @@ namespace GHGameOfLife
                 if (isTypeChosen && isRuleChosen && isInitChosen)
                 {
                     inputFinished = true;
-                }
-                //inputFinished = true;
-
-                //while (readingInput)
-                //{
-                //    var keyInfo = Console.ReadKey(true);
-                //    var charIn = keyInfo.KeyChar;
-                //    if (charIn == '\r')
-                //    {
-                //        readingInput = false;
-                //        break;
-                //    }
-                //    if (charIn == '\b')
-                //    {
-                //        if (userInput != "")
-                //        {
-                //            userInput = userInput.Substring(0, userInput.Length - 1);
-                //            Console.Write("\b \b");
-                //        }
-                //    }
-                //    if(keyInfo.Modifiers == ConsoleModifiers.Control)
-                //    {
-                //        switch(keyInfo.Key)
-                //        {
-                //            case ConsoleKey.OemPlus:
-                //            case ConsoleKey.Add:
-                //                if (Curr_Size_Index < Valid_Sizes.Count() - 1)
-                //                {
-                //                    Curr_Size_Index++;
-                //                }
-                //                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
-                //                consoleResized = true;
-                //                break;
-                //            case ConsoleKey.OemMinus:
-                //            case ConsoleKey.Subtract:
-                //                if (Curr_Size_Index > 0)
-                //                {
-                //                    Curr_Size_Index--;
-                //                }
-                //                newPromptRow = ReInitializeConsoleWithPrompts(typePrompts);
-                //                consoleResized = true;
-                //                break;
-                //        }
-                //        if(consoleResized)
-                //        {
-                //            break;
-                //        }
-                //    }
-                //    if (!(""+charIn).All(c => char.IsLetterOrDigit(c)))
-                //    {
-                //        //Ignore input that is not a letter or digit
-                //    }
-                //    else if (userInput.Length < maxInputLen)
-                //    {
-                //        Console.Write(charIn);
-                //        userInput += charIn;
-                //    }
-                //    else
-                //    {
-                //        System.Threading.Thread.Sleep(50);
-                //    }
-                //}
-                }
+                }            
+            }
             if (!exitGame)
             {
-                //run this sucker or handle extra input, like resource choice
+                //run this sucker
                 switch(typeChoice)
                 {
                     case 1:
@@ -431,173 +363,16 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Displays the main menu. Pick how to load the population.
-        /// Display the choice and ask for confirmation instead of just
-        /// jumping to the next screen incase someone hits a wrong button
-        /// </summary>
-        ///                                          
-        private static void MainMenu()
-        {
-            var buildType = Automata2D.BuildTypes.Random;
-            string res = null;
-
-            int numChoices = MenuText.Menu_Choices.Count();
-            int currPromptRow = MenuText.PrintMainMenu();
-            int choice = -1;
-
-            //Only allow letters and numbers to be written as a choice
-            //TODO: Add this to the resource selection menu
-            string allCharDec =  "abcdefghijklmnopqrstuvwxyz1234567890";
-
-            bool validEntry = false;
-            int newPromptRow = currPromptRow;
-            bool resized = false;
-            var tryAuto = false;
-            while (!validEntry)
-            {
-                if (resized)
-                    currPromptRow = newPromptRow;
-
-                resized = false;
-                Console.CursorVisible = true;
-                MenuText.ClearWithinBorder(currPromptRow);
-                Console.SetCursorPosition(MenuText.Left_Align, currPromptRow);
-                Console.Write(MenuText.Prompt);                   
-
-                string input = "";
-                int maxLen = 1;
-
-                while (true)
-                {
-                    ConsoleKeyInfo cki = Console.ReadKey(true);
-                    char c = cki.KeyChar;
-                    if (c == '\r')
-                        break;
-                    if (c == '\b')
-                    {
-                        if (input != "")
-                        {
-                            input = input.Substring(0, input.Length - 1);
-                            Console.Write("\b \b");
-                        }
-                    }
-                    //Need to reinitialize the console/menu positioning after changing window size
-                    else if ((cki.Key == ConsoleKey.OemPlus || cki.Key == ConsoleKey.Add) && cki.Modifiers == ConsoleModifiers.Control)
-                    {
-                        if (Curr_Size_Index < Valid_Sizes.Count() - 1)
-                        {
-                            Curr_Size_Index++;
-                        }
-                        newPromptRow = ReInitializeConsole();
-                        resized = true;
-                        break;
-                    }
-                    else if ((cki.Key == ConsoleKey.OemMinus || cki.Key == ConsoleKey.Subtract) && cki.Modifiers == ConsoleModifiers.Control)
-                    {
-                        if (Curr_Size_Index > 0)
-                        {
-                            Curr_Size_Index--;
-                        }
-                        newPromptRow = ReInitializeConsole();
-                        resized = true;
-                        break;
-                    }
-                    else if (!allCharDec.Contains(c))
-                    {
-                        //This is here so these characters are not written
-                    }
-                    else if (input.Length < maxLen)
-                    {
-                        Console.Write(c);
-                        input += c;
-                    }
-                    else
-                        System.Threading.Thread.Sleep(50);
-                }
-
-                if (resized)
-                    continue;
-               
-                if (IsValidNumber(input, numChoices))
-                {
-                    choice = Int32.Parse(input);
-                    validEntry = true;
-                }
-                else
-                {
-                    Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 1);
-                    Console.Write(MenuText.Entry_Error);
-                    continue;
-                }
-
-                Console.CursorVisible = false;
-                switch (choice)
-                {
-                    case 1:
-                        buildType = Automata2D.BuildTypes.Random;
-                        validEntry = true;
-                        break;
-                    case 2:
-                        buildType = Automata2D.BuildTypes.File;
-                        validEntry = true;
-                        break;
-                    case 3:
-                        //Clear the line telling you how to change window size
-                        MenuText.ClearLine((Console.WindowHeight) - 4);
-                        buildType = Automata2D.BuildTypes.Resource;
-                        res = PromptForRes();
-                        if (res != null)
-                            validEntry = true;
-                        else
-                        {
-                            MenuText.PrintMainMenu();
-                            validEntry = false;
-                        }
-                        break;
-                    case 4:
-                        buildType = Automata2D.BuildTypes.User;
-                        validEntry = true;
-                        break;
-                    case 5:
-                        validEntry = true;
-                        tryAuto = true;
-                        break;
-                    case 6:
-                        validEntry = true;
-                        return;
-                    default:
-                        Console.SetCursorPosition(MenuText.Left_Align, currPromptRow + 2);
-                        Console.Write(MenuText.Entry_Error);
-                        validEntry = false;
-                        break;
-                }
-            }
-
-            if(tryAuto)
-            {
-                MenuText.ClearAllInBorder();
-                var autoBoard = Automata1D.InitializeAutomata(Current_Rows - 10,Current_Cols - 10,Automata1D.BuildTypes.Single,Automata1D.RuleTypes.Rule90);
-                ConsoleRunHelper.ConsoleAutomataRunner(autoBoard);
-            }
-            else
-            {
-                //Clear the current options
-                MenuText.ClearAllInBorder();
-
-                //Move out into the main loop maybe
-                Automata2D game = Automata2D.InitializeAutomata(Current_Rows-10, Current_Cols-10, buildType, Automata2D.RuleTypes.Life, res);
-                ConsoleRunHelper.ConsoleAutomataRunner(game);
-            }
-           
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
         /// Display a list of all resources built in to the program
-        /// TODO: Probably make this better support more resources or something
+        /// TODO: Change this to use key presses like the NewMenu
+        ///             Have this take a list of strings to display
+        ///             return instead an index for the chosen string
         /// </summary>
         /// <returns>The string key value of the resource to load</returns>
         private static string PromptForRes()
         {
+            //Clear the resize options, can no longer resize.
+            MenuText.ClearLine((Console.WindowHeight - 4));
             string retVal = null;
             int numRes = MenuText.Large_Pops.Count;
 
@@ -703,17 +478,17 @@ namespace GHGameOfLife
         /// </summary>
         /// <returns>Returns the new row to print the response text on</returns>
         /// TODO: This does not seem to get run after having the user create their own population....?
-        private static int ReInitializeConsole()
-        {
-            Console.Clear();
-            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
+        //private static int ReInitializeConsole()
+        //{
+        //    Console.Clear();
+        //    AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
 
-            Current_Rows = Console.WindowHeight;
-            Current_Cols = Console.WindowWidth;
-            MenuText.ReInitialize();
-            MenuText.DrawBorder();
-            return MenuText.PrintMainMenu();            
-        }
+        //    Current_Rows = Console.WindowHeight;
+        //    Current_Cols = Console.WindowWidth;
+        //    MenuText.ReInitialize();
+        //    MenuText.DrawBorder();
+        //    return MenuText.PrintMainMenu();            
+        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Makes sure the string can be converted to a valid int.

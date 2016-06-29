@@ -84,6 +84,7 @@ namespace GHGameOfLife
                     newAutomata1D.Build1DBoard_Single();
                     break;
             }
+            newAutomata1D.__Is_Initialized = true;
             return newAutomata1D;
         }
 //-----------------------------------------------------------------------------
@@ -163,14 +164,12 @@ namespace GHGameOfLife
                 this.__Current_Row[i] = (this.__Rand.Next() % 2 == 0);
             }
             this.__Entire_Board[0] = this.__Current_Row;
-            this.__Is_Initialized = true;
         }
 //-----------------------------------------------------------------------------
         private void Build1DBoard_Single()
         {
             this.__Current_Row[this.__Num_Cols / 2] = true;
             this.__Entire_Board[0] = this.__Current_Row;
-            this.__Is_Initialized = true;
         }
 //-----------------------------------------------------------------------------
 //  Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)

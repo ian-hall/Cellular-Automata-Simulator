@@ -84,8 +84,8 @@ namespace GHGameOfLife
                     newAutomata2D.Build2DBoard_User();
                     break;
             }
+            newAutomata2D.__Is_Initialized = true;
             return newAutomata2D;
-            //this.__Is_Initialized = true;
         } 
 //------------------------------------------------------------------------------
         /// <summary>
@@ -187,7 +187,6 @@ namespace GHGameOfLife
                     this.__Board[r, c] = (rand.Next() % 2 == 0);
                 }
             }
-            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -229,7 +228,6 @@ namespace GHGameOfLife
                 }
                 this.Build2DBoard_Random();
             }
-            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -263,7 +261,6 @@ namespace GHGameOfLife
                 }
                 this.Build2DBoard_Random();
             }
-            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -308,7 +305,8 @@ namespace GHGameOfLife
             }
             else
             {
-                wholeFile = Regex.Split(GHGameOfLife.LargePops.ResourceManager.GetString(filename), Environment.NewLine).ToList();
+                var loadedResource = GHGameOfLife.LargePops.ResourceManager.GetString(filename);
+                wholeFile = Regex.Split(loadedResource, Environment.NewLine).ToList();
             }
             var fileByLine = new List<string>();
             foreach (var line in wholeFile)
@@ -675,7 +673,6 @@ namespace GHGameOfLife
 
             MenuText.ClearLine(positionPrintRow);
             this.FillBoard(popString.ToString());
-            this.__Is_Initialized = true;
         }
 //------------------------------------------------------------------------------
         /// <summary>

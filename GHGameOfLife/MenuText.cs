@@ -191,31 +191,31 @@ namespace GHGameOfLife
         /// TODO: Change this to take a list or array of strings to print
         /// </summary>
         /// <returns>Returns the line to print the choice prompt on</returns>
-        public static int PrintMainMenu()
-        {
-            ClearAllInBorder();
+        //public static int PrintMainMenu()
+        //{
+        //    ClearAllInBorder();
 
-            Console.ForegroundColor = MenuText.Info_FG;
-            Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
-            Console.WriteLine(Change_Size);
+        //    Console.ForegroundColor = MenuText.Info_FG;
+        //    Console.SetCursorPosition(5,(Console.WindowHeight) - 4);
+        //    Console.WriteLine(Change_Size);
 
-            Console.ForegroundColor = MenuText.Default_FG;
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Welcome);
+        //    Console.ForegroundColor = MenuText.Default_FG;
+        //    Console.SetCursorPosition(Left_Align, Welcome_Row);
+        //    Console.Write(Welcome);
 
-            int curRow = Menu_Start_Row;
+        //    int curRow = Menu_Start_Row;
 
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Choose_Msg);
-            Console.SetCursorPosition(Left_Align, ++curRow);
-            Console.Write(Press_Enter);
-            foreach( string choice in Menu_Choices )
-            {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
-                Console.Write(choice);
-            }
-            return (++curRow);
-        }
+        //    Console.SetCursorPosition(Left_Align, curRow);
+        //    Console.Write(Choose_Msg);
+        //    Console.SetCursorPosition(Left_Align, ++curRow);
+        //    Console.Write(Press_Enter);
+        //    foreach( string choice in Menu_Choices )
+        //    {
+        //        Console.SetCursorPosition(Left_Align + 4, ++curRow);
+        //        Console.Write(choice);
+        //    }
+        //    return (++curRow);
+        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the resource menu
