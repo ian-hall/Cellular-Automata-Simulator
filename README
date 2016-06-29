@@ -1,2 +1,5 @@
-You can load a file of '.''s and 'O''s as a starting population, start with a random board, choose from a couple of preloaded populations, or build your own starting population.
-Controls for the game are displayed on the screen, they are pretty self explanatory.
+This is Ian's Automata Whatever's Readme
+
+This is a console program that allows you to choose between 1D and 2D cellular automata to run simulations of. For both types,
+users are able to choose the rule set and initial population to use. For 2D automata, users can choose to build their own initial pop,
+choose a preloaded population from a list, or load a CELLS file consiting of '.'s and 'O's representing cells.
