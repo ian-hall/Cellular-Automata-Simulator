@@ -14,7 +14,7 @@ namespace GHGameOfLife
     {
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes { Rule30, Rule90, q, w, e, r, t, y, u, a, s, d };
+        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_73, Rule_90, Rule_129 };
 
         private bool[] __Current_Row;
         private bool[][] __Entire_Board;
@@ -60,11 +60,23 @@ namespace GHGameOfLife
 
             switch(rule)
             {
-                case RuleTypes.Rule30:
+                case RuleTypes.Rule_30:
                     this.__Rule = Rule30;
                     break;
-                case RuleTypes.Rule90:
+                case RuleTypes.Rule_90:
                     this.__Rule = Rule90;
+                    break;
+                case RuleTypes.Rule_1:
+                    this.__Rule = Rule1;
+                    break;
+                case RuleTypes.Rule_73:
+                    this.__Rule = Rule73;
+                    break;
+                case RuleTypes.Rule_129:
+                    this.__Rule = Rule129;
+                    break;
+                case RuleTypes.Rule_18:
+                    this.__Rule = Rule18;
                     break;
                 default:
                     this.__Rule = Rule90;
@@ -189,11 +201,44 @@ namespace GHGameOfLife
             bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
             bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
 
-            return left ^ (center || right);
+            return left ^ (center | right);
         }
 //-----------------------------------------------------------------------------
+        private bool Rule1(int col)
+        {
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return !(left | center | right);
+        }
 //-----------------------------------------------------------------------------
+        private bool Rule73(int col)
+        {
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return !(left & right | left ^ center ^ right);
+        }
 //-----------------------------------------------------------------------------
+        private bool Rule129(int col)
+        {
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return !(left ^ center | left ^ right);
+        }
+//-----------------------------------------------------------------------------
+        private bool Rule18(int col)
+        {
+            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
+            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
+            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
+
+            return (left ^ right ^ center) & !center;
+        }
 //-----------------------------------------------------------------------------
     }
 ///////////////////////////////////////////////////////////////////////////////

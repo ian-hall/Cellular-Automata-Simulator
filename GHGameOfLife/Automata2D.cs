@@ -18,7 +18,7 @@ namespace GHGameOfLife
     {
         delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
-        public enum RuleTypes { Life, Life_Without_Death };
+        public enum RuleTypes { Life, Life_Without_Death, Seeds, Replicator };
 
         private bool[,] __Board;
         private const char LIVE_CELL = '☺';
@@ -56,7 +56,6 @@ namespace GHGameOfLife
         {
             this.__Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
-            //TODO: set __Rule based on rule arg
             switch(rule)
             {
                 case RuleTypes.Life:
@@ -64,6 +63,12 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Life_Without_Death:
                     this.__Rule = LifeWithoutDeath;
+                    break;
+                case RuleTypes.Seeds:
+                    this.__Rule = Seeds;
+                    break;
+                case RuleTypes.Replicator:
+                    this.__Rule = Replicator;
                     break;
                 default:
                     this.__Rule = Life;
@@ -169,7 +174,6 @@ namespace GHGameOfLife
         private bool Life(int r, int c)
         {
             int n = 0;
-
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
@@ -199,8 +203,12 @@ namespace GHGameOfLife
         /// <returns></returns>
         private bool LifeWithoutDeath(int r, int c)
         {
-            int n = 0;
+            if (this.__Board[r, c])
+            {
+                return true;
+            }
 
+            int n = 0;
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
@@ -210,18 +218,62 @@ namespace GHGameOfLife
             if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
 
-            if (this.__Board[r, c])
-            {
-                return true;
-            }
-            else
-            {
-                return (n == 3);
-            }
+            return n == 3;
         }
 //------------------------------------------------------------------------------
-        //private methods used to construct the game board
-        //------------------------------------------------------------------------------
+        /// <summary>
+        /// Seeds rule
+        /// Live cells always die
+        /// Dead cells turn live if they have 2 neighbors
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool Seeds(int r, int c)
+        {
+            if (this.__Board[r, c])
+            {
+                return false;
+            }
+
+            int n = 0;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+
+            return n == 2;
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Replicator rules
+        /// Live cells stay alive if they have 1,3,5,or 7 neighbors.
+        /// Dead cells turn live if they have 1,3,5, or 7 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool Replicator(int r, int c)
+        {
+            int n = 0;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+
+            return ((n == 1) || (n == 3) || (n == 5) || (n == 7));
+        }
+//------------------------------------------------------------------------------
+//private methods used to construct the game board
+//------------------------------------------------------------------------------
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
