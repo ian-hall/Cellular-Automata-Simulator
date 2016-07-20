@@ -18,7 +18,8 @@ namespace GHGameOfLife
     {
         delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
-        public enum RuleTypes { Life, Life_Without_Death, Seeds, Replicator };
+        public enum RuleTypes { Life, Life_Without_Death, Life_34, Seeds, Replicator, Day_And_Night,
+                                Diamoeba };
 
         private bool[,] __Board;
         private const char LIVE_CELL = '☺';
@@ -69,6 +70,15 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Replicator:
                     this.__Rule = Replicator;
+                    break;
+                case RuleTypes.Day_And_Night:
+                    this.__Rule = DayAndNight;
+                    break;
+                case RuleTypes.Life_34:
+                    this.__Rule = Life34;
+                    break;
+                case RuleTypes.Diamoeba:
+                    this.__Rule = Diamoeba;
                     break;
                 default:
                     this.__Rule = Life;
@@ -173,15 +183,7 @@ namespace GHGameOfLife
         /// <returns></returns>
         private bool Life(int r, int c)
         {
-            int n = 0;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            var n = CountNeighbors_Moore(r, c);
 
             if(this.__Board[r,c])
             {
@@ -208,15 +210,7 @@ namespace GHGameOfLife
                 return true;
             }
 
-            int n = 0;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            var n = CountNeighbors_Moore(r, c);
 
             return n == 3;
         }
@@ -236,15 +230,7 @@ namespace GHGameOfLife
                 return false;
             }
 
-            int n = 0;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            var n = CountNeighbors_Moore(r, c);
 
             return n == 2;
         }
@@ -259,17 +245,108 @@ namespace GHGameOfLife
         /// <returns></returns>
         private bool Replicator(int r, int c)
         {
-            int n = 0;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            var n = CountNeighbors_Moore(r, c);
 
             return ((n == 1) || (n == 3) || (n == 5) || (n == 7));
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// DayAndNight rules
+        /// Live cells stay alive if they have 3,4,6,7, or 8 neighbors.
+        /// Dead cells turn live if they have 3,6,7, or 8 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool DayAndNight(int r, int c)
+        {
+            var n = CountNeighbors_Moore(r, c);
+
+            if (this.__Board[r, c])
+            {
+                return ((n == 3) || (n == 4) || (n == 6) || (n == 7) || (n == 8));
+            }
+            else
+            {
+                return ((n == 3) || (n == 6) || (n == 7) || (n == 8));
+            }
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// 34 Life rules.
+        /// Live cells stay alive if they have 3 or 4 neighbors.
+        /// Dead cells turn live if they have 3 or 4 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool Life34(int r, int c)
+        {
+            var n = CountNeighbors_Moore(r, c);
+
+            return ((n == 3) || (n == 4));
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Diamoeba rules
+        /// Live cells stay alive if they have 5,6,7, or 8 neighbors.
+        /// Dead cells turn live if they have 3,5,6,7, or 8 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool Diamoeba(int r, int c)
+        {
+            var n = CountNeighbors_Moore(r, c);
+
+            if (this.__Board[r, c])
+            {
+                return ((n == 5) || (n == 6) || (n == 7) || (n == 8));
+            }
+            else
+            {
+                return ((n == 3) || (n == 5) || (n == 6) || (n == 7) || (n == 8));
+            }
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Counts number of true values in the Moore neighborhood of a point.
+        /// </summary>
+        /// <param name="r">Row value</param>
+        /// <param name="c">Column value</param>
+        /// <param name="range">How large the neighborhood is, default value of 1</param>
+        /// <returns>number of neighbors</returns>
+        private int CountNeighbors_Moore(int r, int c, int range=1)
+        {
+            if( range < 1 )
+            {
+                return this.__Board[r, c] ? 1 : 0;
+            }
+
+            int n = 0;
+            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            //if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
+            //if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
+            for( int i = r-range; i <= r+range; i++ )
+            {
+                for (int j = c - range; j <= c + range; j++)
+                {
+                    if( i==r && j==c )
+                    {
+                        continue;
+                    }
+                    var currRow = (i + this.__Num_Rows) % this.__Num_Rows;
+                    var currCol = (j + this.__Num_Cols) % this.__Num_Cols;
+                    if (this.__Board[currRow, currCol]) n++;                  
+                }
+            }
+
+            return n;
         }
 //------------------------------------------------------------------------------
 //private methods used to construct the game board

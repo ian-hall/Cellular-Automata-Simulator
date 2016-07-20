@@ -390,9 +390,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Display a list of all resources built in to the program
-        /// TODO: Change this to use key presses like the NewMenu
-        ///             Have this take a list of strings to display
-        ///             return instead an index for the chosen string
+        /// TODO: Have multiple resources specific to certain life rules
+        ///       as well as one common resource list for all rules
         /// </summary>
         /// <returns>The string key value of the resource to load</returns>
         private static string PromptForRes()
