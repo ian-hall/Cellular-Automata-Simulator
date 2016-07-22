@@ -3,10 +3,10 @@
 	<head>
 		<meta charset='utf-8'>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/bootstrap.space.mod.css" title="base">
-		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/site.css" title="base">
-		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219.css" title="219">
-		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219site.css" title="219">
+		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/bootstrap.space.mod.css" title="light">
+		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/site.css" title="light">
+		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219.css" title="dark">
+		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219site.css" title="dark">
         <link rel="shortcut icon" href="http://www.iconj.com/icon.php?pid=u8tuc0fwqi" type="image/x-icon" /> 
 		<title>imhall.com</title>
 	</head>
@@ -20,6 +20,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="http://www.imhall.com">{imhall.com}</a>
+					<button type="button" onclick="switch_style(this.value)" name="theme" value="light" id="themeSwitcher" class="btn btn-sm btn-default navbar-btn"></button>
 				</div>
 				<div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -84,10 +85,6 @@
                     <p class="text-footer">
                         <ul class="list-inline">
                             <li>&copy; 2016 - <a href="http://www.github.com/ian-hall">Ian Hall<img src="http://www.imhall.com/images/blacktocat.png"></a></li>
-                            <li class="btn-group pull-right">
-                                <button type="submit" onclick="switch_style('base');return false;" name="theme" value="Light Theme" id="base" class="btn btn-default">Light</button>
-                                <button type="submit" onclick="switch_style('219');return false;" name="theme" value="Dark Theme" id="219" class="btn btn-default">Dark</button>
-                            </li>
                         </ul>
                     </p>
                 </div>
