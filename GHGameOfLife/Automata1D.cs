@@ -188,56 +188,54 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private bool Rule90(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return left ^ right;
+            var neighbors = GetNeighbors(col);
+            return neighbors[col-1] ^ neighbors[col+1];
         }
 //-----------------------------------------------------------------------------
         private bool Rule30(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return left ^ (center | right);
+            var neighbors = GetNeighbors(col);
+            return neighbors[col-1] ^ (neighbors[col] | neighbors[col+1]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule1(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return !(left | center | right);
+            var neighbors = GetNeighbors(col);
+            return !(neighbors[col-1] | neighbors[col] | neighbors[col+1]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule73(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return !(left & right | left ^ center ^ right);
+            var neighbors = GetNeighbors(col);
+            return !(neighbors[col-1] & neighbors[col+1] | neighbors[col-1] ^ neighbors[col] ^ neighbors[col+1]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule129(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return !(left ^ center | left ^ right);
+            var neighbors = GetNeighbors(col);
+            return !(neighbors[col-1] ^ neighbors[col] | neighbors[col-1] ^ neighbors[col+1]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule18(int col)
         {
-            bool left = this.__Current_Row[(col - 1 + this.__Num_Cols) % this.__Num_Cols];
-            bool center = this.__Current_Row[(col + this.__Num_Cols) % this.__Num_Cols];
-            bool right = this.__Current_Row[(col + 1 + this.__Num_Cols) % this.__Num_Cols];
-
-            return (left ^ right ^ center) & !center;
+            var neighbors = GetNeighbors(col);
+            return (neighbors[col-1] ^ neighbors[col+1] ^ neighbors[col]) & !neighbors[col];
+        }
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Gets the neighboring values of the given column.
+        /// </summary>
+        /// <param name="col">Column the neighbors are centered on</param>
+        /// <param name="range">How far to go from the center, default value of 1</param>
+        /// <returns>Dictionary indexed by ints from [col-range .. col+range] with the values of neighbors.</returns>
+        private Dictionary<int,bool> GetNeighbors(int col, int range = 1)
+        {
+            var neighbors = new Dictionary<int, bool>();
+            for( int c = col-range; c <= col+range; c++ )
+            {
+                neighbors[c] = this.__Current_Row[(c + this.__Num_Cols) % this.__Num_Cols];
+            }
+            return neighbors;
         }
 //-----------------------------------------------------------------------------
     }

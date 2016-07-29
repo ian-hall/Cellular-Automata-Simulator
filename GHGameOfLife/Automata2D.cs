@@ -324,14 +324,6 @@ namespace GHGameOfLife
             }
 
             int n = 0;
-            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            //if (this.__Board[(r - 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            //if (this.__Board[r, (c - 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, c]) n++;
-            //if (this.__Board[r, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
-            //if (this.__Board[(r + 1 + this.__Num_Rows) % this.__Num_Rows, (c + 1 + this.__Num_Cols) % this.__Num_Cols]) n++;
             for( int i = r-range; i <= r+range; i++ )
             {
                 for (int j = c - range; j <= c + range; j++)
