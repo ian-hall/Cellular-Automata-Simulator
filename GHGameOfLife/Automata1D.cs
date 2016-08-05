@@ -14,7 +14,7 @@ namespace GHGameOfLife
     {
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_73, Rule_90, Rule_129 };
+        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_73, Rule_90, Rule_129, Rule_193 };
 
         private bool[] __Current_Row;
         private bool[][] __Entire_Board;
@@ -77,6 +77,9 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Rule_18:
                     this.__Rule = Rule18;
+                    break;
+                case RuleTypes.Rule_193:
+                    this.__Rule = Rule193;
                     break;
                 default:
                     this.__Rule = Rule90;
@@ -189,37 +192,43 @@ namespace GHGameOfLife
         private bool Rule90(int col)
         {
             var neighbors = GetNeighbors(col);
-            return neighbors[col-1] ^ neighbors[col+1];
+            return neighbors["P"] ^ neighbors["R"];
         }
 //-----------------------------------------------------------------------------
         private bool Rule30(int col)
         {
             var neighbors = GetNeighbors(col);
-            return neighbors[col-1] ^ (neighbors[col] | neighbors[col+1]);
+            return neighbors["P"] ^ (neighbors["Q"] | neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule1(int col)
         {
             var neighbors = GetNeighbors(col);
-            return !(neighbors[col-1] | neighbors[col] | neighbors[col+1]);
+            return !(neighbors["P"] | neighbors["Q"] | neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule73(int col)
         {
             var neighbors = GetNeighbors(col);
-            return !(neighbors[col-1] & neighbors[col+1] | neighbors[col-1] ^ neighbors[col] ^ neighbors[col+1]);
+            return !(neighbors["P"] & neighbors["R"] | neighbors["P"] ^ neighbors["Q"] ^ neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule129(int col)
         {
             var neighbors = GetNeighbors(col);
-            return !(neighbors[col-1] ^ neighbors[col] | neighbors[col-1] ^ neighbors[col+1]);
+            return !(neighbors["P"] ^ neighbors["Q"] | neighbors["P"] ^ neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
         private bool Rule18(int col)
         {
             var neighbors = GetNeighbors(col);
-            return (neighbors[col-1] ^ neighbors[col+1] ^ neighbors[col]) & !neighbors[col];
+            return (neighbors["P"] ^ neighbors["R"] ^ neighbors["Q"]) & !neighbors["Q"];
+        }
+//-----------------------------------------------------------------------------
+        private bool Rule193(int col)
+        {
+            var neighbors = GetNeighbors(col);
+            return neighbors["P"] ^ (neighbors["P"] | neighbors["Q"] | !neighbors["R"]) ^ neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -227,13 +236,35 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="col">Column the neighbors are centered on</param>
         /// <param name="range">How far to go from the center, default value of 1</param>
-        /// <returns>Dictionary indexed by ints from [col-range .. col+range] with the values of neighbors.</returns>
-        private Dictionary<int,bool> GetNeighbors(int col, int range = 1)
+        /// <returns>Dictionary indexed by "P", "Q", and "R". "P" (left) and "R" (right) are repeated based on the number of spaces away from the center, "Q".
+        ///          For example, with range=2, the keys would be PP, P, Q, R, RR representing col-2 col-1 col col+1 col+2
+        /// </returns>
+        private Dictionary<string,bool> GetNeighbors(int col, int range = 1)
         {
-            var neighbors = new Dictionary<int, bool>();
-            for( int c = col-range; c <= col+range; c++ )
+            range = Math.Abs(range);
+            var neighbors = new Dictionary<string, bool>();
+            for( int n = range * -1; n <= range; n++ )
             {
-                neighbors[c] = this.__Current_Row[(c + this.__Num_Cols) % this.__Num_Cols];
+                var keyBuilder = new StringBuilder();
+                if(n < 0 )
+                {
+                    foreach (int i in Enumerable.Range(0, Math.Abs(n)))
+                    {
+                        keyBuilder.Append("P");
+                    }
+                }
+                else if (n == 0)
+                {
+                    keyBuilder.Append("Q");
+                }
+                else
+                {
+                    foreach (int i in Enumerable.Range(0, Math.Abs(n)))
+                    {
+                        keyBuilder.Append("R");
+                    }
+                }
+                neighbors[keyBuilder.ToString()] = this.__Current_Row[((col + n) + this.__Num_Cols) % this.__Num_Cols];
             }
             return neighbors;
         }
