@@ -112,7 +112,7 @@ namespace GHGameOfLife
                 case ConsoleKey.S:
                     if (!currentStatus["Continuous"] || currentStatus["Paused"])
                     {
-                        SaveBoard(currentGame.Rows, currentGame.Cols, currentGame.Board);
+                        SaveBoard(currentGame.Rows, currentGame.Cols, currentGame.Board_Copy);
                     }
                     break;
                 case ConsoleKey.OemMinus:

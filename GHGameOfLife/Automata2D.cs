@@ -21,21 +21,21 @@ namespace GHGameOfLife
         public enum RuleTypes { Life, Life_Without_Death, Life_34, Seeds, Replicator, Day_And_Night,
                                 Diamoeba };
 
-        private bool[,] __Board;
+        private bool[,] Board;
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
-        private Rule2D __Rule;
+        private Rule2D Rule;
 
-        public override bool[,] Board
+        public override bool[,] Board_Copy
         {
             get
             {
-                var temp = new bool[this.__Num_Rows, this.__Num_Cols];
-                for(int r = 0; r < this.__Num_Rows; r++)
+                var temp = new bool[this.Rows, this.Cols];
+                for(int r = 0; r < this.Rows; r++)
                 {
-                    for( int c = 0; c < this.__Num_Cols; c++ )
+                    for( int c = 0; c < this.Cols; c++ )
                     {
-                        temp[r, c] = this.__Board[r, c];
+                        temp[r, c] = this.Board[r, c];
                     }
                 }
                 return temp;
@@ -43,9 +43,9 @@ namespace GHGameOfLife
         }
 
         //Values used only for Build2DBoard_user
-        private IEnumerable<int> __Valid_Lefts;
-        private IEnumerable<int> __Valid_Tops;
-        private int __Cursor_Left, __Cursor_Top;
+        private IEnumerable<int> Valid_Lefts;
+        private IEnumerable<int> Valid_Tops;
+        private int Cursor_Left, Cursor_Top;
         //------------------------------------------------------------------------------
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -55,33 +55,33 @@ namespace GHGameOfLife
         /// <param name="colMax">Number of columns</param>
         private Automata2D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
         {
-            this.__Board = new bool[rowMax, colMax];
+            this.Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
             switch(rule)
             {
                 case RuleTypes.Life:
-                    this.__Rule = Life;
+                    this.Rule = Life;
                     break;
                 case RuleTypes.Life_Without_Death:
-                    this.__Rule = LifeWithoutDeath;
+                    this.Rule = LifeWithoutDeath;
                     break;
                 case RuleTypes.Seeds:
-                    this.__Rule = Seeds;
+                    this.Rule = Seeds;
                     break;
                 case RuleTypes.Replicator:
-                    this.__Rule = Replicator;
+                    this.Rule = Replicator;
                     break;
                 case RuleTypes.Day_And_Night:
-                    this.__Rule = DayAndNight;
+                    this.Rule = DayAndNight;
                     break;
                 case RuleTypes.Life_34:
-                    this.__Rule = Life34;
+                    this.Rule = Life34;
                     break;
                 case RuleTypes.Diamoeba:
-                    this.__Rule = Diamoeba;
+                    this.Rule = Diamoeba;
                     break;
                 default:
-                    this.__Rule = Life;
+                    this.Rule = Life;
                     break;
             }
         }
@@ -110,7 +110,7 @@ namespace GHGameOfLife
                     newAutomata2D.Build2DBoard_User();
                     break;
             }
-            newAutomata2D.__Is_Initialized = true;
+            newAutomata2D.Is_Initialized = true;
             return newAutomata2D;
         } 
 //------------------------------------------------------------------------------
@@ -119,17 +119,17 @@ namespace GHGameOfLife
         /// </summary>
         public override void NextGeneration()
         {
-            var lastBoard = this.__Board;
+            var lastBoard = this.Board;
             var nextBoard = new bool[Rows, Cols];
             for (int r = 0; r < Rows; r++)
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = this.__Rule(r, c);
+                    nextBoard[r, c] = this.Rule(r, c);
                 }
             }
-            this.__Generation++;
-            this.__Board = nextBoard;                  
+            this.Generation++;
+            this.Board = nextBoard;                  
         }
 //------------------------------------------------------------------------------
         /// <summary>
@@ -141,7 +141,7 @@ namespace GHGameOfLife
         {
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
-            string write = "Generation " + __Generation;
+            string write = "Generation " + this.Generation;
             int left = (Console.WindowWidth / 2) - (write.Length / 2);
             Console.SetCursorPosition(left, 1);
             Console.Write(write);
@@ -151,12 +151,12 @@ namespace GHGameOfLife
 
             Console.SetCursorPosition(0, MenuHelper.Space);
             StringBuilder sb = new StringBuilder();
-            for (int r = 0; r < this.__Num_Rows; r++)
+            for (int r = 0; r < this.Rows; r++)
             {
                 sb.Append("    ║");
-                for (int c = 0; c < this.__Num_Cols; c++)
+                for (int c = 0; c < this.Cols; c++)
                 {
-                    if (!__Board[r, c])
+                    if (!Board[r, c])
                     {
                         sb.Append(Automata2D.DEAD_CELL);
                     }
@@ -185,7 +185,7 @@ namespace GHGameOfLife
         {
             var n = CountNeighbors_Moore(r, c);
 
-            if(this.__Board[r,c])
+            if(this.Board[r,c])
             {
                 return ((n == 2) || (n == 3));
             }
@@ -205,7 +205,7 @@ namespace GHGameOfLife
         /// <returns></returns>
         private bool LifeWithoutDeath(int r, int c)
         {
-            if (this.__Board[r, c])
+            if (this.Board[r, c])
             {
                 return true;
             }
@@ -225,7 +225,7 @@ namespace GHGameOfLife
         /// <returns></returns>
         private bool Seeds(int r, int c)
         {
-            if (this.__Board[r, c])
+            if (this.Board[r, c])
             {
                 return false;
             }
@@ -262,7 +262,7 @@ namespace GHGameOfLife
         {
             var n = CountNeighbors_Moore(r, c);
 
-            if (this.__Board[r, c])
+            if (this.Board[r, c])
             {
                 return ((n == 3) || (n == 4) || (n == 6) || (n == 7) || (n == 8));
             }
@@ -299,7 +299,7 @@ namespace GHGameOfLife
         {
             var n = CountNeighbors_Moore(r, c);
 
-            if (this.__Board[r, c])
+            if (this.Board[r, c])
             {
                 return ((n == 5) || (n == 6) || (n == 7) || (n == 8));
             }
@@ -320,7 +320,7 @@ namespace GHGameOfLife
         {
             if( range < 1 )
             {
-                return this.__Board[r, c] ? 1 : 0;
+                return this.Board[r, c] ? 1 : 0;
             }
 
             int n = 0;
@@ -332,9 +332,9 @@ namespace GHGameOfLife
                     {
                         continue;
                     }
-                    var currRow = (i + this.__Num_Rows) % this.__Num_Rows;
-                    var currCol = (j + this.__Num_Cols) % this.__Num_Cols;
-                    if (this.__Board[currRow, currCol]) n++;                  
+                    var currRow = (i + this.Rows) % this.Rows;
+                    var currCol = (j + this.Cols) % this.Cols;
+                    if (this.Board[currRow, currCol]) n++;                  
                 }
             }
 
@@ -355,7 +355,7 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < this.Cols; c++)
                 {
-                    this.__Board[r, c] = (rand.Next() % 2 == 0);
+                    this.Board[r, c] = (rand.Next() % 2 == 0);
                 }
             }
         }
@@ -571,13 +571,13 @@ namespace GHGameOfLife
             Console.SetBufferSize(this.Console_Width + 50, this.Console_Height);
             Console.ForegroundColor = ConsoleColor.White;
 
-            bool[,] tempBoard = new bool[__Valid_Tops.Count(), __Valid_Lefts.Count()];
+            bool[,] tempBoard = new bool[Valid_Tops.Count(), Valid_Lefts.Count()];
 
-            for (int i = 0; i < __Valid_Tops.Count(); i++)
+            for (int i = 0; i < Valid_Tops.Count(); i++)
             {
-                for (int j = 0; j < __Valid_Lefts.Count(); j++)
+                for (int j = 0; j < Valid_Lefts.Count(); j++)
                 {
-                    Console.SetCursorPosition(__Valid_Lefts.ElementAt(j), __Valid_Tops.ElementAt(i));
+                    Console.SetCursorPosition(Valid_Lefts.ElementAt(j), Valid_Tops.ElementAt(i));
                     Console.Write('*');
                     tempBoard[i, j] = false;
                 }
@@ -594,8 +594,8 @@ namespace GHGameOfLife
             int charLeft = blinkLeft + 1;
             int extraTop = 2;
 
-            __Cursor_Left = __Valid_Lefts.ElementAt(__Valid_Lefts.Count() / 2);
-            __Cursor_Top = __Valid_Tops.ElementAt(__Valid_Tops.Count() / 2);
+            Cursor_Left = Valid_Lefts.ElementAt(Valid_Lefts.Count() / 2);
+            Cursor_Top = Valid_Tops.ElementAt(Valid_Tops.Count() / 2);
             int nextLeft;
             int nextTop;
             bool exit = false;
@@ -611,7 +611,7 @@ namespace GHGameOfLife
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 MenuHelper.ClearLine(MenuHelper.Space - 3);
-                string positionStr = String.Format("Current position: ({0},{1})", __Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space);
+                string positionStr = String.Format("Current position: ({0},{1})", Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space);
                 Console.SetCursorPosition(this.Console_Width / 2 - positionStr.Length / 2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
@@ -624,20 +624,20 @@ namespace GHGameOfLife
                         int storeBoardLeft = loadedPopBounds.Left + loadedPopBounds.Width + 1;
                         int storeBoardTop = loadedPopBounds.Top;
 
-                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, storeBoardLeft, storeBoardTop);
-                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, loadedPopBounds.Width, loadedPopBounds.Height, __Cursor_Left, __Cursor_Top);
+                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, storeBoardLeft, storeBoardTop);
+                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, loadedPopBounds.Width, loadedPopBounds.Height, Cursor_Left, Cursor_Top);
                         System.Threading.Thread.Sleep(250);
-                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, loadedPopBounds.Left, loadedPopBounds.Top);
-                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, loadedPopBounds.Width, loadedPopBounds.Height, __Cursor_Left, __Cursor_Top);
+                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, loadedPopBounds.Left, loadedPopBounds.Top);
+                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, loadedPopBounds.Width, loadedPopBounds.Height, Cursor_Left, Cursor_Top);
                         System.Threading.Thread.Sleep(150);
                     }
                     else
                     {
-                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, 1, 1, charLeft, extraTop);
-                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, __Cursor_Left, __Cursor_Top);
+                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, 1, 1, charLeft, extraTop);
+                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, Cursor_Left, Cursor_Top);
                         System.Threading.Thread.Sleep(150);
-                        Console.MoveBufferArea(__Cursor_Left, __Cursor_Top, 1, 1, blinkLeft, extraTop);
-                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, __Cursor_Left, __Cursor_Top);
+                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, 1, 1, blinkLeft, extraTop);
+                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, Cursor_Left, Cursor_Top);
                         System.Threading.Thread.Sleep(150);
                     }
 
@@ -652,68 +652,68 @@ namespace GHGameOfLife
                         exit = true;
                         continue;
                     case ConsoleKey.RightArrow:
-                        nextLeft = ++__Cursor_Left;
+                        nextLeft = ++Cursor_Left;
                         if (popLoaderMode)
                         {
-                            if (nextLeft >= (__Valid_Lefts.Last() - loadedPopBounds.Width) + 2)
+                            if (nextLeft >= (Valid_Lefts.Last() - loadedPopBounds.Width) + 2)
                             {
-                                nextLeft = __Valid_Lefts.Min();
+                                nextLeft = Valid_Lefts.Min();
                             }
                         }
 
-                        if (!__Valid_Lefts.Contains(nextLeft))
+                        if (!Valid_Lefts.Contains(nextLeft))
                         {
-                            nextLeft = __Valid_Lefts.Min();
+                            nextLeft = Valid_Lefts.Min();
                         }
-                        __Cursor_Left = nextLeft;
+                        Cursor_Left = nextLeft;
                         break;
                     case ConsoleKey.LeftArrow:
-                        nextLeft = --__Cursor_Left;
+                        nextLeft = --Cursor_Left;
                         if (popLoaderMode)
                         {
-                            if (!__Valid_Lefts.Contains(nextLeft))
+                            if (!Valid_Lefts.Contains(nextLeft))
                             {
-                                nextLeft = (__Valid_Lefts.Last() - loadedPopBounds.Width) + 1;
+                                nextLeft = (Valid_Lefts.Last() - loadedPopBounds.Width) + 1;
                             }
                         }
 
-                        if (!__Valid_Lefts.Contains(nextLeft))
+                        if (!Valid_Lefts.Contains(nextLeft))
                         {
-                            nextLeft = __Valid_Lefts.Max();
+                            nextLeft = Valid_Lefts.Max();
                         }
-                        __Cursor_Left = nextLeft;
+                        Cursor_Left = nextLeft;
                         break;
                     case ConsoleKey.UpArrow:
-                        nextTop = --__Cursor_Top;
+                        nextTop = --Cursor_Top;
                         if (popLoaderMode)
                         {
-                            if (!__Valid_Tops.Contains(nextTop))
+                            if (!Valid_Tops.Contains(nextTop))
                             {
-                                nextTop = (__Valid_Tops.Last() - loadedPopBounds.Height) + 1;
+                                nextTop = (Valid_Tops.Last() - loadedPopBounds.Height) + 1;
                             }
                         }
 
-                        if (!__Valid_Tops.Contains(nextTop))
+                        if (!Valid_Tops.Contains(nextTop))
                         {
-                            nextTop = __Valid_Tops.Max();
+                            nextTop = Valid_Tops.Max();
                         }
-                        __Cursor_Top = nextTop;
+                        Cursor_Top = nextTop;
                         break;
                     case ConsoleKey.DownArrow:
-                        nextTop = ++__Cursor_Top;
+                        nextTop = ++Cursor_Top;
                         if (popLoaderMode)
                         {
-                            if (nextTop >= (__Valid_Tops.Last() - loadedPopBounds.Height) + 2)
+                            if (nextTop >= (Valid_Tops.Last() - loadedPopBounds.Height) + 2)
                             {
-                                nextTop = __Valid_Tops.Min();
+                                nextTop = Valid_Tops.Min();
                             }
                         }
 
-                        if (!__Valid_Tops.Contains(nextTop))
+                        if (!Valid_Tops.Contains(nextTop))
                         {
-                            nextTop = __Valid_Tops.Min();
+                            nextTop = Valid_Tops.Min();
                         }
-                        __Cursor_Top = nextTop;
+                        Cursor_Top = nextTop;
                         break;
                     case ConsoleKey.Spacebar:
                         if (popLoaderMode)
@@ -723,12 +723,12 @@ namespace GHGameOfLife
                             int popRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
                             int popCols = (loadedPopBounds.Right - loadedPopBounds.Left);
 
-                            for (int r = __Cursor_Top; r < __Cursor_Top + popRows; r++)
+                            for (int r = Cursor_Top; r < Cursor_Top + popRows; r++)
                             {
-                                for (int c = __Cursor_Left; c < __Cursor_Left + popCols; c++)
+                                for (int c = Cursor_Left; c < Cursor_Left + popCols; c++)
                                 {
                                     Console.SetCursorPosition(c, r);
-                                    if (smallPopVals[r - __Cursor_Top][c - __Cursor_Left])
+                                    if (smallPopVals[r - Cursor_Top][c - Cursor_Left])
                                     {
                                         if (tempBoard[r - MenuHelper.Space, c - MenuHelper.Space])
                                         {
@@ -748,8 +748,8 @@ namespace GHGameOfLife
                         }
                         else
                         {
-                            Console.SetCursorPosition(__Cursor_Left, __Cursor_Top);
-                            bool boardVal = !tempBoard[__Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space];
+                            Console.SetCursorPosition(Cursor_Left, Cursor_Top);
+                            bool boardVal = !tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space];
                             if (boardVal)
                             {
                                 Console.ForegroundColor = MenuHelper.Builder_FG;
@@ -760,7 +760,7 @@ namespace GHGameOfLife
                                 Console.ForegroundColor = MenuHelper.Default_FG;
                                 Console.Write('*');
                             }
-                            tempBoard[__Cursor_Top - MenuHelper.Space, __Cursor_Left - MenuHelper.Space] = boardVal;
+                            tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space] = boardVal;
                         }
                         break;
                     case ConsoleKey.D1:
@@ -813,7 +813,7 @@ namespace GHGameOfLife
                         }
                         break;
                     case ConsoleKey.S:
-                        ConsoleRunHelper.SaveBoard(__Valid_Tops.Count(), __Valid_Lefts.Count(), tempBoard);
+                        ConsoleRunHelper.SaveBoard(Valid_Tops.Count(), Valid_Lefts.Count(), tempBoard);
                         break;
                     case ConsoleKey.C:
                         popLoaderMode = false;
@@ -825,16 +825,16 @@ namespace GHGameOfLife
             }
 
             StringBuilder popString = new StringBuilder();
-            for (int r = 0; r < __Valid_Tops.Count(); r++)
+            for (int r = 0; r < Valid_Tops.Count(); r++)
             {
-                for (int c = 0; c < __Valid_Lefts.Count(); c++)
+                for (int c = 0; c < Valid_Lefts.Count(); c++)
                 {
                     if (tempBoard[r, c])
                         popString.Append('O');
                     else
                         popString.Append('.');
                 }
-                if (r != __Valid_Tops.Count() - 1)
+                if (r != Valid_Tops.Count() - 1)
                     popString.AppendLine();
             }
 
@@ -869,7 +869,7 @@ namespace GHGameOfLife
             bool loaded = false;
 
             // Checks if the loaded pop is going to fit in the window at the current cursor position
-            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
             {
                 popVals = new bool[rowsNum][];
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
@@ -918,7 +918,7 @@ namespace GHGameOfLife
             bool loaded = false;
             Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
 
-            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
             {
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                 {
@@ -965,7 +965,7 @@ namespace GHGameOfLife
 
             Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
 
-            if ((__Cursor_Left <= (__Valid_Lefts.Last() - colsNum) + 1) && (__Cursor_Top <= (__Valid_Tops.Last() - rowsNum) + 1))
+            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
             {
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                 {
@@ -1021,9 +1021,9 @@ namespace GHGameOfLife
                     int popCol = c - bounds.Left;
 
                     if (popByLine[popRow][popCol] == '.')
-                        this.__Board[r, c] = false;
+                        this.Board[r, c] = false;
                     else
-                        this.__Board[r, c] = true;
+                        this.Board[r, c] = true;
                 }
             }
         }
@@ -1066,8 +1066,8 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         private void CalcBuilderBounds()
         {
-            this.__Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
-            this.__Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
+            this.Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
+            this.Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
         }
 //------------------------------------------------------------------------------
     } // end class

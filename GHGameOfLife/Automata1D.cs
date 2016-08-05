@@ -16,25 +16,25 @@ namespace GHGameOfLife
         public enum BuildTypes { Random, Single };
         public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_73, Rule_90, Rule_129, Rule_193 };
 
-        private bool[] __Current_Row;
-        private bool[][] __Entire_Board;
+        private bool[] Current_Row;
+        private bool[][] Entire_Board;
         private const char LIVE_CELL = '█';
         private const char DEAD_CELL = ' ';
-        private int __Print_Row;
-        private Rule1D __Rule;
-        private List<ConsoleColor> __Print_Colors;
-        private Random __Rand;
+        private int Print_Row;
+        private Rule1D Rule;
+        private List<ConsoleColor> Print_Colors;
+        private Random Rand;
 
-        public override bool[,] Board
+        public override bool[,] Board_Copy
         {
             get
             {
-                var temp = new bool[this.__Num_Rows, this.__Num_Cols];
-                for( int r = 0; r < this.__Num_Rows; r++ )
+                var temp = new bool[this.Rows, this.Cols];
+                for( int r = 0; r < this.Rows; r++ )
                 {
-                    for( int c = 0; c < this.__Num_Cols; c++ )
+                    for( int c = 0; c < this.Cols; c++ )
                     {
-                        temp[r, c] = this.__Entire_Board[r][c];
+                        temp[r, c] = this.Entire_Board[r][c];
                     }
                 }
                 return temp;
@@ -43,46 +43,46 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private Automata1D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
         {
-            this.__Print_Row = 0;
-            this.__Current_Row = new bool[this.__Num_Cols];
-            this.__Entire_Board = new bool[this.__Num_Rows][];
-            this.__Rand = new Random();
+            this.Print_Row = 0;
+            this.Current_Row = new bool[this.Cols];
+            this.Entire_Board = new bool[this.Rows][];
+            this.Rand = new Random();
 
             var allColors = Enum.GetValues(typeof(ConsoleColor));
-            this.__Print_Colors = new List<ConsoleColor>();
+            this.Print_Colors = new List<ConsoleColor>();
             foreach(ConsoleColor color in allColors)
             {
                 if(color != ConsoleColor.Black)
                 {
-                    this.__Print_Colors.Add(color);
+                    this.Print_Colors.Add(color);
                 }
             }
 
             switch(rule)
             {
                 case RuleTypes.Rule_30:
-                    this.__Rule = Rule30;
+                    this.Rule = Rule30;
                     break;
                 case RuleTypes.Rule_90:
-                    this.__Rule = Rule90;
+                    this.Rule = Rule90;
                     break;
                 case RuleTypes.Rule_1:
-                    this.__Rule = Rule1;
+                    this.Rule = Rule1;
                     break;
                 case RuleTypes.Rule_73:
-                    this.__Rule = Rule73;
+                    this.Rule = Rule73;
                     break;
                 case RuleTypes.Rule_129:
-                    this.__Rule = Rule129;
+                    this.Rule = Rule129;
                     break;
                 case RuleTypes.Rule_18:
-                    this.__Rule = Rule18;
+                    this.Rule = Rule18;
                     break;
                 case RuleTypes.Rule_193:
-                    this.__Rule = Rule193;
+                    this.Rule = Rule193;
                     break;
                 default:
-                    this.__Rule = Rule90;
+                    this.Rule = Rule90;
                     break;
             }
         }
@@ -99,7 +99,7 @@ namespace GHGameOfLife
                     newAutomata1D.Build1DBoard_Single();
                     break;
             }
-            newAutomata1D.__Is_Initialized = true;
+            newAutomata1D.Is_Initialized = true;
             return newAutomata1D;
         }
 //-----------------------------------------------------------------------------
@@ -109,25 +109,25 @@ namespace GHGameOfLife
         /// </summary>
         public override void NextGeneration()
         {
-            var nextRow = new bool[this.__Num_Cols];
-            for( int i = 0; i < __Num_Cols; i++ )
+            var nextRow = new bool[this.Cols];
+            for( int i = 0; i < Cols; i++ )
             {
-                nextRow[(i + this.__Num_Cols) % this.__Num_Cols] = this.__Rule(i);
+                nextRow[(i + this.Cols) % this.Cols] = this.Rule(i);
             }
 
             //Shift the entire board up if it is already filled, and place this new row
             //at the bottom
-            if (this.__Print_Row >= this.__Num_Rows)
+            if (this.Print_Row >= this.Rows)
             {
-                this.__Entire_Board = GenericHelp<bool>.ShiftUp(this.__Entire_Board);
-                this.__Entire_Board[(this.__Num_Rows - 1)] = nextRow;
+                this.Entire_Board = GenericHelp<bool>.ShiftUp(this.Entire_Board);
+                this.Entire_Board[(this.Rows - 1)] = nextRow;
             }
             else
             {
-                this.__Entire_Board[this.__Print_Row] = nextRow;
+                this.Entire_Board[this.Print_Row] = nextRow;
             }
 
-            this.__Current_Row = nextRow;
+            this.Current_Row = nextRow;
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -138,7 +138,7 @@ namespace GHGameOfLife
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Board_FG;
 
-            if( this.__Print_Row >= this.__Num_Rows )
+            if( this.Print_Row >= this.Rows )
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
@@ -146,24 +146,22 @@ namespace GHGameOfLife
                 //Magic numbers: 
                 //      srcTop -> +1 because we skip the first row of data
                 //      srcHeight -> -1 because we skip the first row of data
-                Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.__Num_Cols, this.__Num_Rows-1, MenuHelper.Space, MenuHelper.Space);
-                --this.__Print_Row;
+                Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.Cols, this.Rows-1, MenuHelper.Space, MenuHelper.Space);
+                --this.Print_Row;
             }
-            Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.__Print_Row);
+            Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.Print_Row);
             var printRow = new StringBuilder();
-            //printRow.Append("    ║");
-            foreach (bool val in this.__Current_Row)
+            foreach (bool val in this.Current_Row)
             {
                 if (val)
                     printRow.Append(LIVE_CELL);
                 else
                     printRow.Append(DEAD_CELL);
             }
-            //printRow.Append("║");
 
-            Console.ForegroundColor = this.__Print_Colors[this.__Rand.Next(this.__Print_Colors.Count)];
+            Console.ForegroundColor = this.Print_Colors[this.Rand.Next(this.Print_Colors.Count)];
             Console.Write(printRow);
-            this.__Print_Row++;
+            this.Print_Row++;
 
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Default_FG;
@@ -174,17 +172,17 @@ namespace GHGameOfLife
         /// </summary>
         private void Build1DBoard_Random()
         {
-            for (int i = 0; i < this.__Num_Cols; i++)
+            for (int i = 0; i < this.Cols; i++)
             {
-                this.__Current_Row[i] = (this.__Rand.Next() % 2 == 0);
+                this.Current_Row[i] = (this.Rand.Next() % 2 == 0);
             }
-            this.__Entire_Board[0] = this.__Current_Row;
+            this.Entire_Board[0] = this.Current_Row;
         }
 //-----------------------------------------------------------------------------
         private void Build1DBoard_Single()
         {
-            this.__Current_Row[this.__Num_Cols / 2] = true;
-            this.__Entire_Board[0] = this.__Current_Row;
+            this.Current_Row[this.Cols / 2] = true;
+            this.Entire_Board[0] = this.Current_Row;
         }
 //-----------------------------------------------------------------------------
 //  Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
@@ -264,7 +262,7 @@ namespace GHGameOfLife
                         keyBuilder.Append("R");
                     }
                 }
-                neighbors[keyBuilder.ToString()] = this.__Current_Row[((col + n) + this.__Num_Cols) % this.__Num_Cols];
+                neighbors[keyBuilder.ToString()] = this.Current_Row[((col + n) + this.Cols) % this.Cols];
             }
             return neighbors;
         }
