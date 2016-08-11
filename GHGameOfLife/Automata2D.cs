@@ -10,7 +10,7 @@ namespace GHGameOfLife
 {
     /// <summary>
     /// This class pretty much does everything. It sets up the console, 
-    /// fills in the initial pop from a file or randomly, and then 
+    /// fills in the initial pop from the given BuildType and then 
     /// does all the checking for living/dying of the population.
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ namespace GHGameOfLife
         delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
         public enum RuleTypes { Life, Life_Without_Death, Life_34, Seeds, Replicator, Day_And_Night,
-                                Diamoeba };
+                                Diamoeba, Morley };
 
         private bool[,] Board;
         private const char LIVE_CELL = '☺';
@@ -79,6 +79,9 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Diamoeba:
                     this.Rule = Diamoeba;
+                    break;
+                case RuleTypes.Morley:
+                    this.Rule = Morley;
                     break;
                 default:
                     this.Rule = Life;
@@ -306,6 +309,28 @@ namespace GHGameOfLife
             else
             {
                 return ((n == 3) || (n == 5) || (n == 6) || (n == 7) || (n == 8));
+            }
+        }
+//------------------------------------------------------------------------------
+        /// <summary>
+        /// Morley rules
+        /// Live cells stay alive if they have 2,4, or 5 neighbors.
+        /// Dead cells turn live if they have 3,6, or 8 neighbors.
+        /// </summary>
+        /// <param name="r">row of tile to check</param>
+        /// <param name="c">col of tile to check</param>
+        /// <returns></returns>
+        private bool Morley(int r, int c)
+        {
+            var n = CountNeighbors_Moore(r, c);
+
+            if (this.Board[r, c])
+            {
+                return ((n == 2) || (n == 4) || (n == 5));
+            }
+            else
+            {
+                return ((n == 3) || (n == 6) || (n == 8));
             }
         }
 //------------------------------------------------------------------------------

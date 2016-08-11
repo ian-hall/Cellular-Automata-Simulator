@@ -14,7 +14,8 @@ namespace GHGameOfLife
     {
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_73, Rule_90, Rule_129, Rule_193 };
+        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
+                               Rule_129, Rule_193 };
 
         private bool[] Current_Row;
         private bool[][] Entire_Board;
@@ -80,6 +81,12 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Rule_193:
                     this.Rule = Rule193;
+                    break;
+                case RuleTypes.Rule_94:
+                    this.Rule = Rule94;
+                    break;
+                case RuleTypes.Rule_57:
+                    this.Rule = Rule57;
                     break;
                 default:
                     this.Rule = Rule90;
@@ -227,6 +234,18 @@ namespace GHGameOfLife
         {
             var neighbors = GetNeighbors(col);
             return neighbors["P"] ^ (neighbors["P"] | neighbors["Q"] | !neighbors["R"]) ^ neighbors["Q"];
+        }
+//-----------------------------------------------------------------------------
+        private bool Rule94(int col)
+        {
+            var neighbors = GetNeighbors(col);
+            return neighbors["P"] & neighbors["R"] ^ (neighbors["P"] | neighbors["Q"] | neighbors["R"]);
+        }
+//-----------------------------------------------------------------------------
+        private bool Rule57(int col)
+        {
+            var neighbors = GetNeighbors(col);
+            return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
         /// <summary>
