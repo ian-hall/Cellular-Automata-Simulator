@@ -86,13 +86,9 @@ namespace GHGameOfLife
                                             "[SPACE] Add/Remove cells",
                                             "[ENTER] Start Game",
                                             "[S] Save board",
-                                            "[C] Cancel pop mode",
+                                            "[[#]] Load/Rotate pop",
                                             "[Ctrl + [#]] Mirror pop",
-                                            "[[#]] Load/Rotate pop"};
-
-            
-
-
+                                            "[C] Cancel pop mode"};
         }
 //------------------------------------------------------------------------------
         public static void ReInitialize()
@@ -219,29 +215,29 @@ namespace GHGameOfLife
         public static void PrintCreationControls()
         {
             Console.ForegroundColor = MenuHelper.Info_FG;
-            int printStart = (Console.WindowHeight) - 4;
+            int printStart = Console.WindowHeight - 4;
             int printRow = printStart;
+            var textWidth = 25;
 
             Console.SetCursorPosition(5, printRow);            
-            Console.Write("{0,-25}{1,-25}",Create_Ctrls[0],Create_Ctrls[4]);
+            Console.Write("{0,-25}{1,-25}{2,-25}",Create_Ctrls[0], Create_Ctrls[4], Create_Ctrls[2]);
             Console.SetCursorPosition(5, ++printRow);
             Console.Write("{0,-25}{1,-25}",Create_Ctrls[1], Create_Ctrls[5]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}",Create_Ctrls[2], Create_Ctrls[6]);
-            Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Create_Ctrls[3],"");
+            Console.Write("{0,-25}{1,-25}",Create_Ctrls[3], Create_Ctrls[6]);
             
-            //Each pop gets a space of 20 cols to write to
-            //We start at 55 because the above messages have a space of 50, plus the 5 for the border
-            //We allow 4 pops to display per column, with a max of 2 columns because of the min window
-            //size of 100
-            int count = 0;
+            /* Start count at 1 because of the above. Need to limit this to 3 entries per column because
+             * of the scroll bar that shows up. printCol is calculated based on the above since we start
+             * printing the pops directly beneath the last entry.
+             */ 
+            int count = 1;
             printRow = printStart;
             foreach(string popName in Builder_Pops)
             {
-                printRow = printStart + (count % 4);
-                Console.SetCursorPosition(55 + (20*(count/4)), printRow);
-                Console.Write("[{0}]{1,-17}",Builder_Pops.IndexOf(popName)+1, popName);
+                printRow = printStart + (count % 3);
+                var printCol = 5 + (textWidth * (2 + count / 3));
+                Console.SetCursorPosition(printCol, printRow);
+                Console.Write("[{0}]{1,-25}",Builder_Pops.IndexOf(popName)+1, popName);
                 ++count;
                 ++printRow;
             }
