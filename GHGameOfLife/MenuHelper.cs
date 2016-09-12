@@ -13,6 +13,7 @@ namespace GHGameOfLife
     {
         // TODO: Change this to be less ugly maybe?
         //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
+        //          Display the chosen rule set on the screen
         public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG    = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
@@ -399,7 +400,7 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Displays options in a paged fashion.
-        /// TODO: 1-7 are used to select an option
+        ///       1-7 are used to select an option
         ///       8 goes back to prev page
         ///       9 goes to next page
         ///       0 cancels

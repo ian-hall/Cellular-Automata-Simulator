@@ -144,7 +144,6 @@ namespace GHGameOfLife
         ///             if 2d   -> prompt for which rule (once implemented)
         ///                     -> prompt for type of starting population
         ///                         -> prompt for resource if needed
-        /// TODO: Change rule selection to be paged
         /// </summary>
         private static void NewMenu()
         {

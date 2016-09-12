@@ -25,6 +25,7 @@ namespace GHGameOfLife
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
         private Rule2D Rule;
+        private string Loaded_Population = "";
 
         public override bool[,] Board_Copy
         {
@@ -148,6 +149,10 @@ namespace GHGameOfLife
             int left = (Console.WindowWidth / 2) - (write.Length / 2);
             Console.SetCursorPosition(left, 1);
             Console.Write(write);
+            MenuHelper.ClearLine(2);
+            Console.SetCursorPosition(left, 2);
+            Console.Write(this.Loaded_Population);
+
 
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Board_FG;
@@ -428,7 +433,6 @@ namespace GHGameOfLife
 //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from a resource
-        /// TODO: Add the name of the resource to the screen
         /// </summary>
         /// <param name="res"></param>
         private void Build2DBoard_Resource(string res)
@@ -439,6 +443,7 @@ namespace GHGameOfLife
 
             if (isValidResource)
             {
+                this.Loaded_Population = res;
                 this.FillBoard(startingPop);
             }
             else
