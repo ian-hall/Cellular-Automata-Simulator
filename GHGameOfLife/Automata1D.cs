@@ -12,6 +12,7 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata1D : ConsoleAutomata
     {
+        //TODO: Add support for rules of form "R1,W6E"
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
         public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
