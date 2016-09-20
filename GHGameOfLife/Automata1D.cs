@@ -12,10 +12,10 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata1D : ConsoleAutomata
     {
-        //TODO: Add support for rules of form "R1,W6E"
+        //TODO: Finish adding support for this stuff: http://psoup.math.wisc.edu/mcell/rullex_1dbi.html
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
+        public enum RuleTypes {Rule_1, Rule_18, Test_Format, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
                                Rule_129, Rule_193 };
 
         private bool[] Current_Row;
@@ -88,6 +88,9 @@ namespace GHGameOfLife
                     break;
                 case RuleTypes.Rule_57:
                     this.Rule = Rule57;
+                    break;
+                case RuleTypes.Test_Format:
+                    this.Rule = Test_Rule;
                     break;
                 default:
                     this.Rule = Rule90;
@@ -247,6 +250,49 @@ namespace GHGameOfLife
         {
             var neighbors = GetNeighbors(col);
             return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
+        }
+//-----------------------------------------------------------------------------
+        private bool Test_Rule(int col)
+        {
+            //Equiv to Rule 18
+            var ruleStr = "R1,W12".Split(',');
+
+            //TODO: Abstract out so this is only run once on initialization and return the dictionary of values
+            var range = int.Parse(ruleStr[0].Substring(1));
+            var numNeighbors = 1 + 2 * range;
+            var numRuleValues = (int)Math.Pow(2, numNeighbors);
+            var hex = ruleStr[1].Substring(1);
+            var binList = new List<string>();
+            for (int i = 0; i < numRuleValues; i++)
+            {
+                binList.Add(Convert.ToString(i, 2).PadLeft(numNeighbors, '0'));
+            }
+            //TODO: Change this to go directly from hex to binary instead of what i'm doing to support larger number of neighbors
+            var ruleVals = Convert.ToString(Convert.ToInt64(hex, 16), 2).PadLeft(numRuleValues, '0');
+            var rule = new Dictionary<string, bool>();
+            for (int i = 0; i < numRuleValues; i++)
+            {
+                var currRule = binList[numRuleValues - 1 - i];
+                var val = ruleVals[i];
+                rule[currRule] = (val == '1') ? true : false;
+            }
+
+            //TODO: Abstract this out as a new GetNeighbors method that returns a string
+            var sb = new StringBuilder();
+            for (int n = range * -1; n <= range; n++)
+            {
+                if(this.Current_Row[((col + n) + this.Cols) % this.Cols])
+                {
+                    sb.Append('1');
+                }
+                else
+                {
+                    sb.Append('0');
+                }
+            }
+
+
+            return rule[sb.ToString()];
         }
 //-----------------------------------------------------------------------------
         /// <summary>
