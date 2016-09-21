@@ -25,7 +25,10 @@ namespace GHGameOfLife
         private int Print_Row;
         private Rule1D Rule;
         private List<ConsoleColor> Print_Colors;
-        private Random Rand;
+        private Random Rng;
+
+        private Dictionary<string, bool> RulesDict;
+        private bool RulesDict_Initialized = false;
 
         public override bool[,] Board_Copy
         {
@@ -48,7 +51,7 @@ namespace GHGameOfLife
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
             this.Entire_Board = new bool[this.Rows][];
-            this.Rand = new Random();
+            this.Rng = new Random();
 
             var allColors = Enum.GetValues(typeof(ConsoleColor));
             this.Print_Colors = new List<ConsoleColor>();
@@ -154,9 +157,6 @@ namespace GHGameOfLife
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
-                //Magic numbers: 
-                //      srcTop -> +1 because we skip the first row of data
-                //      srcHeight -> -1 because we skip the first row of data
                 Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.Cols, this.Rows-1, MenuHelper.Space, MenuHelper.Space);
                 --this.Print_Row;
             }
@@ -170,7 +170,7 @@ namespace GHGameOfLife
                     printRow.Append(DEAD_CELL);
             }
 
-            Console.ForegroundColor = this.Print_Colors[this.Rand.Next(this.Print_Colors.Count)];
+            Console.ForegroundColor = this.Print_Colors[this.Rng.Next(this.Print_Colors.Count)];
             Console.Write(printRow);
             this.Print_Row++;
 
@@ -185,7 +185,7 @@ namespace GHGameOfLife
         {
             for (int i = 0; i < this.Cols; i++)
             {
-                this.Current_Row[i] = (this.Rand.Next() % 2 == 0);
+                this.Current_Row[i] = (this.Rng.Next() % 2 == 0);
             }
             this.Entire_Board[0] = this.Current_Row;
         }
@@ -254,45 +254,16 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private bool Test_Rule(int col)
         {
-            //Equiv to Rule 18
-            var ruleStr = "R1,W12".Split(',');
-
-            //TODO: Abstract out so this is only run once on initialization and return the dictionary of values
-            var range = int.Parse(ruleStr[0].Substring(1));
-            var numNeighbors = 1 + 2 * range;
-            var numRuleValues = (int)Math.Pow(2, numNeighbors);
-            var hex = ruleStr[1].Substring(1);
-            var binList = new List<string>();
-            for (int i = 0; i < numRuleValues; i++)
+            var ruleStr = "R3,W39C0EE4F7FA96F93B4D32B09ED0E0";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            var hex = ruleStr.Split(',')[1].Substring(1);
+            if ( !RulesDict_Initialized )
             {
-                binList.Add(Convert.ToString(i, 2).PadLeft(numNeighbors, '0'));
+                this.RulesDict = BuildRulesDict(hex, range);
+                this.RulesDict_Initialized = true;
             }
-            //TODO: Change this to go directly from hex to binary instead of what i'm doing to support larger number of neighbors
-            var ruleVals = Convert.ToString(Convert.ToInt64(hex, 16), 2).PadLeft(numRuleValues, '0');
-            var rule = new Dictionary<string, bool>();
-            for (int i = 0; i < numRuleValues; i++)
-            {
-                var currRule = binList[numRuleValues - 1 - i];
-                var val = ruleVals[i];
-                rule[currRule] = (val == '1') ? true : false;
-            }
-
-            //TODO: Abstract this out as a new GetNeighbors method that returns a string
-            var sb = new StringBuilder();
-            for (int n = range * -1; n <= range; n++)
-            {
-                if(this.Current_Row[((col + n) + this.Cols) % this.Cols])
-                {
-                    sb.Append('1');
-                }
-                else
-                {
-                    sb.Append('0');
-                }
-            }
-
-
-            return rule[sb.ToString()];
+            var neighborhood = GetNeighborsBinary(col, range);
+            return this.RulesDict[neighborhood];
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -331,6 +302,92 @@ namespace GHGameOfLife
                 neighbors[keyBuilder.ToString()] = this.Current_Row[((col + n) + this.Cols) % this.Cols];
             }
             return neighbors;
+        }
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Function that returns a binary string representing the values of a neighborhood with the given range.
+        /// </summary>
+        /// <param name="col">center of the neighborhood</param>
+        /// <param name="range">how far from the center to go</param>
+        /// <returns>Binary string representing the neighborhood.</returns>
+        private string GetNeighborsBinary(int col, int range)
+        {
+            range = Math.Abs(range);
+            var sb = new StringBuilder();
+            for (int n = range * -1; n <= range; n++)
+            {
+                if (this.Current_Row[((col + n) + this.Cols) % this.Cols])
+                {
+                    sb.Append('1');
+                }
+                else
+                {
+                    sb.Append('0');
+                }
+            }
+            return sb.ToString();
+        }
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Returns a dictionary with keys being binary strings and values being a boolean representing the next state of the center bit in the bin string.
+        /// </summary>
+        /// <param name="hex">A hex string representing the wolfram code of an automata rule.</param>
+        /// <param name="range">The neighborhood size that the rule is based on.</param>
+        /// <returns></returns>
+        private Dictionary<string,bool> BuildRulesDict(string hex, int range)
+        {
+            var numNeighbors = 1 + 2 * range;
+            var numRuleValues = (int)Math.Pow(2, numNeighbors);
+            var binList = new List<string>();
+            for (int i = 0; i < numRuleValues; i++)
+            {
+                binList.Add(Convert.ToString(i, 2).PadLeft(numNeighbors, '0'));
+            }
+            //var ruleVals = Convert.ToString(Convert.ToInt64(hex, 16), 2).PadLeft(numRuleValues, '0');
+            var ruleVals = HexToBin(hex).PadLeft(numRuleValues, '0'); ;
+            var rule = new Dictionary<string, bool>();
+            for (int i = 0; i < numRuleValues; i++)
+            {
+                var currRule = binList[numRuleValues - 1 - i];
+                var val = ruleVals[i];
+                rule[currRule] = (val == '1') ? true : false;
+            }
+            return rule;
+        }
+//-----------------------------------------------------------------------------
+        /// <summary>
+        /// Converts a string of hex to a string of binary.
+        /// </summary>
+        /// <param name="hex">a string of hex</param>
+        /// <returns>a string of binary</returns>
+        private string HexToBin(string hex)
+        {
+            //kill me
+            var lol = new Dictionary<char, string>()
+            {
+                {'0',"0000" },
+                {'1',"0001" },
+                {'2',"0010" },
+                {'3',"0011" },
+                {'4',"0100" },
+                {'5',"0101" },
+                {'6',"0110" },
+                {'7',"0111" },
+                {'8',"1000" },
+                {'9',"1001" },
+                {'A',"1010" },
+                {'B',"1011" },
+                {'C',"1100" },
+                {'D',"1101" },
+                {'E',"1110" },
+                {'F',"1111" }
+            };
+            var sb = new StringBuilder();
+            foreach(var c in hex)
+            {
+                sb.Append(lol[c]);
+            }
+            return sb.ToString();
         }
 //-----------------------------------------------------------------------------
     }
