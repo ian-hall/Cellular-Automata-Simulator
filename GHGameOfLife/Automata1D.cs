@@ -15,8 +15,8 @@ namespace GHGameOfLife
         //TODO: Finish adding support for this stuff: http://psoup.math.wisc.edu/mcell/rullex_1dbi.html
         delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes {Rule_1, Rule_18, Test_Format, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
-                               Rule_129, Rule_193 };
+        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
+                               Rule_129, Rule_193, Bermuda_Triangle, Fish_Bones, Glider_P168, R3_Gliders };
 
         private bool[] Current_Row;
         private bool[][] Entire_Board;
@@ -27,8 +27,8 @@ namespace GHGameOfLife
         private List<ConsoleColor> Print_Colors;
         private Random Rng;
 
-        private Dictionary<string, bool> RulesDict;
-        private bool RulesDict_Initialized = false;
+        private Dictionary<string, bool> RuleDict;
+        private bool RuleDict_Initialized = false;
 
         public override bool[,] Board_Copy
         {
@@ -92,8 +92,17 @@ namespace GHGameOfLife
                 case RuleTypes.Rule_57:
                     this.Rule = Rule57;
                     break;
-                case RuleTypes.Test_Format:
-                    this.Rule = Test_Rule;
+                case RuleTypes.Bermuda_Triangle:
+                    this.Rule = Bermuda_Triangle;
+                    break;
+                case RuleTypes.Fish_Bones:
+                    this.Rule = Fish_Bones;
+                    break;
+                case RuleTypes.Glider_P168:
+                    this.Rule = Glider_P168;
+                    break;
+                case RuleTypes.R3_Gliders:
+                    this.Rule = R3_Glider;
                     break;
                 default:
                     this.Rule = Rule90;
@@ -252,18 +261,60 @@ namespace GHGameOfLife
             return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
-        private bool Test_Rule(int col)
+        private bool Bermuda_Triangle(int col)
         {
-            var ruleStr = "R3,W39C0EE4F7FA96F93B4D32B09ED0E0";
+            var ruleStr = "R2,WBC82271C";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
             var hex = ruleStr.Split(',')[1].Substring(1);
-            if ( !RulesDict_Initialized )
+            if (!RuleDict_Initialized)
             {
-                this.RulesDict = BuildRulesDict(hex, range);
-                this.RulesDict_Initialized = true;
+                this.RuleDict = BuildRulesDict(hex, range);
+                this.RuleDict_Initialized = true;
             }
             var neighborhood = GetNeighborsBinary(col, range);
-            return this.RulesDict[neighborhood];
+            return this.RuleDict[neighborhood];
+        }
+//-----------------------------------------------------------------------------
+        private bool Fish_Bones(int col)
+        {
+            var ruleStr = "R2,W5F0C9AD8";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            var hex = ruleStr.Split(',')[1].Substring(1);
+            if (!RuleDict_Initialized)
+            {
+                this.RuleDict = BuildRulesDict(hex, range);
+                this.RuleDict_Initialized = true;
+            }
+            var neighborhood = GetNeighborsBinary(col, range);
+            return this.RuleDict[neighborhood];
+        }
+//-----------------------------------------------------------------------------
+        private bool Glider_P168(int col)
+        {
+            var ruleStr = "R2,W6C1E53A8";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            var hex = ruleStr.Split(',')[1].Substring(1);
+            if (!RuleDict_Initialized)
+            {
+                this.RuleDict = BuildRulesDict(hex, range);
+                this.RuleDict_Initialized = true;
+            }
+            var neighborhood = GetNeighborsBinary(col, range);
+            return this.RuleDict[neighborhood];
+        }
+//-----------------------------------------------------------------------------
+        private bool R3_Glider(int col)
+        {
+            var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            var hex = ruleStr.Split(',')[1].Substring(1);
+            if (!RuleDict_Initialized)
+            {
+                this.RuleDict = BuildRulesDict(hex, range);
+                this.RuleDict_Initialized = true;
+            }
+            var neighborhood = GetNeighborsBinary(col, range);
+            return this.RuleDict[neighborhood];
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -343,7 +394,6 @@ namespace GHGameOfLife
             {
                 binList.Add(Convert.ToString(i, 2).PadLeft(numNeighbors, '0'));
             }
-            //var ruleVals = Convert.ToString(Convert.ToInt64(hex, 16), 2).PadLeft(numRuleValues, '0');
             var ruleVals = HexToBin(hex).PadLeft(numRuleValues, '0'); ;
             var rule = new Dictionary<string, bool>();
             for (int i = 0; i < numRuleValues; i++)

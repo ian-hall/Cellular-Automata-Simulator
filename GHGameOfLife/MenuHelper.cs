@@ -343,7 +343,7 @@ namespace GHGameOfLife
         }
 //------------------------------------------------------------------------------
         /// <summary>
-        /// Prints a menu from the given choses
+        /// Prints a menu from the given choices
         /// </summary>
         /// <param name="choices">IEnumerable<string> of choices to display</param>
         public static void PrintMenuFromList(IEnumerable<string> choices)
