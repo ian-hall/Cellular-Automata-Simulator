@@ -15,16 +15,13 @@
         protected bool pr_Initialized;
         protected int pr_Rows;
         protected int pr_Cols;
-        protected int pr_Console_Height;
-        protected int pr_Console_Width;
-        protected int pr_Generation;
+        protected int Console_Height;
+        protected int Console_Width;
+        protected int Generation;
 
         public bool Is_Initialized { get { return this.pr_Initialized; } protected set { this.pr_Initialized = value; } }
         public int Rows { get { return this.pr_Rows; } protected set { this.pr_Rows = value; } }
         public int Cols { get { return this.pr_Cols; } protected set { this.pr_Cols = value; } }
-        public int Console_Height { get { return this.pr_Console_Height; } protected set { this.pr_Console_Height = value; } }
-        public int Console_Width { get { return this.pr_Console_Width; } protected set { this.pr_Console_Width = value; } }
-        public int Generation { get { return this.pr_Generation; } protected set { this.pr_Generation = value; } }
         public bool Is_Wrapping { get; set; }
         public abstract bool[,] Board_Copy { get; }
 //-----------------------------------------------------------------------------
