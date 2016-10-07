@@ -13,7 +13,7 @@ namespace GHGameOfLife
     class Automata1D : ConsoleAutomata
     {
         //TODO: Finish adding support for this stuff: http://psoup.math.wisc.edu/mcell/rullex_1dbi.html
-        delegate bool Rule1D(int col);
+        private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
         public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
                                Rule_129, Rule_193, Bermuda_Triangle, Fish_Bones, Glider_P168, R3_Gliders };
@@ -108,6 +108,10 @@ namespace GHGameOfLife
                     this.Rule = Rule90;
                     break;
             }
+            //TODO: Use this to just call some kind of GetRule method or something instead of the above switch
+            //var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            //var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule"));
+            //this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, temp2.First()) as Rule1D;
         }
 //-----------------------------------------------------------------------------
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType)
