@@ -151,8 +151,8 @@ namespace GHGameOfLife
                                                   "2) 2D Automata",
                                                   "3) Exit"};
 
-            var ruleTypes1D = Enum.GetValues(typeof(Automata1D.RuleTypes));
-            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(ruleTypes1D);
+            //var ruleTypes1D = Enum.GetValues(typeof(Automata1D.RuleTypes));
+            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Automata1D.RuleTypes);
 
             var initTypes1D = Enum.GetValues(typeof(Automata1D.BuildTypes));
             var initTypes1DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes1D);
@@ -365,7 +365,7 @@ namespace GHGameOfLife
                 {
                     case 1:
                         //1D automata
-                        var ruleVal1D = (Automata1D.RuleTypes)(ruleChoice);
+                        var ruleVal1D = Automata1D.RuleTypes[ruleChoice];
                         var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
                         var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D, ruleVal1D);

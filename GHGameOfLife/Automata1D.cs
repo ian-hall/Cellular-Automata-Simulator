@@ -15,8 +15,8 @@ namespace GHGameOfLife
         //TODO: Finish adding support for this stuff: http://psoup.math.wisc.edu/mcell/rullex_1dbi.html
         private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
-                               Rule_129, Rule_193, Bermuda_Triangle, Fish_Bones, Glider_P168, R3_Gliders };
+        //public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
+        //                       Rule_129, Rule_193, Bermuda_Triangle, Fish_Bones, Glider_P168, R3_Gliders };
 
         private bool[] Current_Row;
         private bool[][] Entire_Board;
@@ -29,6 +29,14 @@ namespace GHGameOfLife
 
         private Dictionary<string, bool> RuleDict;
         private bool RuleDict_Initialized = false;
+
+        private static IEnumerable<System.Reflection.MethodInfo> All_Rules
+        {
+            get
+            {
+                return typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
+            }
+        }
 
         public override bool[,] Board_Copy
         {
@@ -45,8 +53,16 @@ namespace GHGameOfLife
                 return temp;
             }
         }
+
+        public static string[] RuleTypes
+        {
+            get
+            {
+                return All_Rules.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+            }
+        }
 //-----------------------------------------------------------------------------
-        private Automata1D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
+        private Automata1D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
@@ -62,61 +78,18 @@ namespace GHGameOfLife
                     this.Print_Colors.Add(color);
                 }
             }
-
-            switch(rule)
-            {
-                case RuleTypes.Rule_30:
-                    this.Rule = Rule_Rule_30;
-                    break;
-                case RuleTypes.Rule_90:
-                    this.Rule = Rule_Rule_90;
-                    break;
-                case RuleTypes.Rule_1:
-                    this.Rule = Rule_Rule_1;
-                    break;
-                case RuleTypes.Rule_73:
-                    this.Rule = Rule_Rule_73;
-                    break;
-                case RuleTypes.Rule_129:
-                    this.Rule = Rule_Rule_129;
-                    break;
-                case RuleTypes.Rule_18:
-                    this.Rule = Rule_Rule_18;
-                    break;
-                case RuleTypes.Rule_193:
-                    this.Rule = Rule_Rule_193;
-                    break;
-                case RuleTypes.Rule_94:
-                    this.Rule = Rule_Rule_94;
-                    break;
-                case RuleTypes.Rule_57:
-                    this.Rule = Rule_Rule_57;
-                    break;
-                case RuleTypes.Bermuda_Triangle:
-                    this.Rule = Rule_Bermuda_Triangle;
-                    break;
-                case RuleTypes.Fish_Bones:
-                    this.Rule = Rule_Fish_Bones;
-                    break;
-                case RuleTypes.Glider_P168:
-                    this.Rule = Rule_Glider_P168;
-                    break;
-                case RuleTypes.R3_Gliders:
-                    this.Rule = Rule_R3_Glider;
-                    break;
-                default:
-                    this.Rule = Rule_Rule_90;
-                    break;
-            }
             //TODO: Use this to just call some kind of GetRule method or something instead of the above switch
             //      Need to have temp2 here converted to an Array of strings so it will work with current MenuHelper functions
-            var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule_"));
-            var temp3 = temp2.Select(fn => fn.Name.Substring(5));
-            //this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, temp2.First()) as Rule1D;
+            //var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            //var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule_")); //The methods relating to the rules
+            //var temp3 = temp2.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+            //var maybe = MenuHelper.EnumToChoiceStrings(temp3); //The options that will be displayed to the user
+            //this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, All_Rules.First()) as Rule1D; //The delagate that points to the method chosen by the user
+            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule));
+            this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule.First()) as Rule1D;
         }
 //-----------------------------------------------------------------------------
-        public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType)
+        public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
         {
             var newAutomata1D = new Automata1D(rowMax, colMax, rType);
             switch(bType)
