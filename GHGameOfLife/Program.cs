@@ -368,7 +368,7 @@ namespace GHGameOfLife
                         var ruleVal1D = (Automata1D.RuleTypes)(ruleChoice);
                         var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
-                        var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D ,ruleVal1D);
+                        var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D, ruleVal1D);
                         ConsoleRunHelper.ConsoleAutomataRunner(autoBoard1D);
                         break;
                     case 2:

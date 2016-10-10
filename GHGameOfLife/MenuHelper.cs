@@ -389,6 +389,13 @@ namespace GHGameOfLife
             return choiceStrings;
         }
 //------------------------------------------------------------------------------
+        /// <summary>
+        /// Changes enums to a list of strings, and also adds a back option.
+        /// NOTE: This only works on enums with 7 or less choices, otherwise the back
+        /// option will not be in the correct position. 
+        /// </summary>
+        /// <param name="enumVals"></param>
+        /// <returns></returns>
         public static List<string> EnumToChoiceStrings_WithBack(Array enumVals)
         {
             var choiceStrings = EnumToChoiceStrings(enumVals);

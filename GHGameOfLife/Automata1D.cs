@@ -66,51 +66,53 @@ namespace GHGameOfLife
             switch(rule)
             {
                 case RuleTypes.Rule_30:
-                    this.Rule = Rule30;
+                    this.Rule = Rule_Rule_30;
                     break;
                 case RuleTypes.Rule_90:
-                    this.Rule = Rule90;
+                    this.Rule = Rule_Rule_90;
                     break;
                 case RuleTypes.Rule_1:
-                    this.Rule = Rule1;
+                    this.Rule = Rule_Rule_1;
                     break;
                 case RuleTypes.Rule_73:
-                    this.Rule = Rule73;
+                    this.Rule = Rule_Rule_73;
                     break;
                 case RuleTypes.Rule_129:
-                    this.Rule = Rule129;
+                    this.Rule = Rule_Rule_129;
                     break;
                 case RuleTypes.Rule_18:
-                    this.Rule = Rule18;
+                    this.Rule = Rule_Rule_18;
                     break;
                 case RuleTypes.Rule_193:
-                    this.Rule = Rule193;
+                    this.Rule = Rule_Rule_193;
                     break;
                 case RuleTypes.Rule_94:
-                    this.Rule = Rule94;
+                    this.Rule = Rule_Rule_94;
                     break;
                 case RuleTypes.Rule_57:
-                    this.Rule = Rule57;
+                    this.Rule = Rule_Rule_57;
                     break;
                 case RuleTypes.Bermuda_Triangle:
-                    this.Rule = Bermuda_Triangle;
+                    this.Rule = Rule_Bermuda_Triangle;
                     break;
                 case RuleTypes.Fish_Bones:
-                    this.Rule = Fish_Bones;
+                    this.Rule = Rule_Fish_Bones;
                     break;
                 case RuleTypes.Glider_P168:
-                    this.Rule = Glider_P168;
+                    this.Rule = Rule_Glider_P168;
                     break;
                 case RuleTypes.R3_Gliders:
-                    this.Rule = R3_Glider;
+                    this.Rule = Rule_R3_Glider;
                     break;
                 default:
-                    this.Rule = Rule90;
+                    this.Rule = Rule_Rule_90;
                     break;
             }
             //TODO: Use this to just call some kind of GetRule method or something instead of the above switch
-            //var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            //var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule"));
+            //      Need to have temp2 here converted to an Array of strings so it will work with current MenuHelper functions
+            var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule_"));
+            var temp3 = temp2.Select(fn => fn.Name.Substring(5));
             //this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, temp2.First()) as Rule1D;
         }
 //-----------------------------------------------------------------------------
@@ -211,61 +213,61 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
 //  Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
 //-----------------------------------------------------------------------------
-        private bool Rule90(int col)
+        private bool Rule_Rule_90(int col)
         {
             var neighbors = GetNeighbors(col);
             return neighbors["P"] ^ neighbors["R"];
         }
 //-----------------------------------------------------------------------------
-        private bool Rule30(int col)
+        private bool Rule_Rule_30(int col)
         {
             var neighbors = GetNeighbors(col);
             return neighbors["P"] ^ (neighbors["Q"] | neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
-        private bool Rule1(int col)
+        private bool Rule_Rule_1(int col)
         {
             var neighbors = GetNeighbors(col);
             return !(neighbors["P"] | neighbors["Q"] | neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
-        private bool Rule73(int col)
+        private bool Rule_Rule_73(int col)
         {
             var neighbors = GetNeighbors(col);
             return !(neighbors["P"] & neighbors["R"] | neighbors["P"] ^ neighbors["Q"] ^ neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
-        private bool Rule129(int col)
+        private bool Rule_Rule_129(int col)
         {
             var neighbors = GetNeighbors(col);
             return !(neighbors["P"] ^ neighbors["Q"] | neighbors["P"] ^ neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
-        private bool Rule18(int col)
+        private bool Rule_Rule_18(int col)
         {
             var neighbors = GetNeighbors(col);
             return (neighbors["P"] ^ neighbors["R"] ^ neighbors["Q"]) & !neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
-        private bool Rule193(int col)
+        private bool Rule_Rule_193(int col)
         {
             var neighbors = GetNeighbors(col);
             return neighbors["P"] ^ (neighbors["P"] | neighbors["Q"] | !neighbors["R"]) ^ neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
-        private bool Rule94(int col)
+        private bool Rule_Rule_94(int col)
         {
             var neighbors = GetNeighbors(col);
             return neighbors["P"] & neighbors["R"] ^ (neighbors["P"] | neighbors["Q"] | neighbors["R"]);
         }
 //-----------------------------------------------------------------------------
-        private bool Rule57(int col)
+        private bool Rule_Rule_57(int col)
         {
             var neighbors = GetNeighbors(col);
             return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
         }
 //-----------------------------------------------------------------------------
-        private bool Bermuda_Triangle(int col)
+        private bool Rule_Bermuda_Triangle(int col)
         {
             var ruleStr = "R2,WBC82271C";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
@@ -279,7 +281,7 @@ namespace GHGameOfLife
             return this.RuleDict[neighborhood];
         }
 //-----------------------------------------------------------------------------
-        private bool Fish_Bones(int col)
+        private bool Rule_Fish_Bones(int col)
         {
             var ruleStr = "R2,W5F0C9AD8";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
@@ -293,7 +295,7 @@ namespace GHGameOfLife
             return this.RuleDict[neighborhood];
         }
 //-----------------------------------------------------------------------------
-        private bool Glider_P168(int col)
+        private bool Rule_Glider_P168(int col)
         {
             var ruleStr = "R2,W6C1E53A8";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
@@ -307,7 +309,7 @@ namespace GHGameOfLife
             return this.RuleDict[neighborhood];
         }
 //-----------------------------------------------------------------------------
-        private bool R3_Glider(int col)
+        private bool Rule_R3_Glider(int col)
         {
             var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
