@@ -18,8 +18,6 @@ namespace GHGameOfLife
     {
         delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
-        public enum RuleTypes { Life, Life_Without_Death, Life_34, Seeds, Replicator, Day_And_Night,
-                                Diamoeba, Morley };
 
         private bool[,] Board;
         private const char LIVE_CELL = '☺';
@@ -43,6 +41,22 @@ namespace GHGameOfLife
             }
         }
 
+        private static IEnumerable<System.Reflection.MethodInfo> All_Rules
+        {
+            get
+            {
+                return typeof(Automata2D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
+            }
+        }
+        public static string[] RuleTypes
+        {
+            get
+            {
+                //5 because that is the length of "Rule_" prefix on rule stuffs
+                return All_Rules.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+            }
+        }
+
         //Values used only for Build2DBoard_user
         private IEnumerable<int> Valid_Lefts;
         private IEnumerable<int> Valid_Tops;
@@ -54,43 +68,15 @@ namespace GHGameOfLife
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
-        private Automata2D(int rowMax, int colMax, RuleTypes rule) : base(rowMax,colMax)
+        private Automata2D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
             this.Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
-            switch(rule)
-            {
-                case RuleTypes.Life:
-                    this.Rule = Life;
-                    break;
-                case RuleTypes.Life_Without_Death:
-                    this.Rule = LifeWithoutDeath;
-                    break;
-                case RuleTypes.Seeds:
-                    this.Rule = Seeds;
-                    break;
-                case RuleTypes.Replicator:
-                    this.Rule = Replicator;
-                    break;
-                case RuleTypes.Day_And_Night:
-                    this.Rule = DayAndNight;
-                    break;
-                case RuleTypes.Life_34:
-                    this.Rule = Life34;
-                    break;
-                case RuleTypes.Diamoeba:
-                    this.Rule = Diamoeba;
-                    break;
-                case RuleTypes.Morley:
-                    this.Rule = Morley;
-                    break;
-                default:
-                    this.Rule = Life;
-                    break;
-            }
+            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule)).First();
+            this.Rule = Delegate.CreateDelegate(typeof(Rule2D), this, chosenRule) as Rule2D;
         }
 //------------------------------------------------------------------------------
-        public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, RuleTypes rType, string res = null)
+        public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType, string res = null)
         {
             var newAutomata2D = new Automata2D(rowMax, colMax, rType);
             switch (bType)
@@ -189,7 +175,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Life(int r, int c)
+        private bool Rule_Life(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 
@@ -211,7 +197,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool LifeWithoutDeath(int r, int c)
+        private bool Rule_Life_Without_Death(int r, int c)
         {
             if (this.Board[r, c])
             {
@@ -231,7 +217,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Seeds(int r, int c)
+        private bool Rule_Seeds(int r, int c)
         {
             if (this.Board[r, c])
             {
@@ -251,7 +237,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Replicator(int r, int c)
+        private bool Rule_Replicator(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 
@@ -266,7 +252,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool DayAndNight(int r, int c)
+        private bool Rule_Day_And_Night(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 
@@ -288,7 +274,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Life34(int r, int c)
+        private bool Rule_Life_34(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 
@@ -303,7 +289,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Diamoeba(int r, int c)
+        private bool Rule_Diamoeba(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 
@@ -325,7 +311,7 @@ namespace GHGameOfLife
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        private bool Morley(int r, int c)
+        private bool Rule_Morley(int r, int c)
         {
             var n = CountNeighbors_Moore(r, c);
 

@@ -12,11 +12,10 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata1D : ConsoleAutomata
     {
-        //TODO: Finish adding support for this stuff: http://psoup.math.wisc.edu/mcell/rullex_1dbi.html
+        //TODO: Maybe convert all rules to the new style
+        //      Also maybe abstract some stuff out so im not repeating all the code for checking if the RuleDict is set
         private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
-        //public enum RuleTypes {Rule_1, Rule_18, Rule_30, Rule_57, Rule_73, Rule_90, Rule_94,
-        //                       Rule_129, Rule_193, Bermuda_Triangle, Fish_Bones, Glider_P168, R3_Gliders };
 
         private bool[] Current_Row;
         private bool[][] Entire_Board;
@@ -58,6 +57,7 @@ namespace GHGameOfLife
         {
             get
             {
+                //5 because that is the length of "Rule_" prefix on rule stuffs
                 return All_Rules.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
             }
         }
@@ -78,15 +78,8 @@ namespace GHGameOfLife
                     this.Print_Colors.Add(color);
                 }
             }
-            //TODO: Use this to just call some kind of GetRule method or something instead of the above switch
-            //      Need to have temp2 here converted to an Array of strings so it will work with current MenuHelper functions
-            //var temp1 = typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            //var temp2 = temp1.Where(fn => fn.Name.StartsWith("Rule_")); //The methods relating to the rules
-            //var temp3 = temp2.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
-            //var maybe = MenuHelper.EnumToChoiceStrings(temp3); //The options that will be displayed to the user
-            //this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, All_Rules.First()) as Rule1D; //The delagate that points to the method chosen by the user
-            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule));
-            this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule.First()) as Rule1D;
+            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule)).First();
+            this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule) as Rule1D;
         }
 //-----------------------------------------------------------------------------
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
@@ -285,6 +278,20 @@ namespace GHGameOfLife
         private bool Rule_R3_Glider(int col)
         {
             var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            var hex = ruleStr.Split(',')[1].Substring(1);
+            if (!RuleDict_Initialized)
+            {
+                this.RuleDict = BuildRulesDict(hex, range);
+                this.RuleDict_Initialized = true;
+            }
+            var neighborhood = GetNeighborsBinary(col, range);
+            return this.RuleDict[neighborhood];
+        }
+//-----------------------------------------------------------------------------
+        private bool Rule_Inverted_Gliders(int col)
+        {
+            var ruleStr = "R2,W360A96F9";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
             var hex = ruleStr.Split(',')[1].Substring(1);
             if (!RuleDict_Initialized)
