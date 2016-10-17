@@ -151,14 +151,12 @@ namespace GHGameOfLife
                                                   "2) 2D Automata",
                                                   "3) Exit"};
 
-            //var ruleTypes1D = Enum.GetValues(typeof(Automata1D.RuleTypes));
-            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Automata1D.RuleTypes);
+            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Automata1D.RuleNames);
 
             var initTypes1D = Enum.GetValues(typeof(Automata1D.BuildTypes));
             var initTypes1DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes1D);
 
-            //var ruleTypes2D = Enum.GetValues(typeof(Automata2D.RuleTypes));
-            var ruleTypes2DStrings = MenuHelper.EnumToChoiceStrings(Automata2D.RuleTypes);
+            var ruleTypes2DStrings = MenuHelper.EnumToChoiceStrings(Automata2D.RuleNames);
 
             var initTypes2D = Enum.GetValues(typeof(Automata2D.BuildTypes));
             var initTypes2DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes2D);
@@ -365,7 +363,7 @@ namespace GHGameOfLife
                 {
                     case 1:
                         //1D automata
-                        var ruleVal1D = Automata1D.RuleTypes[ruleChoice];
+                        var ruleVal1D = Automata1D.RuleNames[ruleChoice];
                         var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
                         var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D, ruleVal1D);
@@ -373,7 +371,7 @@ namespace GHGameOfLife
                         break;
                     case 2:
                         //2D automata
-                        var ruleVal2D = Automata2D.RuleTypes[ruleChoice];
+                        var ruleVal2D = Automata2D.RuleNames[ruleChoice];
                         var initVal2D = (Automata2D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
                         var autoBoard2D = Automata2D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal2D, ruleVal2D, res2D);

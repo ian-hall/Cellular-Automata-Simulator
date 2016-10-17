@@ -24,18 +24,10 @@ namespace GHGameOfLife
         private int Print_Row;
         private Rule1D Rule;
         private List<ConsoleColor> Print_Colors;
-        private Random Rng;
+        private Random RNG;
 
         private Dictionary<string, bool> RuleDict;
         private bool RuleDict_Initialized = false;
-
-        private static IEnumerable<System.Reflection.MethodInfo> All_Rules
-        {
-            get
-            {
-                return typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
-            }
-        }
 
         public override bool[,] Board_Copy
         {
@@ -52,13 +44,19 @@ namespace GHGameOfLife
                 return temp;
             }
         }
-
-        public static string[] RuleTypes
+        private static IEnumerable<System.Reflection.MethodInfo> RuleMethods
+        {
+            get
+            {
+                return typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
+            }
+        }
+        public static string[] RuleNames
         {
             get
             {
                 //5 because that is the length of "Rule_" prefix on rule stuffs
-                return All_Rules.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+                return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
             }
         }
 //-----------------------------------------------------------------------------
@@ -67,19 +65,11 @@ namespace GHGameOfLife
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
             this.Entire_Board = new bool[this.Rows][];
-            this.Rng = new Random();
+            this.RNG = new Random();
 
-            var allColors = Enum.GetValues(typeof(ConsoleColor));
-            this.Print_Colors = new List<ConsoleColor>();
-            foreach(ConsoleColor color in allColors)
-            {
-                if(color != ConsoleColor.Black)
-                {
-                    this.Print_Colors.Add(color);
-                }
-            }
-            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule) as Rule1D;
+            this.Print_Colors = (Enum.GetValues(typeof(ConsoleColor)) as ConsoleColor[]).Where(color => color != ConsoleColor.Black).ToList();
+            var chosenRule = RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
+            this.Rule = (Rule1D)Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule);
         }
 //-----------------------------------------------------------------------------
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
@@ -130,8 +120,8 @@ namespace GHGameOfLife
         /// </summary>
         public override void PrintBoard()
         {
-            Console.BackgroundColor = MenuHelper.Default_BG;
-            Console.ForegroundColor = MenuHelper.Board_FG;
+            //Console.BackgroundColor = MenuHelper.Default_BG;
+            //Console.ForegroundColor = MenuHelper.Board_FG;
 
             if( this.Print_Row >= this.Rows )
             {
@@ -151,12 +141,12 @@ namespace GHGameOfLife
                     printRow.Append(DEAD_CELL);
             }
 
-            Console.ForegroundColor = this.Print_Colors[this.Rng.Next(this.Print_Colors.Count)];
+            Console.ForegroundColor = this.Print_Colors[this.RNG.Next(this.Print_Colors.Count)];
             Console.Write(printRow);
             this.Print_Row++;
 
-            Console.BackgroundColor = MenuHelper.Default_BG;
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            //Console.BackgroundColor = MenuHelper.Default_BG;
+            //Console.ForegroundColor = MenuHelper.Default_FG;
         }
 //-----------------------------------------------------------------------------
         /// <summary>
@@ -166,7 +156,7 @@ namespace GHGameOfLife
         {
             for (int i = 0; i < this.Cols; i++)
             {
-                this.Current_Row[i] = (this.Rng.Next() % 2 == 0);
+                this.Current_Row[i] = (this.RNG.Next() % 2 == 0);
             }
             this.Entire_Board[0] = this.Current_Row;
         }

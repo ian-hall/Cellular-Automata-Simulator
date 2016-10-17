@@ -41,19 +41,19 @@ namespace GHGameOfLife
             }
         }
 
-        private static IEnumerable<System.Reflection.MethodInfo> All_Rules
+        private static IEnumerable<System.Reflection.MethodInfo> RuleMethods
         {
             get
             {
                 return typeof(Automata2D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
             }
         }
-        public static string[] RuleTypes
+        public static string[] RuleNames
         {
             get
             {
                 //5 because that is the length of "Rule_" prefix on rule stuffs
-                return All_Rules.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+                return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
             }
         }
 
@@ -72,8 +72,8 @@ namespace GHGameOfLife
         {
             this.Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
-            var chosenRule = All_Rules.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = Delegate.CreateDelegate(typeof(Rule2D), this, chosenRule) as Rule2D;
+            var chosenRule = RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
+            this.Rule = (Rule2D)Delegate.CreateDelegate(typeof(Rule2D), this, chosenRule);
         }
 //------------------------------------------------------------------------------
         public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType, string res = null)
