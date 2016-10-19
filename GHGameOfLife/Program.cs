@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using GHGameOfLife.Rules;
 
 
 namespace GHGameOfLife
@@ -151,7 +152,7 @@ namespace GHGameOfLife
                                                   "2) 2D Automata",
                                                   "3) Exit"};
 
-            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Automata1D.RuleNames);
+            var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Rules1D.RuleNames);
 
             var initTypes1D = Enum.GetValues(typeof(Automata1D.BuildTypes));
             var initTypes1DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes1D);
@@ -363,7 +364,7 @@ namespace GHGameOfLife
                 {
                     case 1:
                         //1D automata
-                        var ruleVal1D = Automata1D.RuleNames[ruleChoice];
+                        var ruleVal1D = Rules1D.RuleNames[ruleChoice];
                         var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
                         var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D, ruleVal1D);

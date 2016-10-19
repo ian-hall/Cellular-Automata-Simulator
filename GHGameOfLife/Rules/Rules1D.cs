@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 
 namespace GHGameOfLife.Rules
 {
+    /// <summary>
+    /// 1D Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
+    /// </summary>
+    /// TODO: Clean this up
     class Rules1D
     {
         private static Dictionary<string, bool> RuleDict;
         public static bool RuleDict_Initialized = false;
-        public delegate bool TestDel(bool[] row, int col);
+        public delegate bool RuleDelegate(bool[] row, int col);
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
         {
             get
             {
-                return typeof(Rules1D).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Where(fn => fn.Name.StartsWith("Rule_"));
+                return typeof(Rules1D).GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public).Where(fn => fn.Name.StartsWith("Rule_"));
             }
         }
         public static string[] RuleNames
@@ -27,7 +31,73 @@ namespace GHGameOfLife.Rules
             }
         }
         //-----------------------------------------------------------------------------
-        private static bool Rule_Glider_P168(bool[] currentRow, int col)
+        public static bool Rule_Rule_90(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow,col);
+            return neighbors["P"] ^ neighbors["R"];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_30(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return neighbors["P"] ^ (neighbors["Q"] | neighbors["R"]);
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_1(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return !(neighbors["P"] | neighbors["Q"] | neighbors["R"]);
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_73(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return !(neighbors["P"] & neighbors["R"] | neighbors["P"] ^ neighbors["Q"] ^ neighbors["R"]);
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_129(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return !(neighbors["P"] ^ neighbors["Q"] | neighbors["P"] ^ neighbors["R"]);
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_18(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return (neighbors["P"] ^ neighbors["R"] ^ neighbors["Q"]) & !neighbors["Q"];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_193(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return neighbors["P"] ^ (neighbors["P"] | neighbors["Q"] | !neighbors["R"]) ^ neighbors["Q"];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_94(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return neighbors["P"] & neighbors["R"] ^ (neighbors["P"] | neighbors["Q"] | neighbors["R"]);
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Rule_57(bool[] currentRow, int col)
+        {
+            var neighbors = GetNeighbors(currentRow, col);
+            return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Bermuda_Triangle(bool[] currentRow, int col)
+        {
+            var ruleStr = "R2,WBC82271C";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            if (!RuleDict_Initialized)
+            {
+                RuleDict = BuildRulesDict(ruleStr);
+            }
+            var neighborhood = GetNeighborsBinary(currentRow, col, range);
+            return RuleDict[neighborhood];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Glider_P168(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W6C1E53A8";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
@@ -39,7 +109,7 @@ namespace GHGameOfLife.Rules
             return RuleDict[neighborhood];
         }
         //-----------------------------------------------------------------------------
-        private static bool Rule_Inverted_Gliders(bool[] currentRow, int col)
+        public static bool Rule_Inverted_Gliders(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W360A96F9";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
@@ -51,6 +121,31 @@ namespace GHGameOfLife.Rules
             return RuleDict[neighborhood];
         }
         //-----------------------------------------------------------------------------
+        public static bool Rule_Fish_Bones(bool[] currentRow, int col)
+        {
+            var ruleStr = "R2,W5F0C9AD8";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            if (!RuleDict_Initialized)
+            {
+                RuleDict = BuildRulesDict(ruleStr);
+            }
+            var neighborhood = GetNeighborsBinary(currentRow, col, range);
+            return RuleDict[neighborhood];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_R3_Glider(bool[] currentRow, int col)
+        {
+            var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
+            var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
+            if (!RuleDict_Initialized)
+            {
+                RuleDict = BuildRulesDict(ruleStr);
+            }
+            var neighborhood = GetNeighborsBinary(currentRow, col, range);
+            return RuleDict[neighborhood];
+        }
+        //-----------------------------------------------------------------------------
+        #region Helpers
         /// <summary>
         /// Gets the neighboring values of the given column.
         /// </summary>
@@ -59,7 +154,7 @@ namespace GHGameOfLife.Rules
         /// <returns>Dictionary indexed by "P", "Q", and "R". "P" (left) and "R" (right) are repeated based on the number of spaces away from the center, "Q".
         ///          For example, with range=2, the keys would be PP, P, Q, R, RR representing col-2 col-1 col col+1 col+2
         /// </returns>
-        private Dictionary<string, bool> GetNeighbors(bool[] currentRow, int col, int range = 1)
+        private static Dictionary<string, bool> GetNeighbors(bool[] currentRow, int col, int range = 1)
         {
             range = Math.Abs(range);
             var maxCols = currentRow.Length;
@@ -179,5 +274,6 @@ namespace GHGameOfLife.Rules
             return sb.ToString();
         }
         //-----------------------------------------------------------------------------
+        #endregion Helpers
     }
 }
