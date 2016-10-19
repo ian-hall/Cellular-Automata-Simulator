@@ -2,6 +2,7 @@
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using GHGameOfLife.Rules;
 
 namespace GHGameOfLife
 {
@@ -14,6 +15,7 @@ namespace GHGameOfLife
     {
         //TODO: Maybe convert all rules to the new style
         //      Also maybe abstract some stuff out so im not repeating all the code for checking if the RuleDict is set
+        private Rules1D.TestDel Rule;
         private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
 
@@ -22,7 +24,7 @@ namespace GHGameOfLife
         private const char LIVE_CELL = '█';
         private const char DEAD_CELL = ' ';
         private int Print_Row;
-        private Rule1D Rule;
+        //private Rule1D Rule;
         private List<ConsoleColor> Print_Colors;
         private Random RNG;
 
@@ -48,15 +50,17 @@ namespace GHGameOfLife
         {
             get
             {
-                return typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
+                return Rules1D.RuleMethods;
+                //return typeof(Automata1D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
             }
         }
         public static string[] RuleNames
         {
             get
             {
+                return Rules1D.RuleNames;
                 //5 because that is the length of "Rule_" prefix on rule stuffs
-                return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+                //return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
             }
         }
 //-----------------------------------------------------------------------------
@@ -69,7 +73,9 @@ namespace GHGameOfLife
 
             this.Print_Colors = (Enum.GetValues(typeof(ConsoleColor)) as ConsoleColor[]).Where(color => color != ConsoleColor.Black).ToList();
             var chosenRule = RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = (Rule1D)Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule);
+            //this.Rule = (Rule1D)Delegate.CreateDelegate(typeof(Rule1D), this, chosenRule);
+            this.Rule = (Rules1D.TestDel)Delegate.CreateDelegate(typeof(Rules1D.TestDel), chosenRule);
+            Rules1D.RuleDict_Initialized = false;
         }
 //-----------------------------------------------------------------------------
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
@@ -97,7 +103,7 @@ namespace GHGameOfLife
             var nextRow = new bool[this.Cols];
             for( int i = 0; i < Cols; i++ )
             {
-                nextRow[(i + this.Cols) % this.Cols] = this.Rule(i);
+                nextRow[(i + this.Cols) % this.Cols] = this.Rule(this.Current_Row,i);
             }
 
             //Shift the entire board up if it is already filled, and place this new row
