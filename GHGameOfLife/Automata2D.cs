@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using GHGameOfLife.Rules;
 
 namespace GHGameOfLife
 {
@@ -16,13 +17,12 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata2D : ConsoleAutomata
     {
-        delegate bool Rule2D(int row, int col);
         public enum BuildTypes { Random, File, Resource, User };
 
         private bool[,] Board;
         private const char LIVE_CELL = '☺';
         private const char DEAD_CELL = ' ';
-        private Rule2D Rule;
+        private Rules2D.RuleDelegate Rule;
         private string Loaded_Population = "";
 
         public override bool[,] Board_Copy
@@ -40,23 +40,6 @@ namespace GHGameOfLife
                 return temp;
             }
         }
-
-        private static IEnumerable<System.Reflection.MethodInfo> RuleMethods
-        {
-            get
-            {
-                return typeof(Automata2D).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).Where(fn => fn.Name.StartsWith("Rule_"));
-            }
-        }
-        public static string[] RuleNames
-        {
-            get
-            {
-                //5 because that is the length of "Rule_" prefix on rule stuffs
-                return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
-            }
-        }
-
         //Values used only for Build2DBoard_user
         private IEnumerable<int> Valid_Lefts;
         private IEnumerable<int> Valid_Tops;
@@ -72,10 +55,10 @@ namespace GHGameOfLife
         {
             this.Board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
-            var chosenRule = RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = (Rule2D)Delegate.CreateDelegate(typeof(Rule2D), this, chosenRule);
+            var chosenRule = Rules2D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
+            this.Rule = (Rules2D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules2D.RuleDelegate), chosenRule);
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType, string res = null)
         {
             var newAutomata2D = new Automata2D(rowMax, colMax, rType);
@@ -103,7 +86,7 @@ namespace GHGameOfLife
             newAutomata2D.Is_Initialized = true;
             return newAutomata2D;
         } 
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
@@ -115,13 +98,13 @@ namespace GHGameOfLife
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = this.Rule(r, c);
+                    nextBoard[r, c] = this.Rule(r, c,lastBoard);
                 }
             }
             this.Generation++;
             this.Board = nextBoard;                  
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Prints the game based on the threaded set up.
         /// Waits until there are at least 2 boards in the board queue and then 
@@ -166,199 +149,11 @@ namespace GHGameOfLife
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Game of Life rules.
-        /// Live cells stay alive if they have 2 or 3 neighbors.
-        /// Dead cells turn live if they have 3 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Life(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            if(this.Board[r,c])
-            {
-                return ((n == 2) || (n == 3));
-            }
-            else
-            {
-                return (n == 3);
-            }
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Life without Death rules.
-        /// Live cells always stay alive.
-        /// Dead cells turn live if they have 3 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Life_Without_Death(int r, int c)
-        {
-            if (this.Board[r, c])
-            {
-                return true;
-            }
-
-            var n = CountNeighbors_Moore(r, c);
-
-            return n == 3;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Seeds rule
-        /// Live cells always die
-        /// Dead cells turn live if they have 2 neighbors
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Seeds(int r, int c)
-        {
-            if (this.Board[r, c])
-            {
-                return false;
-            }
-
-            var n = CountNeighbors_Moore(r, c);
-
-            return n == 2;
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Replicator rules
-        /// Live cells stay alive if they have 1,3,5,or 7 neighbors.
-        /// Dead cells turn live if they have 1,3,5, or 7 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Replicator(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            return ((n == 1) || (n == 3) || (n == 5) || (n == 7));
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// DayAndNight rules
-        /// Live cells stay alive if they have 3,4,6,7, or 8 neighbors.
-        /// Dead cells turn live if they have 3,6,7, or 8 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Day_And_Night(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            if (this.Board[r, c])
-            {
-                return ((n == 3) || (n == 4) || (n == 6) || (n == 7) || (n == 8));
-            }
-            else
-            {
-                return ((n == 3) || (n == 6) || (n == 7) || (n == 8));
-            }
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// 34 Life rules.
-        /// Live cells stay alive if they have 3 or 4 neighbors.
-        /// Dead cells turn live if they have 3 or 4 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Life_34(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            return ((n == 3) || (n == 4));
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Diamoeba rules
-        /// Live cells stay alive if they have 5,6,7, or 8 neighbors.
-        /// Dead cells turn live if they have 3,5,6,7, or 8 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Diamoeba(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            if (this.Board[r, c])
-            {
-                return ((n == 5) || (n == 6) || (n == 7) || (n == 8));
-            }
-            else
-            {
-                return ((n == 3) || (n == 5) || (n == 6) || (n == 7) || (n == 8));
-            }
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Morley rules
-        /// Live cells stay alive if they have 2,4, or 5 neighbors.
-        /// Dead cells turn live if they have 3,6, or 8 neighbors.
-        /// </summary>
-        /// <param name="r">row of tile to check</param>
-        /// <param name="c">col of tile to check</param>
-        /// <returns></returns>
-        private bool Rule_Morley(int r, int c)
-        {
-            var n = CountNeighbors_Moore(r, c);
-
-            if (this.Board[r, c])
-            {
-                return ((n == 2) || (n == 4) || (n == 5));
-            }
-            else
-            {
-                return ((n == 3) || (n == 6) || (n == 8));
-            }
-        }
-//------------------------------------------------------------------------------
-        /// <summary>
-        /// Counts number of true values in the Moore neighborhood of a point.
-        /// </summary>
-        /// <param name="r">Row value</param>
-        /// <param name="c">Column value</param>
-        /// <param name="range">How large the neighborhood is, default value of 1</param>
-        /// <returns>number of neighbors</returns>
-        private int CountNeighbors_Moore(int r, int c, int range=1)
-        {
-            if( range < 1 )
-            {
-                return this.Board[r, c] ? 1 : 0;
-            }
-
-            int n = 0;
-            for( int i = r-range; i <= r+range; i++ )
-            {
-                for (int j = c - range; j <= c + range; j++)
-                {
-                    if( i==r && j==c )
-                    {
-                        continue;
-                    }
-                    var currRow = (i + this.Rows) % this.Rows;
-                    var currCol = (j + this.Cols) % this.Cols;
-                    if (this.Board[currRow, currCol]) n++;                  
-                }
-            }
-
-            return n;
-        }
-//------------------------------------------------------------------------------
-//private methods used to construct the game board
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
+        //private methods used to construct the game board
+        //------------------------------------------------------------------------------
+        #region Builders
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
         /// Easy enough to get using (random int)%2
@@ -1085,7 +880,8 @@ namespace GHGameOfLife
             this.Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
             this.Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
+        #endregion Builders
     } // end class
-///////////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////////
 }
