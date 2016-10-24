@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GHGameOfLife.Rules
 {
@@ -27,7 +26,7 @@ namespace GHGameOfLife.Rules
             get
             {
                 //5 because that is the length of "Rule_" prefix on rule stuffs
-                return RuleMethods.Select(fn => fn.Name.Substring(5)).ToArray(); //The names of the methods
+                return RuleMethods.Select(fn => fn.Name.Substring(5)).OrderBy(s => s).ToArray(); //The names of the methods
             }
         }
         //-----------------------------------------------------------------------------

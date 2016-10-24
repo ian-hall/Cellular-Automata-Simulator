@@ -79,6 +79,7 @@
       <DependentUpon>BuilderPops.resx</DependentUpon>
     </Compile>
     <Compile Include="Rules\Rules1D.cs" />
+    <Compile Include="Rules\Rules2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

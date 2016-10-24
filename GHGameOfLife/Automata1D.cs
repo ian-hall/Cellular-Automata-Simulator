@@ -14,7 +14,6 @@ namespace GHGameOfLife
     class Automata1D : ConsoleAutomata
     {
         //TODO: Maybe convert all rules to the new style
-        //      Also maybe abstract some stuff out so im not repeating all the code for checking if the RuleDict is set
         private Rules1D.RuleDelegate Rule;
         private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
