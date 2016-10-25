@@ -450,10 +450,19 @@ namespace GHGameOfLife
                     currentPage.Add(String.Format("{0}) {1}",(i-lo)+1,choices[i]));
                 }
             }
-            foreach (var prompt in defaultPrompts)
+            if(pageNum != 0)
             {
-                currentPage.Add(prompt);
+                currentPage.Add(defaultPrompts[0]);
             }
+            if( !onLastPage )
+            {
+                currentPage.Add(defaultPrompts[1]);
+            }
+            currentPage.Add(defaultPrompts[2]);
+            //foreach (var prompt in defaultPrompts)
+            //{
+            //    currentPage.Add(prompt);
+            //}
 
             MenuHelper.PrintMenuFromList(currentPage);
             return hi - 1;
