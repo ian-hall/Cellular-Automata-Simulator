@@ -439,7 +439,7 @@ namespace GHGameOfLife
             for (int i = lo; i < hi; i++)
             {
                 //the strings in choices might or might not have keys (ex 1), 2), etc) associated with them
-                //we need to add these prompts if they are not there.
+                //we need to add these prompts if they are not there. I think that only means when loading a resource
                 var hasPrompt = Regex.IsMatch(choices[i], "^[0-9][)] ");
                 if(hasPrompt)
                 {
@@ -459,10 +459,6 @@ namespace GHGameOfLife
                 currentPage.Add(defaultPrompts[1]);
             }
             currentPage.Add(defaultPrompts[2]);
-            //foreach (var prompt in defaultPrompts)
-            //{
-            //    currentPage.Add(prompt);
-            //}
 
             MenuHelper.PrintMenuFromList(currentPage);
             return hi - 1;

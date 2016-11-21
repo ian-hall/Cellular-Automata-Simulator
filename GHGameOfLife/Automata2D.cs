@@ -13,6 +13,8 @@ namespace GHGameOfLife
     /// This class pretty much does everything. It sets up the console, 
     /// fills in the initial pop from the given BuildType and then 
     /// does all the checking for living/dying of the population.
+    /// 
+    /// TODO: Also display rule set
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
     class Automata2D : ConsoleAutomata
@@ -187,6 +189,10 @@ namespace GHGameOfLife
             {
                 string filePath = openWindow.FileName;
                 isValidFile = IsValidFileOrResource(filePath, this, out startingPop, out errType);
+                if(isValidFile)
+                {
+                    this.Loaded_Population = openWindow.SafeFileName;
+                }
             }
             //no ELSE because it defaults to a file not loaded error
 

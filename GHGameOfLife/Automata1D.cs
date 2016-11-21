@@ -25,6 +25,7 @@ namespace GHGameOfLife
         private int Print_Row;
         private List<ConsoleColor> Print_Colors;
         private Random RNG;
+        private string Rule_Name = "";
 
         public override bool[,] Board_Copy
         {
@@ -52,6 +53,7 @@ namespace GHGameOfLife
             this.Print_Colors = (Enum.GetValues(typeof(ConsoleColor)) as ConsoleColor[]).Where(color => color != ConsoleColor.Black).ToList();
             var chosenRule = Rules1D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
             this.Rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
+            this.Rule_Name = rule;
             Rules1D.RuleDict_Initialized = false;
         }
 //-----------------------------------------------------------------------------
@@ -105,8 +107,13 @@ namespace GHGameOfLife
         {
             //Console.BackgroundColor = MenuHelper.Default_BG;
             //Console.ForegroundColor = MenuHelper.Board_FG;
+            //TODO: Move this outside so it is only called once
+            Console.ForegroundColor = ConsoleColor.White;
+            int left = (Console.WindowWidth / 2) - (this.Rule_Name.Length / 2);
+            //Console.SetCursorPosition(left, 2);
+            //Console.Write(this.Rule_Name);
 
-            if( this.Print_Row >= this.Rows )
+            if ( this.Print_Row >= this.Rows )
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
