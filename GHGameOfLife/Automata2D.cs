@@ -14,7 +14,6 @@ namespace GHGameOfLife
     /// fills in the initial pop from the given BuildType and then 
     /// does all the checking for living/dying of the population.
     /// 
-    /// TODO: Also display rule set
     /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
     class Automata2D : ConsoleAutomata
@@ -86,7 +85,12 @@ namespace GHGameOfLife
                     break;
             }
             newAutomata2D.Is_Initialized = true;
-            MenuHelper.PrintOnLine(2, newAutomata2D.Loaded_Population);
+            var infoStr = String.Format("Rule: {0}", rType);
+            if (!String.IsNullOrEmpty(newAutomata2D.Loaded_Population))
+            {
+                infoStr = infoStr + String.Format("\tPop: {0}", newAutomata2D.Loaded_Population);
+            }
+            MenuHelper.PrintOnLine(2, infoStr.Replace('_', ' '));
             return newAutomata2D;
         } 
         //------------------------------------------------------------------------------

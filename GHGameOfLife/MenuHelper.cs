@@ -13,7 +13,6 @@ namespace GHGameOfLife
     {
         // TODO: Change this to be less ugly maybe?
         //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
-        //          Display the chosen rule set on the screen
         public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;

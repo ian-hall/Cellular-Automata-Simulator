@@ -70,7 +70,7 @@ namespace GHGameOfLife
                     break;
             }
             newAutomata1D.Is_Initialized = true;
-            MenuHelper.PrintOnLine(2, newAutomata1D.Rule_Name);
+            MenuHelper.PrintOnLine(2, newAutomata1D.Rule_Name.Replace('_', ' '));
             return newAutomata1D;
         }
 //-----------------------------------------------------------------------------
