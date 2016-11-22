@@ -70,6 +70,7 @@ namespace GHGameOfLife
                     break;
             }
             newAutomata1D.Is_Initialized = true;
+            MenuHelper.PrintOnLine(2, newAutomata1D.Rule_Name);
             return newAutomata1D;
         }
 //-----------------------------------------------------------------------------
@@ -105,21 +106,13 @@ namespace GHGameOfLife
         /// </summary>
         public override void PrintBoard()
         {
-            //Console.BackgroundColor = MenuHelper.Default_BG;
-            //Console.ForegroundColor = MenuHelper.Board_FG;
-            //TODO: Move this outside so it is only called once
-            Console.ForegroundColor = ConsoleColor.White;
-            int left = (Console.WindowWidth / 2) - (this.Rule_Name.Length / 2);
-            //Console.SetCursorPosition(left, 2);
-            //Console.Write(this.Rule_Name);
-
             if ( this.Print_Row >= this.Rows )
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
                 Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.Cols, this.Rows-1, MenuHelper.Space, MenuHelper.Space);
-                --this.Print_Row;
+                this.Print_Row--;
             }
             Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.Print_Row);
             var printRow = new StringBuilder();

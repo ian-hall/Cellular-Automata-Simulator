@@ -86,6 +86,7 @@ namespace GHGameOfLife
                     break;
             }
             newAutomata2D.Is_Initialized = true;
+            MenuHelper.PrintOnLine(2, newAutomata2D.Loaded_Population);
             return newAutomata2D;
         } 
         //------------------------------------------------------------------------------
@@ -117,13 +118,7 @@ namespace GHGameOfLife
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
             string write = "Generation " + this.Generation;
-            int left = (Console.WindowWidth / 2) - (write.Length / 2);
-            Console.SetCursorPosition(left, 1);
-            Console.Write(write);
-            MenuHelper.ClearLine(2);
-            Console.SetCursorPosition(left, 2);
-            Console.Write(this.Loaded_Population);
-
+            MenuHelper.PrintOnLine(1, write);
 
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Board_FG;
