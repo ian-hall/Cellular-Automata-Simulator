@@ -13,7 +13,6 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata1D : ConsoleAutomata
     {
-        //TODO: Maybe convert all rules to the new style
         private Rules1D.RuleDelegate Rule;
         private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };

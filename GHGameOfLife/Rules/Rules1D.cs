@@ -9,6 +9,8 @@ namespace GHGameOfLife.Rules
     /// 1D Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
     /// </summary>
     /// TODO: Clean this up
+    ///         Also add some kind of "Random" rule that picks a rule at ... random
+    ///         actually this probably would be choosing a different rule every call which means the board would look silly
     class Rules1D
     {
         private static Dictionary<string, bool> RuleDict;
@@ -142,6 +144,14 @@ namespace GHGameOfLife.Rules
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
+        }
+        //-----------------------------------------------------------------------------
+        public static bool Rule_Random(bool[] currentRow, int col)
+        {
+            RuleDict_Initialized = false;
+            var randomRule = RuleMethods.Take(RuleMethods.Count()-1).ElementAt(new Random().Next(RuleMethods.Count()-1));
+            var test = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), randomRule);
+            return test(currentRow, col);
         }
         //-----------------------------------------------------------------------------
         #region Helpers
