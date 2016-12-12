@@ -8,12 +8,10 @@ namespace GHGameOfLife.Rules
     /// <summary>
     /// 1D Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)
     /// </summary>
-    /// TODO: Clean this up
-    ///         Also add some kind of "Random" rule that picks a rule at ... random
-    ///         actually this probably would be choosing a different rule every call which means the board would look silly
     class Rules1D
     {
         private static Dictionary<string, bool> RuleDict;
+        private static RuleDelegate RandomRule;
         public static bool RuleDict_Initialized = false;
         public delegate bool RuleDelegate(bool[] row, int col);
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
@@ -148,10 +146,19 @@ namespace GHGameOfLife.Rules
         //-----------------------------------------------------------------------------
         public static bool Rule_Random(bool[] currentRow, int col)
         {
-            RuleDict_Initialized = false;
-            var randomRule = RuleMethods.Take(RuleMethods.Count()-1).ElementAt(new Random().Next(RuleMethods.Count()-1));
-            var test = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), randomRule);
-            return test(currentRow, col);
+            // Need to keep this last so the randomRule thing below doesn't include it.
+            //TODO: Maybe sometimes still goes full off/on
+            if(col%13 == 0)
+            {
+                RuleDict_Initialized = false;
+                // magic number 1 because Rule_Random is last and we don't want to horrible recursion happening
+                var chosen = RuleMethods.Take(RuleMethods.Count() - 1).ElementAt(new Random().Next(RuleMethods.Count() - 1));
+                RandomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
+            }
+            //RuleDict_Initialized = false;
+            //var randomRule = RuleMethods.Take(RuleMethods.Count()-1).ElementAt(new Random().Next(RuleMethods.Count()-1));
+            //var test = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), randomRule);
+            return RandomRule(currentRow, col);
         }
         //-----------------------------------------------------------------------------
         #region Helpers
