@@ -44,6 +44,7 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private Automata1D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
+            // TODO: Add a "custom" rule set that allows users to input a rule of the form Ry,Wxxxxxxxx"
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
             this.Entire_Board = new bool[this.Rows][];

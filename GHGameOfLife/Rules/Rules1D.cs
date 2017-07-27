@@ -13,6 +13,7 @@ namespace GHGameOfLife.Rules
         private static Dictionary<string, bool> RuleDict;
         private static RuleDelegate RandomRule;
         private static Random RNG = new Random();
+        private static string CustomRule = String.Empty;
         public static bool RuleDict_Initialized = false;
         public delegate bool RuleDelegate(bool[] row, int col);
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
@@ -145,6 +146,32 @@ namespace GHGameOfLife.Rules
             return RuleDict[neighborhood];
         }
         //-----------------------------------------------------------------------------
+        public static bool Rule_Custom(bool[] currentRow, int col)
+        {
+            if (Rules1D.CustomRule == String.Empty)
+            {
+                //TODO: Prompt for the string
+                var temp = "R1,W9f".ToUpper();
+                var hex = temp.Split(',')[1].Substring(1);
+                if (IsValidHex(hex))
+                {
+                    Rules1D.CustomRule = temp;
+                }
+                else
+                {
+                    Rules1D.CustomRule = "R1,W0";
+                }
+
+            }
+            var range = int.Parse(Rules1D.CustomRule.Split(',')[0].Substring(1));
+            if (!RuleDict_Initialized)
+            {
+                RuleDict = BuildRulesDict(Rules1D.CustomRule);
+            }
+            var neighborhood = GetNeighborsBinary(currentRow, col, range);
+            return RuleDict[neighborhood];
+        }
+        //-----------------------------------------------------------------------------
         public static bool Rule_Random(bool[] currentRow, int col)
         {
             // Need to keep this last so the randomRule thing below doesn't include it.
@@ -153,7 +180,7 @@ namespace GHGameOfLife.Rules
             if(col%33 == 0)
             {
                 RuleDict_Initialized = false;
-                // magic number 1 because Rule_Random is last and we don't want to horrible recursion happening
+                // magic number 1 because Rule_Random is last and we don't want some kind of horrible recursion happening
                 var chosen = RuleMethods.Take(RuleMethods.Count() - 1).ElementAt(RNG.Next(RuleMethods.Count() - 1));
                 RandomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
             }
@@ -248,7 +275,7 @@ namespace GHGameOfLife.Rules
             {
                 var currRule = binList[numRuleValues - 1 - i];
                 var val = ruleVals[i];
-                rule[currRule] = (val == '1') ? true : false;
+                rule[currRule] = (val == '1') /*? true : false*/;
             }
             RuleDict_Initialized = true;
             return rule;
@@ -287,6 +314,16 @@ namespace GHGameOfLife.Rules
                 sb.Append(lol[c]);
             }
             return sb.ToString();
+        }
+        //-----------------------------------------------------------------------------
+        /// <summary>
+        /// Checks if a given string is hex
+        /// </summary>
+        /// <param name="s">a string</param>
+        /// <returns>if the string is a hex</returns>
+        private static bool IsValidHex(string s)
+        {
+            return s.All(c => "0123456789ABCDEF".Contains(c));
         }
         //-----------------------------------------------------------------------------
         #endregion Helpers
