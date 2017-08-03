@@ -470,7 +470,7 @@ namespace GHGameOfLife
         /// <param name="toPrint">string to print</param>
         public static void PrintOnLine(int line, string toPrint)
         {
-            MenuHelper.ClearLine(line);
+            MenuHelper.ClearWithinBorder(line);
             var left = (Console.WindowWidth/2) - (toPrint.Length/2);
             Console.SetCursorPosition(left, line);
             Console.WriteLine(toPrint);
@@ -484,17 +484,19 @@ namespace GHGameOfLife
         /// <returns></returns>
         public static string PromptOnLine(int line, string prompt = MenuHelper.Prompt)
         {
-            MenuHelper.ClearLine(line);
+            MenuHelper.ClearWithinBorder(line);
             var left = (Console.WindowWidth / 2) - (prompt.Length / 2);
             Console.SetCursorPosition(left, line);
-            Console.WriteLine(prompt);
+            Console.Write(prompt);
+            Console.CursorVisible = true;
             var input = Console.ReadLine();
+            Console.CursorVisible = false;
             return input;
         }
         //------------------------------------------------------------------------------
         /// <summary>
         /// Checks if the iniput string is a valid range for 1D automata. Gonna limit range to 
-        /// some magic number like 5
+        /// some magic number like 4
         /// </summary>
         /// <param name="input">user's input string</param>
         /// <param name="range">int representing the range</param>
@@ -505,7 +507,7 @@ namespace GHGameOfLife
             try
             {
                 var temp = Int32.Parse(input);
-                if(temp < 0 || temp > 5)
+                if(temp < 1 || temp > 4)
                 {
                     return false;
                 }

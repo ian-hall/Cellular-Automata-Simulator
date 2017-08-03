@@ -54,13 +54,38 @@ namespace GHGameOfLife
             var chosenRule = Rules1D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
             this.Rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
             this.Rule_Name = rule;
-            Rules1D.UserRule = "R1,W16";
+            //Rules1D.UserRule = "R1,W16";
             Rules1D.RuleDict_Initialized = false;
         }
 //-----------------------------------------------------------------------------
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
         {
             var newAutomata1D = new Automata1D(rowMax, colMax, rType);
+            //This is really gross but it prompts users for input on lines 15, 16 and 17 for the range and hex value of a custom 1d rule
+            //This also lets the user type all willy nilly and can mess up the nice boarder but oh well for now
+            if(rType == "Custom")
+            {
+                MenuHelper.PrintOnLine(15, "Select Range");
+                var tempRange = MenuHelper.PromptOnLine(16,"[1-4]: ");
+                int range;
+                while(!MenuHelper.ValidRangeInput(tempRange,out range))
+                {
+                    MenuHelper.PrintOnLine(17, "Try again");
+                    tempRange = MenuHelper.PromptOnLine(16, "[1-4]: ");                                     
+                }
+                MenuHelper.PrintOnLine(15, "Enter a hex string");
+                var tempHex = MenuHelper.PromptOnLine(16, "the hex: ");
+                string hex = String.Empty;
+                while(!MenuHelper.ValidHexInput(tempHex,out hex))
+                {
+                    MenuHelper.PrintOnLine(17, "thats a bad hex");
+                    tempHex = MenuHelper.PromptOnLine(16, "the hex: ");
+                }
+                //Clear the inside of the border once we get some valid values
+                MenuHelper.ClearAllInBorder();
+
+                Rules1D.UserRule = "R" + range + ",W" + hex;
+            }
             switch(bType)
             {
                 case BuildTypes.Random:
