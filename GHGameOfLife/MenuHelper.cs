@@ -5,6 +5,7 @@ using System.Resources;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace GHGameOfLife
 {
@@ -474,6 +475,62 @@ namespace GHGameOfLife
             Console.SetCursorPosition(left, line);
             Console.WriteLine(toPrint);
         }
+        //------------------------------------------------------------------------------
+        /// <summary>
+        /// Writes a prompt at the line and returns user input
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="toPrint"></param>
+        /// <returns></returns>
+        public static string PromptOnLine(int line, string prompt = MenuHelper.Prompt)
+        {
+            MenuHelper.ClearLine(line);
+            var left = (Console.WindowWidth / 2) - (prompt.Length / 2);
+            Console.SetCursorPosition(left, line);
+            Console.WriteLine(prompt);
+            var input = Console.ReadLine();
+            return input;
+        }
+        //------------------------------------------------------------------------------
+        /// <summary>
+        /// Checks if the iniput string is a valid range for 1D automata. Gonna limit range to 
+        /// some magic number like 5
+        /// </summary>
+        /// <param name="input">user's input string</param>
+        /// <param name="range">int representing the range</param>
+        /// <returns></returns>
+        public static bool ValidRangeInput(string input, out int range)
+        {
+            range = 0;
+            try
+            {
+                var temp = Int32.Parse(input);
+                if(temp < 0 || temp > 5)
+                {
+                    return false;
+                }
+                range = temp;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        //------------------------------------------------------------------------------
+        public static bool ValidHexInput(string input, out string hex)
+        {
+            hex = String.Empty;
+            var temp = input.ToUpper();
+            var allValid = temp.All(c => "0123456789ABCDEF".Contains(c));
+            if (!allValid)
+            {
+                return false;
+            }
+            hex = temp;
+            return true;
+        }
+        //------------------------------------------------------------------------------
         //------------------------------------------------------------------------------
     } // end class
     ///////////////////////////////////////////////////////////////////////////////

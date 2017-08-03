@@ -54,6 +54,7 @@ namespace GHGameOfLife
             var chosenRule = Rules1D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
             this.Rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
             this.Rule_Name = rule;
+            Rules1D.UserRule = "R1,W16";
             Rules1D.RuleDict_Initialized = false;
         }
 //-----------------------------------------------------------------------------

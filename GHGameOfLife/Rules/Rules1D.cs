@@ -16,6 +16,17 @@ namespace GHGameOfLife.Rules
         private static string CustomRule = String.Empty;
         public static bool RuleDict_Initialized = false;
         public delegate bool RuleDelegate(bool[] row, int col);
+        public static string UserRule
+        {
+            get
+            {
+                return Rules1D.CustomRule;
+            }
+            set
+            {
+                Rules1D.CustomRule = value;
+            }
+        }
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
         {
             get
@@ -148,21 +159,26 @@ namespace GHGameOfLife.Rules
         //-----------------------------------------------------------------------------
         public static bool Rule_Custom(bool[] currentRow, int col)
         {
-            if (Rules1D.CustomRule == String.Empty)
-            {
-                //TODO: Prompt for the string
-                var temp = "R1,W9f".ToUpper();
-                var hex = temp.Split(',')[1].Substring(1);
-                if (IsValidHex(hex))
-                {
-                    Rules1D.CustomRule = temp;
-                }
-                else
-                {
-                    Rules1D.CustomRule = "R1,W0";
-                }
+            //if (Rules1D.CustomRule == String.Empty)
+            //{
+            //    //TODO: Prompt for the string
+            //    MenuHelper.PrintOnLine(15, "Does this work?");
+            //    MenuHelper.PromptOnLine(16);
+            //    var testRange = "1";
+            //    var testHex = "1a4fF";
+            //    string validHex;
+            //    int validRange;
+            //    if (MenuHelper.ValidHexInput(testHex,out validHex) && MenuHelper.ValidRangeInput(testRange,out validRange))
+            //    {
+            //        var ruleStr = "R" + validRange.ToString() + ",W" + validHex;
+            //        Rules1D.CustomRule = ruleStr;
+            //    }
+            //    else
+            //    {
+            //        Rules1D.CustomRule = "R1,W0";
+            //    }
 
-            }
+            //}
             var range = int.Parse(Rules1D.CustomRule.Split(',')[0].Substring(1));
             if (!RuleDict_Initialized)
             {
