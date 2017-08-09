@@ -159,26 +159,8 @@ namespace GHGameOfLife.Rules
         //-----------------------------------------------------------------------------
         public static bool Rule_Custom(bool[] currentRow, int col)
         {
-            //if (Rules1D.CustomRule == String.Empty)
-            //{
-            //    //TODO: Prompt for the string
-            //    MenuHelper.PrintOnLine(15, "Does this work?");
-            //    MenuHelper.PromptOnLine(16);
-            //    var testRange = "1";
-            //    var testHex = "1a4fF";
-            //    string validHex;
-            //    int validRange;
-            //    if (MenuHelper.ValidHexInput(testHex,out validHex) && MenuHelper.ValidRangeInput(testRange,out validRange))
-            //    {
-            //        var ruleStr = "R" + validRange.ToString() + ",W" + validHex;
-            //        Rules1D.CustomRule = ruleStr;
-            //    }
-            //    else
-            //    {
-            //        Rules1D.CustomRule = "R1,W0";
-            //    }
-
-            //}
+            //Should maybe sanity check that the CustomRule string is set and, if it isn't, put some default 
+            //value in so we dont just error out. Maybe have it change to a new rule and reset the rulesdict
             var range = int.Parse(Rules1D.CustomRule.Split(',')[0].Substring(1));
             if (!RuleDict_Initialized)
             {

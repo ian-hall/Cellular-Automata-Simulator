@@ -54,7 +54,6 @@ namespace GHGameOfLife
             var chosenRule = Rules1D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
             this.Rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
             this.Rule_Name = rule;
-            //Rules1D.UserRule = "R1,W16";
             Rules1D.RuleDict_Initialized = false;
         }
 //-----------------------------------------------------------------------------
@@ -62,7 +61,7 @@ namespace GHGameOfLife
         {
             var newAutomata1D = new Automata1D(rowMax, colMax, rType);
             //This is really gross but it prompts users for input on lines 15, 16 and 17 for the range and hex value of a custom 1d rule
-            //This also lets the user type all willy nilly and can mess up the nice boarder but oh well for now
+            //This also lets the user type all willy nilly and can mess up the nice border but oh well for now
             if(rType == "Custom")
             {
                 MenuHelper.PrintOnLine(15, "Select Range");
@@ -83,8 +82,9 @@ namespace GHGameOfLife
                 }
                 //Clear the inside of the border once we get some valid values
                 MenuHelper.ClearAllInBorder();
-
-                Rules1D.UserRule = "R" + range + ",W" + hex;
+                var ruleStr = "R" + range + ",W" + hex;
+                Rules1D.UserRule = ruleStr;
+                newAutomata1D.Rule_Name = ruleStr;
             }
             switch(bType)
             {
