@@ -1,5 +1,5 @@
 This is Ian's Automata Whatever's Readme
 
-This is a console program that allows you to choose between 1D and 2D cellular automata to run simulations of. For both types,
-users are able to choose the rule set and initial population to use. For 2D automata, users can choose to build their own initial pop,
-choose a preloaded population from a list, or load a CELLS file consiting of '.'s and 'O's representing cells.
+This let's you run 1D or 2D automata simulations. 
+It supports files of '.'s and '0's and has a wide range of built-in rules and populations to try. 
+It also allows for user-defined 1D rules and 2D populations.
