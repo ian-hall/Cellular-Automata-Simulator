@@ -178,8 +178,9 @@ namespace GHGameOfLife.Rules
             if(col%33 == 0)
             {
                 RuleDict_Initialized = false;
-                // magic number 1 because Rule_Random is last and we don't want some kind of horrible recursion happening
-                var chosen = RuleMethods.Take(RuleMethods.Count() - 1).ElementAt(RNG.Next(RuleMethods.Count() - 1));
+                // magic number 2 because Rule_Random is last and we don't want some kind of horrible recursion happening
+                // Also because we don't want to accidently call Rule_Custom
+                var chosen = RuleMethods.Take(RuleMethods.Count() - 2).ElementAt(RNG.Next(RuleMethods.Count() - 2));
                 RandomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
             }
             return RandomRule(currentRow, col);
