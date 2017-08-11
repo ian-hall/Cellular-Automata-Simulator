@@ -179,7 +179,7 @@ namespace GHGameOfLife.Rules
             {
                 RuleDict_Initialized = false;
                 // magic number 2 because Rule_Random is last and we don't want some kind of horrible recursion happening
-                // Also because we don't want to accidently call Rule_Custom
+                // Also because we don't want to accidentally call Rule_Custom
                 var chosen = RuleMethods.Take(RuleMethods.Count() - 2).ElementAt(RNG.Next(RuleMethods.Count() - 2));
                 RandomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
             }

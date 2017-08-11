@@ -44,7 +44,6 @@ namespace GHGameOfLife
 //-----------------------------------------------------------------------------
         private Automata1D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
-            // TODO: Add a "custom" rule set that allows users to input a rule of the form Ry,Wxxxxxxxx"
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
             this.Entire_Board = new bool[this.Rows][];
@@ -72,6 +71,7 @@ namespace GHGameOfLife
                     MenuHelper.PrintOnLine(17, "Try again");
                     tempRange = MenuHelper.PromptOnLine(16, "[1-4]: ");                                     
                 }
+                MenuHelper.ClearWithinBorder(17);
                 MenuHelper.PrintOnLine(15, "Enter a hex string");
                 var tempHex = MenuHelper.PromptOnLine(16, "the hex: ");
                 string hex = String.Empty;
