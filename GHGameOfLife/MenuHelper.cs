@@ -268,7 +268,7 @@ namespace GHGameOfLife
         }
         //------------------------------------------------------------------------------
         /// <summary>
-        /// Only the space under the bottom border is used for the menu
+        /// Clear all lines below the border
         /// </summary>
         public static void ClearUnderBoard()
         {

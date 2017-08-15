@@ -16,28 +16,23 @@ namespace GHGameOfLife
         // Don't go below these values or the text will be screwy
 
         static int Current_Cols, Current_Rows;
+        
+        //seriously don't remember how i came up with these numbers
         static int Max_Cols = 175;
         static int Max_Rows = 52;  
   
         static int Num_Sizes = 3;  // The amount of different sizes allowed
         static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
-        static int Curr_Size_Index = 1; // Which size to default to, 1 is med
+        static int Curr_Size_Index = 0; // Default to smallest size
 //------------------------------------------------------------------------------
         [STAThread]
         static void Main(string[] args)
         {
-            
-            int initBuffWidth = Console.BufferWidth;
-            int initBuffHeight = Console.BufferHeight;
-            int initConsWidth = Console.WindowWidth;
-            int initConsHeight = Console.WindowHeight;
-
             InitializeConsole();
             bool exit = false;
             do
             {
                 NewMenu();
-
                 MenuHelper.PromptForAnother();
                 bool validKey = false;             
                 while (!validKey)
@@ -55,10 +50,7 @@ namespace GHGameOfLife
                     {
                         validKey = true;
                     }
-
-                }
-                
-
+                }                
             } while (!exit);
         }
 //------------------------------------------------------------------------------
@@ -249,7 +241,7 @@ namespace GHGameOfLife
                     }
                 }
                 //After checking for the resize we should process the input
-                //start with chosing type, then rules, then board init type
+                //start with choosing type, then rules, then board init type
                 if(!isTypeChosen)
                 {
                     switch (keyInfo.Key)
@@ -493,7 +485,6 @@ namespace GHGameOfLife
             Current_Cols = Console.WindowWidth;
             MenuHelper.ReInitialize();
             MenuHelper.DrawBorder();
-            //return MenuText.PrintMenuFromList(prompts);
         }
 //------------------------------------------------------------------------------
     } // end class
