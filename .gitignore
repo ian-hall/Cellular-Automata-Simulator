@@ -213,3 +213,4 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+/.vs/GHGameOfLife/v15/Server/sqlite3
