@@ -347,14 +347,14 @@ namespace GHGameOfLife
             error = MenuHelper.FileError.None;
             return true;
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
-        /// TODO: Change this again to accept more file formats
         /// Makes sure there are only '.' and 'O' in a given string, used to 
         /// validate the file loaded in BuildFromFile()
         /// </summary>
         /// <param name="s">current string</param>
         /// <returns>True if the string is all '.' and 'O'</returns>
+        /// TODO: Change this again to accept more file formats
         private bool ValidLine(string s)
         {
             try
@@ -377,11 +377,11 @@ namespace GHGameOfLife
             }
             return true;
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
-        /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
         /// </summary>
+        /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
         private void Build2DBoard_User()
         {
             Console.SetBufferSize(this.Console_Width + 50, this.Console_Height);

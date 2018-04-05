@@ -127,9 +127,10 @@ namespace GHGameOfLife
             MenuHelper.Initialize();
             MenuHelper.DrawBorder();
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Displays the main menu for starting the game running.
+        /// </summary>
         /// 
         ///         Prompt for 1d or 2d
         ///             if 1d   -> prompt for which rule
@@ -137,7 +138,6 @@ namespace GHGameOfLife
         ///             if 2d   -> prompt for which rule (once implemented)
         ///                     -> prompt for type of starting population
         ///                         -> prompt for resource if needed
-        /// </summary>
         private static void NewMenu()
         {
             var typePrompts = new List<string>() {"1) 1D Automata",
@@ -377,13 +377,13 @@ namespace GHGameOfLife
                 }
             }
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Display a list of all resources built in to the program
-        /// TODO: Have multiple resources specific to certain life rules
-        ///       as well as one common resource list for all rules
         /// </summary>
         /// <returns>The string key value of the resource to load</returns>
+        /// TODO: Have multiple resources specific to certain life rules
+        ///       as well as one common resource list for all rules
         private static string PromptForRes()
         {
             //Clear the resize options since we are not supporting resizing here.

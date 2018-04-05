@@ -2,13 +2,13 @@
 {
     /// <summary>
     /// abstract class for handling ConsoleAutomata whatevers.
+    /// </summary>
     /// Members include:
     ///         __Is_Initialized -> bool representing board initialization
     ///         __Num_Rows,__Num_Cols -> ints representing the dimensions of the game board
     ///         __Orig_Console_Height,__Orig_Console_Width -> ints representing the size of the console on game initializtion
     ///         __Generation -> current generation of the game    
     ///         abstract Board -> 2D array of bools representing the current game board
-    /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
     abstract class ConsoleAutomata
     {

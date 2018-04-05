@@ -406,12 +406,12 @@ namespace GHGameOfLife
         //------------------------------------------------------------------------------
         /// <summary>
         /// Displays options in a paged fashion.
+        /// </summary>
+        /// <returns>the index of the chosen choice</returns>
         ///       1-7 are used to select an option
         ///       8 goes back to prev page
         ///       9 goes to next page
         ///       0 cancels
-        /// </summary>
-        /// <returns>the index of the chosen choice</returns>
         public static int PrintPagedMenu(List<string> choices, int pageNum, out bool onLastPage)
         {
             onLastPage = false;
@@ -495,12 +495,12 @@ namespace GHGameOfLife
         }
         //------------------------------------------------------------------------------
         /// <summary>
-        /// Checks if the iniput string is a valid range for 1D automata. Gonna limit range to 
-        /// some magic number like 4
+        /// Checks if the input string is a valid range for 1D automata.
         /// </summary>
         /// <param name="input">user's input string</param>
         /// <param name="range">int representing the range</param>
         /// <returns></returns>
+        ///  Gonna limit range to some magic number like 4
         public static bool ValidRangeInput(string input, out int range)
         {
             range = 0;

@@ -128,7 +128,7 @@ namespace GHGameOfLife
         }
 //-----------------------------------------------------------------------------
         /// <summary>
-        /// Prings the automata rule within the boarders of the console
+        /// Prints the automata rule within the boarders of the console
         /// </summary>
         public override void PrintBoard()
         {
