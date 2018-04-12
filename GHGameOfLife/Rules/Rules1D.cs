@@ -173,9 +173,7 @@ namespace GHGameOfLife.Rules
         public static bool Rule_Random(bool[] currentRow, int col)
         {
             // Need to keep this last so the randomRule thing below doesn't include it.
-            //TODO: temp 33 just to see when new rule is chosen
-            //      can't use col == 0 unless i want a whole lot of nothing
-            if(col%33 == 0)
+            if(col%20 == 0)
             {
                 RuleDict_Initialized = false;
                 // magic number 2 because Rule_Random is last and we don't want some kind of horrible recursion happening
