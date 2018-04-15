@@ -1,5 +1,7 @@
 This is Ian's Automata Whatever's Readme
 
-This let's you run 1D or 2D automata simulations. 
-It supports files of '.'s and '0's and has a wide range of built-in rules and populations to try. 
-It also allows for user-defined 1D rules and 2D populations.
+Just a silly little console application that lets you play around with 1D and 2D cellular automata populations.
+Supports user created rules for 1D automata and user created initial populations for 2D automata.
+Now uses .NET Core.
+
+Requires the [.NET Core runtime](https://www.microsoft.com/net/download/windows/run) to run.
