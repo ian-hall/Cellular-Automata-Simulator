@@ -1,0 +1,442 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="anvil" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\anvil.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="average" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\average.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="b29" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\b29.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="b52bomber" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\b52bomber.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="backrake3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\backrake3.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="barge2spaceship" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\barge2spaceship.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bargespaceship" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\bargespaceship.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="beehivebendtail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\beehivebendtail.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="beehivewithnine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\beehivewithnine.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Bee_Hat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\beehat.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="blinkerpuffer1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\blinkerpuffer1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="blinkersbitpole" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\blinkersbitpole.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="boatstretcher1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\boatstretcher1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="boatwithlongtail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\boatwithlongtail.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="brain" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\brain.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="buckaroo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\buckaroo.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="bunnies10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\bunnies10.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Canada_Goose" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\canadagoose.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="carnivalshuttle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\carnivalshuttle.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="carriersiamesecarrier" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\carriersiamesecarrier.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cheptomino" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cheptomino.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cisbargewithtail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cisbargewithtail.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cisbeaconanddock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cisbeaconanddock.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cisbeaconupandlonghook" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cisbeaconupandlonghook.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cisboatanddock" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cisboatanddock.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cismirroredrbee" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cismirroredrbee.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="cisshillelagh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cisshillelagh.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="confusedeaters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\confusedeaters.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="edgerepairspaceship1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\edgerepairspaceship1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="edna" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\edna.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ellisonp4hwemulatorhybrid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ellisonp4hwemulatorhybrid.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="eureka" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\eureka.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="extremelyimpressive" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\extremelyimpressive.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="fumarole" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\fumarole.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="fumaroleonachimsp11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\fumaroleonachimsp11.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="gardenofeden1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\gardenofeden1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="gardenofeden5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\gardenofeden5.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="germ" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\germ.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="glasses" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\glasses.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Grow_By_One" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\growbyone.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="heart" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\heart.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="heavyweightemulator" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\heavyweightemulator.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="heavyweightvolcano" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\heavyweightvolcano.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="hivenudger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\hivenudger.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="hivenudger2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\hivenudger2.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="honeycomb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\honeycomb.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="honeyfarm" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\honeyfarm.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="hooks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\hooks.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="hookwithtail" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\hookwithtail.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="house" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\house.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="interchange" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\interchange.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="iwona" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\iwona.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="jack" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\jack.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="jam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\jam.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="karelsp15" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\karelsp15.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="killercandlefrobras" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\killercandlefrobras.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="killertoads" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\killertoads.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="lwss" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\lwss.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="mango" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\mango.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="mathematician" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\mathematician.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="max" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\max.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="mazing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\mazing.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="mooseantlers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\mooseantlers.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="multuminparvo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\multuminparvo.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="p35beehivehassler" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\p35beehivehassler.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="p36toadhassler" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\p36toadhassler.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="p5reflector" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\p5reflector.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pipsquirter1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\pipsquirter1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pipsquirter2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\pipsquirter2.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="piston" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\piston.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pond" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\pond.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="popover" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\popover.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="prepulsarshuttle29v2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\prepulsarshuttle29v2.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="prepulsarspaceship" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\prepulsarspaceship.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pressurecooker" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\pressurecooker.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="protein" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\protein.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="pseudobarberpole" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\pseudobarberpole.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="r2d2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\r2d2.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="revolver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\revolver.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="sailboat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\sailboat.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="schickengine" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\schickengine.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Ship_In_a_Bottle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\shipinbottle.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="silversp5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\silversp5.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="snorkelloop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\snorkelloop.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Sparky" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\sparky.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="tableontable" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\tableontable.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="trafficcircle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\trafficcircle.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="trafficjam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\trafficjam.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="tripole" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\tripole.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Twin_Bees" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\twinbees.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="unicycle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\unicycle.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="unix" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\unix.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="washerwoman" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\washerwoman.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="whynot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\whynot.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="Wickstretcher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>resources\wickstretcher.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="wing" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\wing.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_104p177" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\104p177.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_119p4h1v0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\119p4h1v0.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_123" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\123.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_17c45reaction" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\17c45reaction.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_1beacon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\1beacon.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_258p3onachimsp11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\258p3onachimsp11.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_2fumaroles" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\2fumaroles.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_46p4h1v0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\46p4h1v0.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_4812diamond" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\4812diamond.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_86p5h1v1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\86p5h1v1.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="_92p331" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\92p331.cells;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+</root>
