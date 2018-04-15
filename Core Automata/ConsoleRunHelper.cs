@@ -109,12 +109,12 @@ namespace Core_Automata
                         currentStatus["Paused"] = false;
                     }
                     break;
-                case ConsoleKey.S:
-                    if (!currentStatus["Continuous"] || currentStatus["Paused"])
-                    {
-                        SaveBoard(currentGame.Rows, currentGame.Cols, currentGame.Board_Copy);
-                    }
-                    break;
+                //case ConsoleKey.S:
+                //    if (!currentStatus["Continuous"] || currentStatus["Paused"])
+                //    {
+                //        SaveBoard(currentGame.Rows, currentGame.Cols, currentGame.Board_Copy);
+                //    }
+                //    break;
                 case ConsoleKey.OemMinus:
                 case ConsoleKey.Subtract:
                     if (__Curr_Speed_Index >= 1)
@@ -151,68 +151,68 @@ namespace Core_Automata
         /// <param name="numRows">Total number of rows on the board</param>
         /// <param name="numCols">Total number of cols on the board</param>
         /// <param name="tempBoard">2d bool array representing the board</param>
-        public static async void SaveBoard(int numRows, int numCols, bool[,] tempBoard)
-        {
-            SaveFileDialog saveDia = new SaveFileDialog();
-            var filters = new List<FileDialogFilter>();
-            var tempFilter = new FileDialogFilter();
-            tempFilter.Name = "Text";
-            tempFilter.Extensions = new List<string>() { "txt" };
-            saveDia.Filters = new List<FileDialogFilter>() { tempFilter };
+        //public static async void SaveBoard(int numRows, int numCols, bool[,] tempBoard)
+        //{
+        //    SaveFileDialog saveDia = new SaveFileDialog();
+        //    var filters = new List<FileDialogFilter>();
+        //    var tempFilter = new FileDialogFilter();
+        //    tempFilter.Name = "Text";
+        //    tempFilter.Extensions = new List<string>() { "txt" };
+        //    saveDia.Filters = new List<FileDialogFilter>() { tempFilter };
 
-            var t1 = new Window();
-            var test = await saveDia.ShowAsync(t1);
+        //    var t1 = new Window();
+        //    var test = await saveDia.ShowAsync(t1);
 
-            var idunno = "";
+        //    var idunno = "";
 
-            // We only save if the dialog box comes back true, otherwise
-            // we just do nothing
-            //if (saveDia.ShowDialog() == DialogResult.OK)
-            //{
-            //    Rect saveBox = new Rect();
-            //    saveBox.Top = int.MaxValue;
-            //    saveBox.Bottom = int.MinValue;
-            //    saveBox.Left = int.MaxValue;
-            //    saveBox.Right = int.MinValue;
+        //    // We only save if the dialog box comes back true, otherwise
+        //    // we just do nothing
+        //    if (saveDia.ShowDialog() == DialogResult.OK)
+        //    {
+        //        Rect saveBox = new Rect();
+        //        saveBox.Top = int.MaxValue;
+        //        saveBox.Bottom = int.MinValue;
+        //        saveBox.Left = int.MaxValue;
+        //        saveBox.Right = int.MinValue;
 
-            //    // make a box that only includes the minimum needed lines
-            //    // to save the board
-            //    // We only need to check live cells
-            //    for (int r = 0; r < numRows; r++)
-            //    {
-            //        for (int c = 0; c < numCols; c++)
-            //        {
-            //            if (tempBoard[r, c])
-            //            {
-            //                if (r < saveBox.Top)
-            //                    saveBox.Top = r;
-            //                if (r > saveBox.Bottom)
-            //                    saveBox.Bottom = r;
-            //                if (c < saveBox.Left)
-            //                    saveBox.Left = c;
-            //                if (c > saveBox.Right)
-            //                    saveBox.Right = c;
-            //            }
-            //        }
-            //    }
+        //        // make a box that only includes the minimum needed lines
+        //        // to save the board
+        //        // We only need to check live cells
+        //        for (int r = 0; r < numRows; r++)
+        //        {
+        //            for (int c = 0; c < numCols; c++)
+        //            {
+        //                if (tempBoard[r, c])
+        //                {
+        //                    if (r < saveBox.Top)
+        //                        saveBox.Top = r;
+        //                    if (r > saveBox.Bottom)
+        //                        saveBox.Bottom = r;
+        //                    if (c < saveBox.Left)
+        //                        saveBox.Left = c;
+        //                    if (c > saveBox.Right)
+        //                        saveBox.Right = c;
+        //                }
+        //            }
+        //        }
 
-            //    StringBuilder sb = new StringBuilder();
-            //    for (int r = saveBox.Top; r <= saveBox.Bottom; r++)
-            //    {
-            //        for (int c = saveBox.Left; c <= saveBox.Right; c++)
-            //        {
-            //            if (tempBoard[r, c])
-            //                sb.Append('O');
-            //            else
-            //                sb.Append('.');
-            //        }
-            //        if (r != saveBox.Bottom)
-            //            sb.AppendLine();
-            //    }
-            //    File.WriteAllText(saveDia.FileName, sb.ToString());
-            //}
+        //        StringBuilder sb = new StringBuilder();
+        //        for (int r = saveBox.Top; r <= saveBox.Bottom; r++)
+        //        {
+        //            for (int c = saveBox.Left; c <= saveBox.Right; c++)
+        //            {
+        //                if (tempBoard[r, c])
+        //                    sb.Append('O');
+        //                else
+        //                    sb.Append('.');
+        //            }
+        //            if (r != saveBox.Bottom)
+        //                sb.AppendLine();
+        //        }
+        //        File.WriteAllText(saveDia.FileName, sb.ToString());
+        //    }
 
-        }
+        //}
 //------------------------------------------------------------------------------
     }
 //////////////////////////////////////////////////////////////////////////////////

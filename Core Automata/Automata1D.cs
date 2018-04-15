@@ -33,6 +33,10 @@ namespace Core_Automata
                 var temp = new bool[this.Rows, this.Cols];
                 for( int r = 0; r < this.Rows; r++ )
                 {
+                    if(this.Entire_Board[r] == null)
+                    {
+                        break;
+                    }
                     for( int c = 0; c < this.Cols; c++ )
                     {
                         temp[r, c] = this.Entire_Board[r][c];

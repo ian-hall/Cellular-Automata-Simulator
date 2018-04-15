@@ -80,13 +80,13 @@ namespace Core_Automata
                                         "[R] Toggle running",
                                         "[ESC] Exit",
                                         "[+/-] Adjust speed",
-                                        "[S] Save board",
-                                        "(while stepping/paused)"};
+                                        "[S] Save board (DISABLED)",
+                                        "(usable while paused)"};
 
             Create_Ctrls = new string[] {   "[↑|↓|←|→] Move cursor",
                                             "[SPACE] Add/Remove cells",
                                             "[ENTER] Start Game",
-                                            "[S] Save board",
+                                            "[S] Save board (DISABLED)",
                                             "[[#]] Load/Rotate pop",
                                             "[Ctrl + [#]] Mirror pop",
                                             "[C] Cancel pop mode"};

@@ -628,9 +628,9 @@ namespace Core_Automata
                             }
                         }
                         break;
-                    case ConsoleKey.S:
-                        ConsoleRunHelper.SaveBoard(Valid_Tops.Count(), Valid_Lefts.Count(), tempBoard);
-                        break;
+                    //case ConsoleKey.S:
+                    //    ConsoleRunHelper.SaveBoard(Valid_Tops.Count(), Valid_Lefts.Count(), tempBoard);
+                    //    break;
                     case ConsoleKey.C:
                         popLoaderMode = false;
                         loadedPop = null;
