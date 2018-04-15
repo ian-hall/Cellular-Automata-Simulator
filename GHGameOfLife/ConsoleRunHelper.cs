@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Avalonia.Controls;
 
 namespace Core_Automata
 {
@@ -144,7 +143,7 @@ namespace Core_Automata
             }
             MenuHelper.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], ConsoleRunHelper.__Curr_Speed_Index);
         }
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
         /// <summary>
         /// Saves the current board to a file. 
         /// </summary>
@@ -160,14 +159,9 @@ namespace Core_Automata
         //    tempFilter.Extensions = new List<string>() { "txt" };
         //    saveDia.Filters = new List<FileDialogFilter>() { tempFilter };
 
-        //    var t1 = new Window();
-        //    var test = await saveDia.ShowAsync(t1);
-
-        //    var idunno = "";
-
-        //    // We only save if the dialog box comes back true, otherwise
-        //    // we just do nothing
-        //    if (saveDia.ShowDialog() == DialogResult.OK)
+            // We only save if the dialog box comes back true, otherwise
+            // we just do nothing
+        //    if (saveDia.ShowDialog(testing) == DialogResult.Ok)
         //    {
         //        Rect saveBox = new Rect();
         //        saveBox.Top = int.MaxValue;
@@ -213,7 +207,7 @@ namespace Core_Automata
         //    }
 
         //}
-//------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------
     }
 //////////////////////////////////////////////////////////////////////////////////
 }

@@ -79,14 +79,11 @@ namespace Core_Automata
             Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
                                         "[R] Toggle running",
                                         "[ESC] Exit",
-                                        "[+/-] Adjust speed",
-                                        "[S] Save board (DISABLED)",
-                                        "(usable while paused)"};
+                                        "[+/-] Adjust speed" };
 
             Create_Ctrls = new string[] {   "[↑|↓|←|→] Move cursor",
                                             "[SPACE] Add/Remove cells",
                                             "[ENTER] Start Game",
-                                            "[S] Save board (DISABLED)",
                                             "[[#]] Load/Rotate pop",
                                             "[Ctrl + [#]] Mirror pop",
                                             "[C] Cancel pop mode"};
@@ -163,9 +160,9 @@ namespace Core_Automata
             Console.SetCursorPosition(5, printRow);
             Console.Write("{0,-25}{1,-25}", Run_Ctrls[0], Run_Ctrls[3]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Run_Ctrls[1], Run_Ctrls[4]);
+            Console.Write("{0,-25}", Run_Ctrls[1]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Run_Ctrls[2], Run_Ctrls[5]);
+            Console.Write("{0,-25}", Run_Ctrls[2]);
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
         //------------------------------------------------------------------------------
@@ -221,11 +218,11 @@ namespace Core_Automata
             var textWidth = 25;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write("{0,-25}{1,-25}{2,-25}", Create_Ctrls[0], Create_Ctrls[4], Create_Ctrls[2]);
+            Console.Write("{0,-25}{1,-25}{2,-25}", Create_Ctrls[0], Create_Ctrls[3], Create_Ctrls[5]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Create_Ctrls[1], Create_Ctrls[5]);
+            Console.Write("{0,-25}{1,-25}", Create_Ctrls[1], Create_Ctrls[4]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Create_Ctrls[3], Create_Ctrls[6]);
+            Console.Write("{0,-25}", Create_Ctrls[2]);
 
             /* Start count at 1 because of the above. Need to limit this to 3 entries per column because
              * of the scroll bar that shows up. printCol is calculated based on the above since we start

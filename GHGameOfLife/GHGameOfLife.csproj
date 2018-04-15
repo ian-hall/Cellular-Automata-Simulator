@@ -4,13 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Core_Automata</RootNamespace>
-    <AssemblyName>Core Automata</AssemblyName>
+    <AssemblyName>CoreAutomata</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.6.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="BuilderPops.Designer.cs">
