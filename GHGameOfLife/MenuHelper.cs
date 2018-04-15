@@ -21,7 +21,7 @@ namespace Core_Automata
         public const ConsoleColor Board_FG = ConsoleColor.White;
         public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
 
-        public const string Msg_Welcome = "Welcome to Ian's Automata Whatever";
+        public const string Msg_Welcome = "Welcome to Ian's Automata Simulator";
         public const string Msg_Choose = "Please choose an option!";
         public const string Msg_Change_Size = "[Ctrl + [+/-]] Change board size";
         public const string Prompt = "Your choice: ";
@@ -87,6 +87,8 @@ namespace Core_Automata
                                             "[[#]] Load/Rotate pop",
                                             "[Ctrl + [#]] Mirror pop",
                                             "[C] Cancel pop mode"};
+
+            ClearConsoleWindow();
         }
         //------------------------------------------------------------------------------
         public static void ReInitialize()
@@ -108,6 +110,14 @@ namespace Core_Automata
         {
             Console.SetCursorPosition(5, row);
             Console.Write("".PadRight(Console.WindowWidth - 10));
+        }
+        //------------------------------------------------------------------------------
+        public static void ClearConsoleWindow()
+        {
+            for( int i = 0; i < Console.WindowHeight; i++ )
+            {
+                ClearLine(i);
+            }
         }
         //------------------------------------------------------------------------------
         public static void DrawBorder()

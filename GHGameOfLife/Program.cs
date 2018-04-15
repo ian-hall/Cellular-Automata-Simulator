@@ -120,7 +120,6 @@ namespace Core_Automata
                 }
             }
 
-
             AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
