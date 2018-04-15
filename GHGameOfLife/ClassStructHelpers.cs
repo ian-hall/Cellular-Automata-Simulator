@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace GHGameOfLife
+namespace Core_Automata
 {
 ///////////////////////////////////////////////////////////////////////////////
     [StructLayout(LayoutKind.Sequential)]

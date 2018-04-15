@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GHGameOfLife {
+namespace Core_Automata {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace GHGameOfLife {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GHGameOfLife.BuilderPops", typeof(BuilderPops).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Core_Automata.BuilderPops", typeof(BuilderPops).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

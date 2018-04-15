@@ -2,9 +2,9 @@
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using GHGameOfLife.Rules;
+using Core_Automata.Rules;
 
-namespace GHGameOfLife
+namespace Core_Automata
 {
 ///////////////////////////////////////////////////////////////////////////////
     /// <summary>
@@ -33,6 +33,11 @@ namespace GHGameOfLife
                 var temp = new bool[this.Rows, this.Cols];
                 for( int r = 0; r < this.Rows; r++ )
                 {
+                    //TODO: Error if trying to copy a partially filled board. Make sure this stops it?? (or just force to False?)
+                    if(this.Entire_Board[r] == null)
+                    {
+                        break;
+                    }
                     for( int c = 0; c < this.Cols; c++ )
                     {
                         temp[r, c] = this.Entire_Board[r][c];

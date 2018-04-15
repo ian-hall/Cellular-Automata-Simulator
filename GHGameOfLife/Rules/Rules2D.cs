@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace GHGameOfLife.Rules
+namespace Core_Automata.Rules
 {
     class Rules2D
     {

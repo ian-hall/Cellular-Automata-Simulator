@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GHGameOfLife.Rules
+namespace Core_Automata.Rules
 {
     /// <summary>
     /// 1D Automata Rules (http://atlas.wolfram.com/TOC/TOC_200.html)

@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-namespace GHGameOfLife
+namespace Core_Automata
 {
     ///////////////////////////////////////////////////////////////////////////////
     class MenuHelper
@@ -55,7 +55,7 @@ namespace GHGameOfLife
             Large_Pops = new List<string>();
             Builder_Pops = new List<string>();
 
-            ResourceManager rm = GHGameOfLife.LargePops.ResourceManager;
+            ResourceManager rm = Core_Automata.LargePops.ResourceManager;
             rm.IgnoreCase = true;
             ResourceSet all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
 
@@ -67,7 +67,7 @@ namespace GHGameOfLife
 
             Large_Pops.Sort();
 
-            rm = GHGameOfLife.BuilderPops.ResourceManager;
+            rm = Core_Automata.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
             all = rm.GetResourceSet(CultureInfo.CurrentCulture, true, true);
 
@@ -80,13 +80,13 @@ namespace GHGameOfLife
                                         "[R] Toggle running",
                                         "[ESC] Exit",
                                         "[+/-] Adjust speed",
-                                        "[S] Save board",
-                                        "(while stepping/paused)"};
+                                        "[S] Save board (DISABLED)",
+                                        "(usable while paused)"};
 
             Create_Ctrls = new string[] {   "[↑|↓|←|→] Move cursor",
                                             "[SPACE] Add/Remove cells",
                                             "[ENTER] Start Game",
-                                            "[S] Save board",
+                                            "[S] Save board (DISABLED)",
                                             "[[#]] Load/Rotate pop",
                                             "[Ctrl + [#]] Mirror pop",
                                             "[C] Cancel pop mode"};

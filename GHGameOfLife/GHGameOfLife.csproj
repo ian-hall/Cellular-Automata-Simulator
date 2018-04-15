@@ -1,237 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3309A0EE-BF74-498D-82A1-CEDEC2F1CFE0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GHGameOfLife</RootNamespace>
-    <AssemblyName>GHGameOfLife</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RootNamespace>Core_Automata</RootNamespace>
+    <AssemblyName>Core Automata</AssemblyName>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Avalonia" Version="0.6.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.6.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Automata1D.cs" />
-    <Compile Include="ClassStructHelpers.cs" />
-    <Compile Include="ConsoleRunHelper.cs" />
-    <Compile Include="Automata2D.cs" />
-    <Compile Include="GenericHelp.cs" />
-    <Compile Include="ConsoleAutomata.cs" />
-    <Compile Include="MenuHelper.cs" />
-    <Compile Include="LargePops.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <Compile Update="BuilderPops.Designer.cs">
       <DesignTime>True</DesignTime>
-      <DependentUpon>LargePops.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BuilderPops.Designer.cs">
       <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
       <DependentUpon>BuilderPops.resx</DependentUpon>
     </Compile>
-    <Compile Include="Rules\Rules1D.cs" />
-    <Compile Include="Rules\Rules2D.cs" />
+    <Compile Update="LargePops.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LargePops.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Resources\104p177.cells" />
-    <None Include="Resources\119p4h1v0.cells" />
-    <None Include="Resources\123.cells" />
-    <None Include="Resources\17c45reaction.cells" />
-    <None Include="Resources\1beacon.cells" />
-    <None Include="Resources\258p3onachimsp11.cells" />
-    <None Include="Resources\2fumaroles.cells" />
-    <None Include="Resources\46p4h1v0.cells" />
-    <None Include="Resources\4812diamond.cells" />
-    <None Include="Resources\86p5h1v1.cells" />
-    <None Include="Resources\92p331.cells" />
-    <None Include="Resources\anvil.cells" />
-    <None Include="Resources\average.cells" />
-    <None Include="Resources\b29.cells" />
-    <None Include="Resources\b52bomber.cells" />
-    <None Include="Resources\backrake3.cells" />
-    <None Include="Resources\barge2spaceship.cells" />
-    <None Include="Resources\bargespaceship.cells" />
-    <None Include="Resources\beehat.cells" />
-    <None Include="Resources\beehivebendtail.cells" />
-    <None Include="Resources\beehivewithnine.cells" />
-    <None Include="Resources\blinkerpuffer1.cells" />
-    <None Include="Resources\blinkersbitpole.cells" />
-    <None Include="Resources\boatstretcher1.cells" />
-    <None Include="Resources\boatwithlongtail.cells" />
-    <None Include="Resources\brain.cells" />
-    <None Include="Resources\buckaroo.cells" />
-    <None Include="Resources\bunnies10.cells" />
-    <None Include="Resources\canadagoose.txt" />
-    <None Include="Resources\carnivalshuttle.cells" />
-    <None Include="Resources\carriersiamesecarrier.cells" />
-    <None Include="Resources\cheptomino.cells" />
-    <None Include="Resources\cisbargewithtail.cells" />
-    <None Include="Resources\cisbeaconanddock.cells" />
-    <None Include="Resources\cisbeaconupandlonghook.cells" />
-    <None Include="Resources\cisboatanddock.cells" />
-    <None Include="Resources\cismirroredrbee.cells" />
-    <None Include="Resources\cisshillelagh.cells" />
-    <None Include="Resources\confusedeaters.cells" />
-    <None Include="Resources\edgerepairspaceship1.cells" />
-    <None Include="Resources\edna.cells" />
-    <None Include="Resources\ellisonp4hwemulatorhybrid.cells" />
-    <None Include="Resources\eureka.cells" />
-    <None Include="Resources\extremelyimpressive.cells" />
-    <None Include="Resources\fumarole.cells" />
-    <None Include="Resources\fumaroleonachimsp11.cells" />
-    <None Include="Resources\gardenofeden1.cells" />
-    <None Include="Resources\gardenofeden5.cells" />
-    <None Include="Resources\germ.cells" />
-    <None Include="Resources\glasses.cells" />
-    <None Include="Resources\growbyone.txt" />
-    <None Include="Resources\heart.cells" />
-    <None Include="Resources\heavyweightemulator.cells" />
-    <None Include="Resources\heavyweightvolcano.cells" />
-    <None Include="Resources\hivenudger.cells" />
-    <None Include="Resources\hivenudger2.cells" />
-    <None Include="Resources\honeycomb.cells" />
-    <None Include="Resources\honeyfarm.cells" />
-    <None Include="Resources\hooks.cells" />
-    <None Include="Resources\hookwithtail.cells" />
-    <None Include="Resources\house.cells" />
-    <None Include="Resources\interchange.cells" />
-    <None Include="Resources\iwona.cells" />
-    <None Include="Resources\jack.cells" />
-    <None Include="Resources\jam.cells" />
-    <None Include="Resources\karelsp15.cells" />
-    <None Include="Resources\killercandlefrobras.cells" />
-    <None Include="Resources\killertoads.cells" />
-    <None Include="Resources\lwss.cells" />
-    <None Include="Resources\mango.cells" />
-    <None Include="Resources\mathematician.cells" />
-    <None Include="Resources\max.cells" />
-    <None Include="Resources\mazing.cells" />
-    <None Include="Resources\mooseantlers.cells" />
-    <None Include="Resources\multuminparvo.cells" />
-    <None Include="Resources\p35beehivehassler.cells" />
-    <None Include="Resources\p36toadhassler.cells" />
-    <None Include="Resources\p5reflector.cells" />
-    <None Include="Resources\pipsquirter1.cells" />
-    <None Include="Resources\pipsquirter2.cells" />
-    <None Include="Resources\piston.cells" />
-    <None Include="Resources\pond.cells" />
-    <None Include="Resources\popover.cells" />
-    <None Include="Resources\prepulsarshuttle29v2.cells" />
-    <None Include="Resources\prepulsarspaceship.cells" />
-    <None Include="Resources\pressurecooker.cells" />
-    <None Include="Resources\protein.cells" />
-    <None Include="Resources\pseudobarberpole.cells" />
-    <None Include="Resources\r2d2.cells" />
-    <None Include="Resources\revolver.cells" />
-    <None Include="Resources\sailboat.cells" />
-    <None Include="Resources\schickengine.cells" />
-    <None Include="Resources\silversp5.cells" />
-    <None Include="Resources\snorkelloop.cells" />
-    <None Include="Resources\tableontable.cells" />
-    <None Include="Resources\trafficcircle.cells" />
-    <None Include="Resources\trafficjam.cells" />
-    <None Include="Resources\tripole.cells" />
-    <None Include="Resources\twinbees.txt" />
-    <None Include="Resources\shipinbottle.txt" />
-    <None Include="Resources\wing.cells" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LargePops.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LargePops.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="BuilderPops.resx">
+    <EmbeddedResource Update="BuilderPops.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BuilderPops.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Resources\sparky.txt" />
+    <EmbeddedResource Update="LargePops.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LargePops.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Acorn.txt" />
-    <None Include="Resources\BlockLayer.txt" />
-    <None Include="Resources\glider%28down%29.txt" />
-    <None Include="Resources\smallship%28left%29.txt" />
-    <None Include="Resources\unicycle.cells" />
-    <None Include="Resources\unix.cells" />
-    <None Include="Resources\washerwoman.cells" />
-    <None Include="Resources\whynot.cells" />
-    <None Include="Resources\wickstretcher.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

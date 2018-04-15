@@ -2,10 +2,10 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using GHGameOfLife.Rules;
+using Core_Automata.Rules;
 
 
-namespace GHGameOfLife
+namespace Core_Automata
 {
 ///////////////////////////////////////////////////////////////////////////////
     class Program

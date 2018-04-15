@@ -1,4 +1,4 @@
-﻿namespace GHGameOfLife
+﻿namespace Core_Automata
 {
     /// <summary>
     /// abstract class for handling ConsoleAutomata whatevers.

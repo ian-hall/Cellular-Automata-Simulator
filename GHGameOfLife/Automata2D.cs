@@ -4,10 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using GHGameOfLife.Rules;
+using Core_Automata.Rules;
 
-namespace GHGameOfLife
+namespace Core_Automata
 {
     /// <summary>
     /// This class pretty much does everything. It sets up the console, 
@@ -18,7 +17,7 @@ namespace GHGameOfLife
 ///////////////////////////////////////////////////////////////////////////////
     class Automata2D : ConsoleAutomata
     {
-        public enum BuildTypes { Random, File, Resource, User };
+        public enum BuildTypes { Random, /*File,*/ Resource, User };
 
         private bool[,] Board;
         private const char LIVE_CELL = '☺';
@@ -71,9 +70,9 @@ namespace GHGameOfLife
                     break;
                 //Build a population from a CELLS-style file
                 //defaults to random in case of an error
-                case BuildTypes.File:
-                    newAutomata2D.Build2DBoard_File();
-                    break;
+                //case BuildTypes.File:
+                //    newAutomata2D.Build2DBoard_File();
+                //    break;
                 //Build a population using one of the CELLS files that is stored as a resource
                 //defaults to random in case of an error
                 case BuildTypes.Resource:
@@ -177,45 +176,46 @@ namespace GHGameOfLife
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        private void Build2DBoard_File()
-        {
-            MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;
-            var isValidFile = false;
+        /// TODO: Temporarily disabled while i get the Avalonia UI thing working
+        //private void Build2DBoard_File()
+        //{
+        //    MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;
+        //    var isValidFile = false;
 
-            OpenFileDialog openWindow = new OpenFileDialog();
-            string startingPop = null;
-            if (openWindow.ShowDialog() == DialogResult.OK)
-            {
-                string filePath = openWindow.FileName;
-                isValidFile = IsValidFileOrResource(filePath, this, out startingPop, out errType);
-                if(isValidFile)
-                {
-                    this.Loaded_Population = openWindow.SafeFileName;
-                }
-            }
-            //no ELSE because it defaults to a file not loaded error
+        //    OpenFileDialog openWindow = new OpenFileDialog();
+        //    string startingPop = null;
+        //    if (openWindow.ShowDialog() == DialogResult.OK)
+        //    {
+        //        string filePath = openWindow.FileName;
+        //        isValidFile = IsValidFileOrResource(filePath, this, out startingPop, out errType);
+        //        if(isValidFile)
+        //        {
+        //            this.Loaded_Population = openWindow.SafeFileName;
+        //        }
+        //    }
+        //    //no ELSE because it defaults to a file not loaded error
 
-            if (isValidFile)
-            {
-                this.FillBoard(startingPop);
-            }
-            else
-            {
-                MenuHelper.PrintFileError(errType);
-                bool keyPressed = false;
-                while (!keyPressed)
-                {
-                    if (!Console.KeyAvailable)
-                        System.Threading.Thread.Sleep(50);
-                    else
-                    {
-                        if (Console.ReadKey(true).Key == ConsoleKey.Enter)
-                            keyPressed = true;
-                    }
-                }
-                this.Build2DBoard_Random();
-            }
-        }
+        //    if (isValidFile)
+        //    {
+        //        this.FillBoard(startingPop);
+        //    }
+        //    else
+        //    {
+        //        MenuHelper.PrintFileError(errType);
+        //        bool keyPressed = false;
+        //        while (!keyPressed)
+        //        {
+        //            if (!Console.KeyAvailable)
+        //                System.Threading.Thread.Sleep(50);
+        //            else
+        //            {
+        //                if (Console.ReadKey(true).Key == ConsoleKey.Enter)
+        //                    keyPressed = true;
+        //            }
+        //        }
+        //        this.Build2DBoard_Random();
+        //    }
+        //}
 //------------------------------------------------------------------------------
         /// <summary>
         /// Builds the board from a resource
@@ -292,7 +292,7 @@ namespace GHGameOfLife
             }
             else
             {
-                var loadedResource = GHGameOfLife.LargePops.ResourceManager.GetString(filename);
+                var loadedResource = Core_Automata.LargePops.ResourceManager.GetString(filename);
                 wholeFile = Regex.Split(loadedResource, Environment.NewLine).ToList();
             }
             var fileByLine = new List<string>();
@@ -588,7 +588,7 @@ namespace GHGameOfLife
                     case ConsoleKey.D4:
                     case ConsoleKey.NumPad4:
                         var keyVal = Int32.Parse("" + pressed.Key.ToString().Last());
-                        string smallPop = GHGameOfLife.BuilderPops.ResourceManager.GetString(MenuHelper.Builder_Pops[keyVal - 1]);
+                        string smallPop = Core_Automata.BuilderPops.ResourceManager.GetString(MenuHelper.Builder_Pops[keyVal - 1]);
                         if (popLoaderMode && (loadedPop == MenuHelper.Builder_Pops[keyVal - 1]))
                         {
                             //if the button is pressed that corresponds to the already loaded population we either rotate or mirror
@@ -628,9 +628,9 @@ namespace GHGameOfLife
                             }
                         }
                         break;
-                    case ConsoleKey.S:
-                        ConsoleRunHelper.SaveBoard(Valid_Tops.Count(), Valid_Lefts.Count(), tempBoard);
-                        break;
+                    //case ConsoleKey.S:
+                    //    ConsoleRunHelper.SaveBoard(Valid_Tops.Count(), Valid_Lefts.Count(), tempBoard);
+                    //    break;
                     case ConsoleKey.C:
                         popLoaderMode = false;
                         loadedPop = null;
