@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Core_Automata
 {
-    ///////////////////////////////////////////////////////////////////////////////
+    
     class MenuHelper
     {
         // TODO: Change this to be less ugly maybe?
@@ -44,7 +44,7 @@ namespace Core_Automata
 
         public static int Space = 5;
         public static int Choices_Per_Page = 7;
-        //------------------------------------------------------------------------------
+        
         public static void Initialize()
         {
             Window_Center = Console.WindowHeight / 2;
@@ -90,7 +90,7 @@ namespace Core_Automata
 
             ClearConsoleWindow();
         }
-        //------------------------------------------------------------------------------
+        
         public static void ReInitialize()
         {
             Window_Center = Console.WindowHeight / 2;
@@ -99,19 +99,19 @@ namespace Core_Automata
             // Start the menus at 1/3 of the window
             Menu_Start_Row = Console.WindowHeight / 3 + 1;
         }
-        //------------------------------------------------------------------------------
+        
         public static void ClearLine(int row)
         {
             Console.SetCursorPosition(0, row);
             Console.Write("".PadRight(Console.WindowWidth - 1));
         }
-        //------------------------------------------------------------------------------
+        
         public static void ClearWithinBorder(int row)
         {
             Console.SetCursorPosition(5, row);
             Console.Write("".PadRight(Console.WindowWidth - 10));
         }
-        //------------------------------------------------------------------------------
+        
         public static void ClearConsoleWindow()
         {
             for( int i = 0; i < Console.WindowHeight; i++ )
@@ -119,7 +119,7 @@ namespace Core_Automata
                 ClearLine(i);
             }
         }
-        //------------------------------------------------------------------------------
+        
         public static void DrawBorder()
         {
             var rows = Console.WindowHeight;
@@ -158,7 +158,7 @@ namespace Core_Automata
                 Console.Write(horiz);
             Console.Write(botRight);
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints the controls for controlling the game while running
         /// </summary>
@@ -175,7 +175,7 @@ namespace Core_Automata
             Console.Write("{0,-25}", Run_Ctrls[2]);
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints the game status while running
         /// </summary>
@@ -216,7 +216,7 @@ namespace Core_Automata
             Console.Write(sb);
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints menu when user is building a population
         /// </summary>
@@ -252,7 +252,7 @@ namespace Core_Automata
 
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints messages to prompt for another round
         /// </summary>
@@ -273,7 +273,7 @@ namespace Core_Automata
             Console.Write("[ESC] Yes, let me out.");
             Console.ForegroundColor = Default_FG;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Clear all lines below the border
         /// </summary>
@@ -284,7 +284,7 @@ namespace Core_Automata
                 ClearLine(i);
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Clear everything inside the board area
         /// </summary>
@@ -294,7 +294,7 @@ namespace Core_Automata
                 ClearWithinBorder(i);
 
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Clear above the border
         /// </summary>
@@ -305,7 +305,7 @@ namespace Core_Automata
                 ClearLine(i);
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints a user friendly error message
         /// </summary>
@@ -348,7 +348,7 @@ namespace Core_Automata
             Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
             Console.Write(MenuHelper.Msg_Press_Enter);
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints a menu from the given choices
         /// </summary>
@@ -377,7 +377,7 @@ namespace Core_Automata
                 Console.Write(choice);
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Changes enums to a list of strings prefixed by numbers 1-7
         /// </summary>
@@ -395,7 +395,7 @@ namespace Core_Automata
             }
             return choiceStrings;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Changes enums to a list of strings, and also adds a back option.
         /// NOTE: This only works on enums with 7 or less choices, otherwise the back
@@ -410,7 +410,7 @@ namespace Core_Automata
             choiceStrings.Add(backString);
             return choiceStrings;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Displays options in a paged fashion.
         /// </summary>
@@ -469,7 +469,7 @@ namespace Core_Automata
             MenuHelper.PrintMenuFromList(currentPage);
             return hi - 1;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints the given string centered on the given line.
         /// </summary>
@@ -482,7 +482,7 @@ namespace Core_Automata
             Console.SetCursorPosition(left, line);
             Console.WriteLine(toPrint);
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Writes a prompt at the line and returns user input
         /// </summary>
@@ -500,7 +500,7 @@ namespace Core_Automata
             Console.CursorVisible = false;
             return input;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Checks if the input string is a valid range for 1D automata.
         /// </summary>
@@ -526,7 +526,7 @@ namespace Core_Automata
                 return false;
             }
         }
-        //------------------------------------------------------------------------------
+        
         public static bool ValidHexInput(string input, out string hex)
         {
             hex = String.Empty;
@@ -539,8 +539,8 @@ namespace Core_Automata
             hex = temp;
             return true;
         }
-        //------------------------------------------------------------------------------
-        //------------------------------------------------------------------------------
+        
+        
     } // end class
-    ///////////////////////////////////////////////////////////////////////////////
+    
 }

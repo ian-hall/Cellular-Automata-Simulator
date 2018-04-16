@@ -12,7 +12,7 @@ namespace Core_Automata
     {
         private static int[] __Speeds = { 100, 75, 50, 25, 10 };
         private static int __Curr_Speed_Index = 2;
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Takes a ConsoleAutomata and runs it
         /// </summary>
@@ -89,7 +89,7 @@ namespace Core_Automata
 
             Console.CursorVisible = false;
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Handles all input while the game is running.
         /// </summary>
@@ -143,7 +143,7 @@ namespace Core_Automata
             }
             MenuHelper.PrintStatus(currentStatus["Continuous"], currentStatus["Paused"], currentStatus["Wrapping"], ConsoleRunHelper.__Curr_Speed_Index);
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Saves the current board to a file. 
         /// </summary>
@@ -207,7 +207,7 @@ namespace Core_Automata
         //    }
 
         //}
-        //------------------------------------------------------------------------------
+        
     }
-//////////////////////////////////////////////////////////////////////////////////
+///
 }

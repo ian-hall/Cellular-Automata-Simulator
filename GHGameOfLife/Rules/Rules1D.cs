@@ -42,61 +42,61 @@ namespace Core_Automata.Rules
                 return RuleMethods.Select(fn => fn.Name.Substring(5)).OrderBy(s => s).ToArray(); //The names of the methods
             }
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_90(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow,col);
             return neighbors["P"] ^ neighbors["R"];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_30(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return neighbors["P"] ^ (neighbors["Q"] | neighbors["R"]);
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_1(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return !(neighbors["P"] | neighbors["Q"] | neighbors["R"]);
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_73(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return !(neighbors["P"] & neighbors["R"] | neighbors["P"] ^ neighbors["Q"] ^ neighbors["R"]);
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_129(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return !(neighbors["P"] ^ neighbors["Q"] | neighbors["P"] ^ neighbors["R"]);
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_18(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return (neighbors["P"] ^ neighbors["R"] ^ neighbors["Q"]) & !neighbors["Q"];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_193(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return neighbors["P"] ^ (neighbors["P"] | neighbors["Q"] | !neighbors["R"]) ^ neighbors["Q"];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_94(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return neighbors["P"] & neighbors["R"] ^ (neighbors["P"] | neighbors["Q"] | neighbors["R"]);
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Rule_57(bool[] currentRow, int col)
         {
             var neighbors = GetNeighbors(currentRow, col);
             return (neighbors["P"] | !neighbors["R"]) ^ neighbors["Q"];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Bermuda_Triangle(bool[] currentRow, int col)
         {
             var ruleStr = "R2,WBC82271C";
@@ -108,7 +108,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Glider_P168(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W6C1E53A8";
@@ -120,7 +120,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Inverted_Gliders(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W360A96F9";
@@ -132,7 +132,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Fish_Bones(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W5F0C9AD8";
@@ -144,7 +144,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_R3_Glider(bool[] currentRow, int col)
         {
             var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
@@ -156,7 +156,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Custom(bool[] currentRow, int col)
         {
             //Should maybe sanity check that the CustomRule string is set and, if it isn't, put some default 
@@ -169,7 +169,7 @@ namespace Core_Automata.Rules
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
             return RuleDict[neighborhood];
         }
-        //-----------------------------------------------------------------------------
+        
         public static bool Rule_Random(bool[] currentRow, int col)
         {
             // Need to keep this last so the randomRule thing below doesn't include it.
@@ -183,7 +183,7 @@ namespace Core_Automata.Rules
             }
             return RandomRule(currentRow, col);
         }
-        //-----------------------------------------------------------------------------
+        
         #region Helpers
         /// <summary>
         /// Gets the neighboring values of the given column.
@@ -223,7 +223,7 @@ namespace Core_Automata.Rules
             }
             return neighbors;
         }
-        //-----------------------------------------------------------------------------
+        
         /// <summary>
         /// Function that returns a binary string representing the values of a neighborhood with the given range.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Core_Automata.Rules
             }
             return sb.ToString();
         }
-        //-----------------------------------------------------------------------------
+        
         /// <summary>
         /// Returns a dictionary with keys being binary strings and values being a boolean representing the next state of the center bit in the bin string.
         /// </summary>
@@ -277,7 +277,7 @@ namespace Core_Automata.Rules
             RuleDict_Initialized = true;
             return rule;
         }
-        //-----------------------------------------------------------------------------
+        
         /// <summary>
         /// Converts a string of hex to a string of binary.
         /// </summary>
@@ -312,7 +312,7 @@ namespace Core_Automata.Rules
             }
             return sb.ToString();
         }
-        //-----------------------------------------------------------------------------
+        
         /// <summary>
         /// Checks if a given string is hex
         /// </summary>
@@ -322,7 +322,7 @@ namespace Core_Automata.Rules
         {
             return s.All(c => "0123456789ABCDEF".Contains(c));
         }
-        //-----------------------------------------------------------------------------
+        
         #endregion Helpers
     }
 }

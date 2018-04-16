@@ -7,7 +7,7 @@ using Core_Automata.Rules;
 
 namespace Core_Automata
 {
-///////////////////////////////////////////////////////////////////////////////
+
     class Program
     {
         // Don't go below these values or the text will be screwy
@@ -24,7 +24,7 @@ namespace Core_Automata
         static int Num_Sizes = 3;  // The amount of different sizes allowed
         static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
         static int Curr_Size_Index = 0; // Default to smallest size
-//------------------------------------------------------------------------------
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -53,7 +53,7 @@ namespace Core_Automata
                 }                
             } while (!exit);
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Initializes the console for display. 
         /// </summary>
@@ -126,7 +126,7 @@ namespace Core_Automata
             MenuHelper.Initialize();
             MenuHelper.DrawBorder();
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Displays the main menu for starting the game running.
         /// </summary>
@@ -376,7 +376,7 @@ namespace Core_Automata
                 }
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Display a list of all resources built in to the program
         /// </summary>
@@ -461,7 +461,7 @@ namespace Core_Automata
                 return null;
             }
         }
-//------------------------------------------------------------------------------
+
         private static void AdjustWindowSize(BoardSize size)
         {              
             //Resize the console window
@@ -471,7 +471,7 @@ namespace Core_Automata
             Console.SetWindowSize(size.Cols, size.Rows);
             Console.SetCursorPosition(0, 0);
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Reinitialize the console after resizing
         /// </summary>
@@ -485,8 +485,7 @@ namespace Core_Automata
             MenuHelper.ReInitialize();
             MenuHelper.DrawBorder();
         }
-//------------------------------------------------------------------------------
+
     } // end class
-//------------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
+
 } 

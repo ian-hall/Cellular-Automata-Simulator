@@ -9,7 +9,7 @@
     ///         __Orig_Console_Height,__Orig_Console_Width -> ints representing the size of the console on game initializtion
     ///         __Generation -> current generation of the game    
     ///         abstract Board -> 2D array of bools representing the current game board
-///////////////////////////////////////////////////////////////////////////////
+
     abstract class ConsoleAutomata
     {
         protected bool pr_Initialized;
@@ -24,7 +24,7 @@
         public int Cols { get { return this.pr_Cols; } protected set { this.pr_Cols = value; } }
         public bool Is_Wrapping { get; set; }
         public abstract bool[,] Board_Copy { get; }
-//-----------------------------------------------------------------------------
+
         protected ConsoleAutomata(int rows, int cols)
         {
             this.Rows = rows;
@@ -35,17 +35,17 @@
             this.Is_Wrapping = true;
             this.Is_Initialized = false;
         }
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Generates the next generation for the board
         /// </summary>
         public abstract void NextGeneration();
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Prints the board to the console window
         /// </summary>
         public abstract void PrintBoard();
-//-----------------------------------------------------------------------------
+
     }
-///////////////////////////////////////////////////////////////////////////////
+
 }

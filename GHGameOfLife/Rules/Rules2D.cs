@@ -22,7 +22,7 @@ namespace Core_Automata.Rules
             }
         }
 
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Game of Life rules.
         /// Live cells stay alive if they have 2 or 3 neighbors.
@@ -44,7 +44,7 @@ namespace Core_Automata.Rules
                 return (n == 3);
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Life without Death rules.
         /// Live cells always stay alive.
@@ -64,7 +64,7 @@ namespace Core_Automata.Rules
 
             return n == 3;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Seeds rule
         /// Live cells always die
@@ -84,7 +84,7 @@ namespace Core_Automata.Rules
 
             return n == 2;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Replicator rules
         /// Live cells stay alive if they have 1,3,5,or 7 neighbors.
@@ -99,7 +99,7 @@ namespace Core_Automata.Rules
 
             return ((n == 1) || (n == 3) || (n == 5) || (n == 7));
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// DayAndNight rules
         /// Live cells stay alive if they have 3,4,6,7, or 8 neighbors.
@@ -121,7 +121,7 @@ namespace Core_Automata.Rules
                 return ((n == 3) || (n == 6) || (n == 7) || (n == 8));
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// 34 Life rules.
         /// Live cells stay alive if they have 3 or 4 neighbors.
@@ -136,7 +136,7 @@ namespace Core_Automata.Rules
 
             return ((n == 3) || (n == 4));
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Diamoeba rules
         /// Live cells stay alive if they have 5,6,7, or 8 neighbors.
@@ -158,7 +158,7 @@ namespace Core_Automata.Rules
                 return ((n == 3) || (n == 5) || (n == 6) || (n == 7) || (n == 8));
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Morley rules
         /// Live cells stay alive if they have 2,4, or 5 neighbors.
@@ -180,7 +180,7 @@ namespace Core_Automata.Rules
                 return ((n == 3) || (n == 6) || (n == 8));
             }
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Counts number of true values in the Moore neighborhood of a point.
         /// </summary>
@@ -212,6 +212,6 @@ namespace Core_Automata.Rules
 
             return n;
         }
-        //------------------------------------------------------------------------------
+        
     }
 }

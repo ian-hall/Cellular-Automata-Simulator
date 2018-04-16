@@ -14,7 +14,7 @@ namespace Core_Automata
     /// does all the checking for living/dying of the population.
     /// 
     /// </summary>
-///////////////////////////////////////////////////////////////////////////////
+
     class Automata2D : ConsoleAutomata
     {
         public enum BuildTypes { Random, /*File,*/ Resource, User };
@@ -44,7 +44,7 @@ namespace Core_Automata
         private IEnumerable<int> Valid_Lefts;
         private IEnumerable<int> Valid_Tops;
         private int Cursor_Left, Cursor_Top;
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
         /// off the size of the console window...
@@ -58,7 +58,7 @@ namespace Core_Automata
             var chosenRule = Rules2D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
             this.Rule = (Rules2D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules2D.RuleDelegate), chosenRule);
         }
-        //------------------------------------------------------------------------------
+        
         public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType, string res = null)
         {
             var newAutomata2D = new Automata2D(rowMax, colMax, rType);
@@ -92,7 +92,7 @@ namespace Core_Automata
             MenuHelper.PrintOnLine(2, infoStr.Replace('_', ' '));
             return newAutomata2D;
         } 
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Adds the next board values to a queue to be read from
         /// </summary>
@@ -110,7 +110,7 @@ namespace Core_Automata
             this.Generation++;
             this.Board = nextBoard;                  
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Prints the game based on the threaded set up.
         /// Waits until there are at least 2 boards in the board queue and then 
@@ -149,10 +149,10 @@ namespace Core_Automata
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Default_FG;
         }
-        //------------------------------------------------------------------------------
-        //------------------------------------------------------------------------------
+        
+        
         //private methods used to construct the game board
-        //------------------------------------------------------------------------------
+        
         #region Builders
         /// <summary>
         /// Default population is a random spattering of 0s and 1s
@@ -170,7 +170,7 @@ namespace Core_Automata
                 }
             }
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Load the initial population from a file of 0s and 1s.
         /// This uses a Windows Forms OpenFileDialog to let the user select
@@ -216,7 +216,7 @@ namespace Core_Automata
         //        this.Build2DBoard_Random();
         //    }
         //}
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Builds the board from a resource
         /// </summary>
@@ -249,7 +249,7 @@ namespace Core_Automata
                 this.Build2DBoard_Random();
             }
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Validates the selected file from the BuildFromFile() method.
         /// A Valid file is all 0s and 1s and does not have more rows or columns
@@ -347,7 +347,7 @@ namespace Core_Automata
             error = MenuHelper.FileError.None;
             return true;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Makes sure there are only '.' and 'O' in a given string, used to 
         /// validate the file loaded in BuildFromFile()
@@ -377,7 +377,7 @@ namespace Core_Automata
             }
             return true;
         }
-        //------------------------------------------------------------------------------
+        
         /// <summary>
         /// Builds the board from user input. This is going to be ugly...
         /// </summary>
@@ -664,7 +664,7 @@ namespace Core_Automata
             MenuHelper.ClearLine(positionPrintRow);
             this.FillBoard(popString.ToString());
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Loads the selected builder pop into the board
         /// </summary>
@@ -715,7 +715,7 @@ namespace Core_Automata
             }
             return loaded;
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Rotates the loaded builder pop 90 degrees clockwise
         /// </summary>
@@ -761,7 +761,7 @@ namespace Core_Automata
 
             return loaded;
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Mirrors the loaded builder pop
         /// </summary>
@@ -807,7 +807,7 @@ namespace Core_Automata
             }
             return loaded;
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Used by files to fill the game board, centered
         /// </summary>
@@ -843,7 +843,7 @@ namespace Core_Automata
                 }
             }
         }
-//------------------------------------------------------------------------------
+
         /// <summary>
         /// Gives the bounds of a rectangle of width popCols and height popRows
         /// centered on the given boardRow and boardCol.
@@ -879,14 +879,14 @@ namespace Core_Automata
 
             return bounds;
         }
-//------------------------------------------------------------------------------
+
         private void CalcBuilderBounds()
         {
             this.Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
             this.Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
         }
-        //------------------------------------------------------------------------------
+        
         #endregion Builders
     } // end class
-      ///////////////////////////////////////////////////////////////////////////////
+      
 }

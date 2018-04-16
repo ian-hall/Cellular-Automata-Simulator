@@ -6,11 +6,11 @@ using Core_Automata.Rules;
 
 namespace Core_Automata
 {
-///////////////////////////////////////////////////////////////////////////////
+
     /// <summary>
     /// Class to support drawing 1D automata rules
     /// </summary>
-///////////////////////////////////////////////////////////////////////////////
+
     class Automata1D : ConsoleAutomata
     {
         private Rules1D.RuleDelegate Rule;
@@ -46,7 +46,7 @@ namespace Core_Automata
                 return temp;
             }
         }
-//-----------------------------------------------------------------------------
+
         private Automata1D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
             this.Print_Row = 0;
@@ -60,7 +60,7 @@ namespace Core_Automata
             this.Rule_Name = rule;
             Rules1D.RuleDict_Initialized = false;
         }
-//-----------------------------------------------------------------------------
+
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
         {
             var newAutomata1D = new Automata1D(rowMax, colMax, rType);
@@ -104,7 +104,7 @@ namespace Core_Automata
             MenuHelper.PrintOnLine(2, newAutomata1D.Rule_Name.Replace('_', ' '));
             return newAutomata1D;
         }
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Function to calculate the next value for all the cells in this.Current_Row
         /// using this.__Rule
@@ -131,7 +131,7 @@ namespace Core_Automata
 
             this.Current_Row = nextRow;
         }
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Prints the automata rule within the boarders of the console
         /// </summary>
@@ -162,7 +162,7 @@ namespace Core_Automata
             //Console.BackgroundColor = MenuHelper.Default_BG;
             //Console.ForegroundColor = MenuHelper.Default_FG;
         }
-//-----------------------------------------------------------------------------
+
         /// <summary>
         /// Builds a random initial board
         /// </summary>
@@ -174,13 +174,13 @@ namespace Core_Automata
             }
             this.Entire_Board[0] = this.Current_Row;
         }
-//-----------------------------------------------------------------------------
+
         private void Build1DBoard_Single()
         {
             this.Current_Row[this.Cols / 2] = true;
             this.Entire_Board[0] = this.Current_Row;
         }
-//-----------------------------------------------------------------------------
+
     }
-///////////////////////////////////////////////////////////////////////////////
+
 }

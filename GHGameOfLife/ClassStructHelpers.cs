@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Core_Automata
 {
-///////////////////////////////////////////////////////////////////////////////
+
     [StructLayout(LayoutKind.Sequential)]
     public struct Rect : IComparable<Rect>
     {
@@ -59,7 +59,7 @@ namespace Core_Automata
             return (Left == Right) && (Top == Bottom) && (Left == 0);
         }
     } // end struct
-///////////////////////////////////////////////////////////////////////////////
+
     class BoardSize
     {
         public int Rows;
@@ -84,5 +84,5 @@ namespace Core_Automata
             return string.Format("W: {0,-10} H: {1,-10} R: {2,-10}", Cols, Rows, Ratio);
         }
     } // End Class
-///////////////////////////////////////////////////////////////////////////////
+
 }
