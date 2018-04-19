@@ -3,89 +3,91 @@
 	<head>
 		<meta charset='utf-8'>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/bootstrap.space.mod.css" title="light">
-		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/site.css" title="light">
-		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219.css" title="dark">
-		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/219site.css" title="dark">
+		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/lux.css" title="light">
+		<link rel="stylesheet" href="http://www.imhall.com/stylesheets/luxsite.css" title="light">
+		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/lux219.css" title="dark">
+		<link rel="alt stylesheet" href="http://www.imhall.com/stylesheets/lux219site.css" title="dark">
         <link rel="shortcut icon" href="http://www.iconj.com/icon.php?pid=u8tuc0fwqi" type="image/x-icon" /> 
 		<title>imhall.com</title>
 	</head>
-	<body onload="set_style_from_cookie()">
-	    <div class="navbar navbar-default navbar-fixed-top">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="http://www.imhall.com">{imhall.com}</a>
-				</div>
-				<div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a href="http://www.imhall.com/projects.html">projects</a></li>
-						<li><a href="http://www.imhall.com/RandomRares/">ED Rares</a></li>
-                    </ul>
-				</div>
-			</div>
-		</div>
-
-        <div class="container body-content">
-		<button type="button" onclick="switch_style(this.value)" name="theme" value="light" id="themeSwitcher" class="btn btn-sm btn-default navbar-btn" style="position:fixed; top:50px; right:15px; z-index:9001;"></button>
-            <h2>Ian's cellular automata thing</h2>
-            <div class="col-md-12">
-                <div class="panel panel-primary">
-                    <div class="panel-body">
-                        <p class="lead">
-                            I have harnessed the power of the console to bring a robust, full-featured, retro-styled, buzzword described
-                            program that lets users choose between types, rule sets, and starting populations. Users are able to utilize
-                            the advanced population creation feature to watch a custom 2D population grow or put in a custom hex string
-                            as a 1D rule.
-                            The source code can be found on <a href="https://github.com/ian-hall/GHGameOfLife">GitHub</a>. 
-                            You can download the latest release <a href="https://github.com/ian-hall/GHGameOfLife/releases">here</a>.
-                            <br /><br />
-                            Just look at these awesome features:
-                        </p>
+    <body onload="set_style_from_cookie()">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand text-primary" href="http://www.imhall.com">{imhall.com}</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav text-primary">
+                        <a class="nav-item nav-link text-primary" href="http://www.imhall.com/projects.html">projects</a>
+                        <a class="nav-item nav-link text-primary" href="http://www.imhall.com/RandomRares/">Elite Rares</a>
                     </div>
                 </div>
-                <br />
-                <h4>Advanced run controls</h4>
-                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
-                    <source src="http://i.imgur.com/KneOJPL.mp4" type="video/mp4" />
-                </video>
-                <br /><br />
-                <h4>Many preset populations</h4>
-                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
-                    <source src="http://i.imgur.com/UI0zj0W.mp4" type="video/mp4" />
-                </video>
-                <br /><br />
-                <h4>Advanced population creation functionality</h4>
-                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
-                    <source src="http://i.imgur.com/R0h2o2D.mp4" type="video/mp4" />
-                </video>
-                <br /><br />
-                <h4>Psychedelic 1D rules</h4>
-                <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
-                    <source src="http://i.imgur.com/WskHUaT.mp4" type="video/mp4" />
-                </video>
-                <br />
+            </div>
+        </nav>
+
+        <div class="container body-content">
+            <button type="button" onclick="switch_style(this.value)" name="theme" value="light" id="themeSwitcher" class="btn btn-sm btn-primary" style="position:fixed; top:115px; right:15px; z-index:9001;"></button>
+            <div class="row">
+                <h2>Ian's cellular automata thing</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body bg-dark">
+                            <p class="lead">
+                                I have harnessed the power of the console to bring a robust, full-featured, retro-styled, buzzword described
+                                program that lets users choose between types, rule sets, and starting populations. Users are able to utilize
+                                the advanced population creation feature to watch a custom 2D population grow or put in a custom hex string
+                                as a 1D rule.
+                                The source code can be found on <a href="https://github.com/ian-hall/GHGameOfLife">GitHub</a>.
+                                You can download the latest release <a href="https://github.com/ian-hall/GHGameOfLife/releases">here</a>.
+                                <br /><br />
+                                Just look at these awesome features:
+                            </p>
+                        </div>
+                    </div>
+                    <br />
+                    <h4>Advanced run controls</h4>
+                    <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
+                        <source src="http://i.imgur.com/KneOJPL.mp4" type="video/mp4" />
+                    </video>
+                    <br /><br />
+                    <h4>Many preset populations</h4>
+                    <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
+                        <source src="http://i.imgur.com/UI0zj0W.mp4" type="video/mp4" />
+                    </video>
+                    <br /><br />
+                    <h4>Advanced population creation functionality</h4>
+                    <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
+                        <source src="http://i.imgur.com/R0h2o2D.mp4" type="video/mp4" />
+                    </video>
+                    <br /><br />
+                    <h4>Psychedelic 1D rules</h4>
+                    <video class="img-responsive" width=750 preload="metadata" controls="controls" loop="loop" poster="http://i.imgur.com/v2JztGZ.jpg">
+                        <source src="http://i.imgur.com/WskHUaT.mp4" type="video/mp4" />
+                    </video>
+                    <br />
+                </div>
             </div>
         </div>
 
         <footer class="footer">
             <div class="container">
                 <div class="row">
-                    <p class="text-footer">
-                        <ul class="list-inline">
-                            <li>&copy; 2018 - <a href="http://www.github.com/ian-hall">Ian Hall<img src="http://www.imhall.com/images/blacktocat.png"></a></li>
-                        </ul>
-                    </p>
+                    <div clas="col-sm-12">
+                        <p class="text-footer">
+                            <ul class="list-inline">
+                                <li class="text-primary">&copy; 2018 - <a href="http://www.github.com/ian-hall">Ian Hall<img src="http://www.imhall.com/images/blacktocat.png"></a></li>
+                            </ul>
+                        </p>
+                    </div>
                 </div>
             </div>
         </footer>
-        <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+        <script src="http://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
         <script src="http://www.imhall.com/scripts/themeswitch.js"></script>
-</body>
+    </body>
 </html>
