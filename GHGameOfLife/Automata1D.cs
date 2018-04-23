@@ -31,14 +31,14 @@ namespace Core_Automata
             get
             {
                 var temp = new bool[this.Rows, this.Cols];
-                for( int r = 0; r < this.Rows; r++ )
+                for (int r = 0; r < this.Rows; r++)
                 {
                     //TODO: Error if trying to copy a partially filled board. Make sure this stops it?? (or just force to False?)
-                    if(this.Entire_Board[r] == null)
+                    if (this.Entire_Board[r] == null)
                     {
                         break;
                     }
-                    for( int c = 0; c < this.Cols; c++ )
+                    for (int c = 0; c < this.Cols; c++)
                     {
                         temp[r, c] = this.Entire_Board[r][c];
                     }
@@ -47,7 +47,7 @@ namespace Core_Automata
             }
         }
 
-        private Automata1D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
+        private Automata1D(int rowMax, int colMax, string rule) : base(rowMax, colMax)
         {
             this.Print_Row = 0;
             this.Current_Row = new bool[this.Cols];
@@ -66,21 +66,21 @@ namespace Core_Automata
             var newAutomata1D = new Automata1D(rowMax, colMax, rType);
             //This is really gross but it prompts users for input on lines 15, 16 and 17 for the range and hex value of a custom 1d rule
             //This also lets the user type all willy nilly and can mess up the nice border but oh well for now
-            if(rType == "Custom")
+            if (rType == "Custom")
             {
                 MenuHelper.PrintOnLine(15, "Select Range");
-                var tempRange = MenuHelper.PromptOnLine(16,"[1-4]: ");
+                var tempRange = MenuHelper.PromptOnLine(16, "[1-4]: ");
                 int range;
-                while(!MenuHelper.ValidRangeInput(tempRange,out range))
+                while (!MenuHelper.ValidRangeInput(tempRange, out range))
                 {
                     MenuHelper.PrintOnLine(17, "Try again");
-                    tempRange = MenuHelper.PromptOnLine(16, "[1-4]: ");                                     
+                    tempRange = MenuHelper.PromptOnLine(16, "[1-4]: ");
                 }
                 MenuHelper.ClearWithinBorder(17);
                 MenuHelper.PrintOnLine(15, "Enter a hex string");
                 var tempHex = MenuHelper.PromptOnLine(16, "the hex: ");
                 string hex = String.Empty;
-                while(!MenuHelper.ValidHexInput(tempHex,out hex))
+                while (!MenuHelper.ValidHexInput(tempHex, out hex))
                 {
                     MenuHelper.PrintOnLine(17, "thats a bad hex");
                     tempHex = MenuHelper.PromptOnLine(16, "the hex: ");
@@ -91,7 +91,7 @@ namespace Core_Automata
                 Rules1D.UserRule = ruleStr;
                 newAutomata1D.Rule_Name = ruleStr;
             }
-            switch(bType)
+            switch (bType)
             {
                 case BuildTypes.Random:
                     newAutomata1D.Build1DBoard_Random();
@@ -112,9 +112,9 @@ namespace Core_Automata
         public override void NextGeneration()
         {
             var nextRow = new bool[this.Cols];
-            for( int i = 0; i < Cols; i++ )
+            for (int i = 0; i < Cols; i++)
             {
-                nextRow[(i + this.Cols) % this.Cols] = this.Rule(this.Current_Row,i);
+                nextRow[(i + this.Cols) % this.Cols] = this.Rule(this.Current_Row, i);
             }
 
             //Shift the entire board up if it is already filled, and place this new row
@@ -137,12 +137,12 @@ namespace Core_Automata
         /// </summary>
         public override void PrintBoard()
         {
-            if ( this.Print_Row >= this.Rows )
+            if (this.Print_Row >= this.Rows)
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
-                Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space+1, this.Cols, this.Rows-1, MenuHelper.Space, MenuHelper.Space);
+                Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space + 1, this.Cols, this.Rows - 1, MenuHelper.Space, MenuHelper.Space);
                 this.Print_Row--;
             }
             Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.Print_Row);
@@ -158,9 +158,6 @@ namespace Core_Automata
             Console.ForegroundColor = this.Print_Colors[this.RNG.Next(this.Print_Colors.Count)];
             Console.Write(printRow);
             this.Print_Row++;
-
-            //Console.BackgroundColor = MenuHelper.Default_BG;
-            //Console.ForegroundColor = MenuHelper.Default_FG;
         }
 
         /// <summary>
@@ -180,7 +177,5 @@ namespace Core_Automata
             this.Current_Row[this.Cols / 2] = true;
             this.Entire_Board[0] = this.Current_Row;
         }
-
     }
-
 }

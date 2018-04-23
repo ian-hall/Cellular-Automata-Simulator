@@ -13,7 +13,6 @@ namespace Core_Automata
     class MenuHelper
     {
         // TODO: Change this to be less ugly maybe?
-        //          Add an Is_Initialized flag, call initialize if anything else is called and it isn't initialized
         public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
@@ -45,7 +44,7 @@ namespace Core_Automata
         public static int Space = 5;
         public static int Choices_Per_Page = 7;
         
-        public static void Initialize()
+        static MenuHelper()
         {
             Window_Center = Console.WindowHeight / 2;
             Left_Align = (Console.WindowWidth / 2) - (Msg_Welcome.Length / 2);

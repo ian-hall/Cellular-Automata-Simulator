@@ -60,7 +60,6 @@ namespace Core_Automata
         private static void InitializeConsole()
         {
             Console.OutputEncoding = Encoding.Unicode;
-            MenuHelper mt = new MenuHelper();
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Default_FG;
             Console.Title = "Ian's Automata Whatevers";        
@@ -123,7 +122,7 @@ namespace Core_Automata
             AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
-            MenuHelper.Initialize();
+            //MenuHelper.Initialize();
             MenuHelper.DrawBorder();
         }
         

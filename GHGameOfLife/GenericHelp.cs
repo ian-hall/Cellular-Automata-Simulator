@@ -46,7 +46,7 @@
         }
 
         /// <summary>
-        /// Shifts all values of a 2d jagged array up one row
+        /// Shifts all values of a 2d jagged array up one row, destroying the values at oldVals[0][]
         /// </summary>
         /// <param name="oldVals">The 2d jagged array to be shifted</param>
         /// <returns>A new jagged array with the shifted values</returns>

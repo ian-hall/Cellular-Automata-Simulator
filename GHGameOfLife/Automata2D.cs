@@ -17,7 +17,7 @@ namespace Core_Automata
 
     class Automata2D : ConsoleAutomata
     {
-        public enum BuildTypes { Random, /*File,*/ Resource, User };
+        public enum BuildTypes { Random, Resource, User };
 
         private bool[,] Board;
         private const char LIVE_CELL = '☺';
@@ -47,7 +47,7 @@ namespace Core_Automata
         
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
-        /// off the size of the console window...
+        /// on the size of the console window...
         /// </summary>
         /// <param name="rowMax">Number of rows</param>
         /// <param name="colMax">Number of columns</param>
@@ -112,9 +112,7 @@ namespace Core_Automata
         }
         
         /// <summary>
-        /// Prints the game based on the threaded set up.
-        /// Waits until there are at least 2 boards in the board queue and then 
-        /// prints the next board in the queue. 
+        /// Prints the game board to the console window.
         /// </summary>
         public override void PrintBoard()
         {
@@ -888,5 +886,4 @@ namespace Core_Automata
         
         #endregion Builders
     } // end class
-      
 }
