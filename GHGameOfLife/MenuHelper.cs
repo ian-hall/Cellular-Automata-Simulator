@@ -12,7 +12,6 @@ namespace Core_Automata
     
     class MenuHelper
     {
-        // TODO: Change this to be less ugly maybe?
         public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
         public const ConsoleColor Info_FG = ConsoleColor.Red;
         public const ConsoleColor Default_BG = ConsoleColor.Black;
@@ -26,7 +25,7 @@ namespace Core_Automata
         public const string Prompt = "Your choice: ";
         public const string Msg_Entry_Error = "**Invalid entry**";
         public const string Msg_Press_Enter = "Press ENTER to confirm";
-        public const string Msg_Loading_Rand = "Loading random pop.";
+        public const string Msg_Loading_Rand = "Loading random pop...";
 
         public static string[] Run_Ctrls;
         public static string[] Create_Ctrls;

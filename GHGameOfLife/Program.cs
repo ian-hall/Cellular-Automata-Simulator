@@ -62,7 +62,7 @@ namespace Core_Automata
             Console.OutputEncoding = Encoding.Unicode;
             Console.BackgroundColor = MenuHelper.Default_BG;
             Console.ForegroundColor = MenuHelper.Default_FG;
-            Console.Title = "Ian's Automata Whatevers";        
+            Console.Title = "Ian's Automata Whatever";        
             
             
             Max_Cols = (Console.LargestWindowWidth < Max_Cols)? Console.LargestWindowWidth : Max_Cols;
@@ -122,7 +122,6 @@ namespace Core_Automata
             AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
             Current_Rows = Console.WindowHeight;
             Current_Cols = Console.WindowWidth;
-            //MenuHelper.Initialize();
             MenuHelper.DrawBorder();
         }
         
@@ -201,7 +200,6 @@ namespace Core_Automata
                     }
                     MenuHelper.PrintMenuFromList(currentPrompts);
                 }
-                //MenuHelper.PrintMenuFromList(currentPrompts);
                 numChoices = currentPrompts.Count;
                 consoleResized = false;
                 while (!Console.KeyAvailable)
