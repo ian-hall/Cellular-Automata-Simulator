@@ -14,7 +14,7 @@ namespace Core_Automata
     class Automata1D : ConsoleAutomata
     {
         private Rules1D.RuleDelegate Rule;
-        private delegate bool Rule1D(int col);
+        //private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
 
         private bool[] Current_Row;

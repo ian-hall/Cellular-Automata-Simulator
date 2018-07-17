@@ -104,7 +104,7 @@ namespace Core_Automata
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = this.Rule(r, c,lastBoard);
+                    nextBoard[r, c] = this.Rule(lastBoard, r, c);
                 }
             }
             this.Generation++;
@@ -174,7 +174,7 @@ namespace Core_Automata
         /// This uses a Windows Forms OpenFileDialog to let the user select
         /// a file. The file is loaded into the center of the console window.
         /// </summary>
-        /// TODO: Temporarily disabled while i get the Avalonia UI thing working
+        /// TODO: disabled until i find another UI to use, or maybe just roll my own console based thing
         //private void Build2DBoard_File()
         //{
         //    MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;

@@ -5,7 +5,7 @@ namespace Core_Automata.Rules
 {
     class Rules2D
     {
-        public delegate bool RuleDelegate(int row, int col, bool[,] board);
+        public delegate bool RuleDelegate(bool[,] board, int row, int col );
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
         {
             get
@@ -22,7 +22,6 @@ namespace Core_Automata.Rules
             }
         }
 
-        
         /// <summary>
         /// Game of Life rules.
         /// Live cells stay alive if they have 2 or 3 neighbors.
@@ -31,9 +30,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Life(int r, int c, bool[,] board)
+        public static bool Rule_Life(bool [,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             if (board[r, c])
             {
@@ -53,14 +52,14 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Life_Without_Death(int r, int c, bool[,] board)
+        public static bool Rule_Life_Without_Death(bool[,] board, int r, int c)
         {
             if (board[r, c])
             {
                 return true;
             }
 
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             return n == 3;
         }
@@ -73,14 +72,14 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Seeds(int r, int c, bool[,] board)
+        public static bool Rule_Seeds(bool[,] board, int r, int c)
         {
             if (board[r, c])
             {
                 return false;
             }
 
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             return n == 2;
         }
@@ -93,9 +92,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Replicator(int r, int c, bool[,] board)
+        public static bool Rule_Replicator(bool[,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             return ((n == 1) || (n == 3) || (n == 5) || (n == 7));
         }
@@ -108,9 +107,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Day_And_Night(int r, int c, bool[,] board)
+        public static bool Rule_Day_And_Night(bool[,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             if (board[r, c])
             {
@@ -130,9 +129,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Life_34(int r, int c, bool[,] board)
+        public static bool Rule_Life_34(bool[,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             return ((n == 3) || (n == 4));
         }
@@ -145,9 +144,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Diamoeba(int r, int c, bool[,] board)
+        public static bool Rule_Diamoeba(bool[,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             if (board[r, c])
             {
@@ -167,9 +166,9 @@ namespace Core_Automata.Rules
         /// <param name="r">row of tile to check</param>
         /// <param name="c">col of tile to check</param>
         /// <returns></returns>
-        public static bool Rule_Morley(int r, int c, bool[,] board)
+        public static bool Rule_Morley(bool[,] board, int r, int c)
         {
-            var n = CountNeighbors_Moore(r, c, board);
+            var n = CountNeighbors_Moore(board, r, c);
 
             if (board[r, c])
             {
@@ -188,7 +187,7 @@ namespace Core_Automata.Rules
         /// <param name="c">Column value</param>
         /// <param name="range">How large the neighborhood is, default value of 1</param>
         /// <returns>number of neighbors</returns>
-        private static int CountNeighbors_Moore(int r, int c, bool[,] board, int range = 1)
+        private static int CountNeighbors_Moore(bool[,] board, int r, int c, int range = 1)
         {
             if (range < 1)
             {
