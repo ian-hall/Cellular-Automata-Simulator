@@ -21,7 +21,7 @@ namespace Core_Automata
         {
             if (!game.Is_Initialized)
             {
-                Console.ForegroundColor = MenuHelper.Info_FG;
+                Console.ForegroundColor = MenuHelper.InfoFG;
                 Console.Write("ERROR");
                 return;
             }

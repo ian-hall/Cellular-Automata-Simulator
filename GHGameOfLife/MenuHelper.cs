@@ -12,46 +12,46 @@ namespace Core_Automata
     
     class MenuHelper
     {
-        public enum FileError { None, Length, Width, Contents, Size, Not_Loaded };
-        public const ConsoleColor Info_FG = ConsoleColor.Red;
-        public const ConsoleColor Default_BG = ConsoleColor.Black;
-        public const ConsoleColor Default_FG = ConsoleColor.White;
-        public const ConsoleColor Board_FG = ConsoleColor.White;
-        public const ConsoleColor Builder_FG = ConsoleColor.Cyan;
+        public enum FileError { None, Length, Width, Contents, Size, NotLoaded };
+        public const ConsoleColor InfoFG = ConsoleColor.Red;
+        public const ConsoleColor DefaultBG = ConsoleColor.Black;
+        public const ConsoleColor DefaultFG = ConsoleColor.White;
+        public const ConsoleColor BoardFG = ConsoleColor.White;
+        public const ConsoleColor BuilderFG = ConsoleColor.Cyan;
 
-        public const string Msg_Welcome = "Welcome to Ian's Automata Simulator";
-        public const string Msg_Choose = "Please choose an option!";
-        public const string Msg_Change_Size = "[Ctrl + [+/-]] Change board size";
+        public const string WelcomeMessage = "Welcome to Ian's Automata Simulator";
+        public const string ChooseMessage = "Please choose an option!";
+        public const string SizeChangeMessage = "[Ctrl + [+/-]] Change board size";
         public const string Prompt = "Your choice: ";
-        public const string Msg_Entry_Error = "**Invalid entry**";
-        public const string Msg_Press_Enter = "Press ENTER to confirm";
-        public const string Msg_Loading_Rand = "Loading random pop...";
+        public const string EntryErrorMessage = "**Invalid entry**";
+        public const string PressEnterMessage = "Press ENTER to confirm";
+        public const string LoadingRandomMessage = "Loading random pop...";
 
-        public static string[] Run_Ctrls;
-        public static string[] Create_Ctrls;
+        public static string[] RunControls;
+        public static string[] CreationControls;
 
-        public static int Window_Center; // Center Row
-        public static int Left_Align;    // Align text with the Welcome message
+        public static int WindowCenter; // Center Row
+        public static int LeftAlign;    // Align text with the Welcome message
 
-        public static List<string> Large_Pops;
-        public static List<string> Builder_Pops;
+        public static List<string> LargePops;
+        public static List<string> BuilderPops;
 
-        private const int Info_Row = 3;
-        private const int Welcome_Row = 6;
-        private static int Menu_Start_Row;
+        private const int InfoRow = 3;
+        private const int WelcomeRow = 6;
+        private static int MenuStarRow;
 
-        public static int Space = 5;
-        public static int Choices_Per_Page = 7;
+        public const int Space = 5;
+        public const int ChoicesPerPage = 7;
         
         static MenuHelper()
         {
-            Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth / 2) - (Msg_Welcome.Length / 2);
+            WindowCenter = Console.WindowHeight / 2;
+            LeftAlign = (Console.WindowWidth / 2) - (WelcomeMessage.Length / 2);
 
             // Start the menus at 1/3 of the window
-            Menu_Start_Row = Console.WindowHeight / 3 + 1;
-            Large_Pops = new List<string>();
-            Builder_Pops = new List<string>();
+            MenuStarRow = Console.WindowHeight / 3 + 1;
+            LargePops = new List<string>();
+            BuilderPops = new List<string>();
 
             ResourceManager rm = Core_Automata.LargePops.ResourceManager;
             rm.IgnoreCase = true;
@@ -60,10 +60,10 @@ namespace Core_Automata
 
             foreach (DictionaryEntry res in all)
             {
-                Large_Pops.Add(res.Key.ToString());
+                LargePops.Add(res.Key.ToString());
             }
 
-            Large_Pops.Sort();
+            LargePops.Sort();
 
             rm = Core_Automata.BuilderPops.ResourceManager;
             rm.IgnoreCase = true;
@@ -71,15 +71,15 @@ namespace Core_Automata
 
             foreach (DictionaryEntry res in all)
             {
-                Builder_Pops.Add(res.Key.ToString());
+                BuilderPops.Add(res.Key.ToString());
             }
 
-            Run_Ctrls = new string[] {  "[SPACE] Step/Pause",
+            RunControls = new string[] {  "[SPACE] Step/Pause",
                                         "[R] Toggle running",
                                         "[ESC] Exit",
                                         "[+/-] Adjust speed" };
 
-            Create_Ctrls = new string[] {   "[↑|↓|←|→] Move cursor",
+            CreationControls = new string[] {   "[↑|↓|←|→] Move cursor",
                                             "[SPACE] Add/Remove cells",
                                             "[ENTER] Start Game",
                                             "[[#]] Load/Rotate pop",
@@ -91,11 +91,11 @@ namespace Core_Automata
         
         public static void ReInitialize()
         {
-            Window_Center = Console.WindowHeight / 2;
-            Left_Align = (Console.WindowWidth / 2) - (Msg_Welcome.Length / 2);
+            WindowCenter = Console.WindowHeight / 2;
+            LeftAlign = (Console.WindowWidth / 2) - (WelcomeMessage.Length / 2);
 
             // Start the menus at 1/3 of the window
-            Menu_Start_Row = Console.WindowHeight / 3 + 1;
+            MenuStarRow = Console.WindowHeight / 3 + 1;
         }
         
         public static void ClearLine(int row)
@@ -162,16 +162,16 @@ namespace Core_Automata
         /// </summary>
         public static void PrintRunControls()
         {
-            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.ForegroundColor = MenuHelper.InfoFG;
             int printRow = (Console.WindowHeight) - 4;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write("{0,-25}{1,-25}", Run_Ctrls[0], Run_Ctrls[3]);
+            Console.Write("{0,-25}{1,-25}", RunControls[0], RunControls[3]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}", Run_Ctrls[1]);
+            Console.Write("{0,-25}", RunControls[1]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}", Run_Ctrls[2]);
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.Write("{0,-25}", RunControls[2]);
+            Console.ForegroundColor = MenuHelper.DefaultFG;
         }
         
         /// <summary>
@@ -184,7 +184,7 @@ namespace Core_Automata
         public static void PrintStatus(bool running, bool paused,
                                         bool wrapping, int speed)
         {
-            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.ForegroundColor = MenuHelper.InfoFG;
             StringBuilder sb = new StringBuilder();
             string runStr = (running) ? "LOOPING" : "STEPPING";
             string pauseStr = (running && paused) ? "PAUSED" : " ";
@@ -209,10 +209,10 @@ namespace Core_Automata
             string formatStr = "{0,-" + colOne + "}{1,-" + colTwo +
                                                         "}{2,-" + colThree + "}{3," + speedCol + "}";
             sb.AppendFormat(formatStr, runStr, pauseStr, wrapStr, speedStr);
-            ClearLine(Info_Row);
-            Console.SetCursorPosition(5, Info_Row);
+            ClearLine(InfoRow);
+            Console.SetCursorPosition(5, InfoRow);
             Console.Write(sb);
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.ForegroundColor = MenuHelper.DefaultFG;
         }
         
         /// <summary>
@@ -220,17 +220,17 @@ namespace Core_Automata
         /// </summary>
         public static void PrintCreationControls()
         {
-            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.ForegroundColor = MenuHelper.InfoFG;
             int printStart = Console.WindowHeight - 4;
             int printRow = printStart;
             var textWidth = 25;
 
             Console.SetCursorPosition(5, printRow);
-            Console.Write("{0,-25}{1,-25}{2,-25}", Create_Ctrls[0], Create_Ctrls[3], Create_Ctrls[5]);
+            Console.Write("{0,-25}{1,-25}{2,-25}", CreationControls[0], CreationControls[3], CreationControls[5]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}{1,-25}", Create_Ctrls[1], Create_Ctrls[4]);
+            Console.Write("{0,-25}{1,-25}", CreationControls[1], CreationControls[4]);
             Console.SetCursorPosition(5, ++printRow);
-            Console.Write("{0,-25}", Create_Ctrls[2]);
+            Console.Write("{0,-25}", CreationControls[2]);
 
             /* Start count at 1 because of the above. Need to limit this to 3 entries per column because
              * of the scroll bar that shows up. printCol is calculated based on the above since we start
@@ -238,17 +238,17 @@ namespace Core_Automata
              */
             int count = 1;
             printRow = printStart;
-            foreach (string popName in Builder_Pops)
+            foreach (string popName in BuilderPops)
             {
                 printRow = printStart + (count % 3);
                 var printCol = 5 + (textWidth * (2 + count / 3));
                 Console.SetCursorPosition(printCol, printRow);
-                Console.Write("[{0}]{1,-25}", Builder_Pops.IndexOf(popName) + 1, popName);
+                Console.Write("[{0}]{1,-25}", BuilderPops.IndexOf(popName) + 1, popName);
                 ++count;
                 ++printRow;
             }
 
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.ForegroundColor = MenuHelper.DefaultFG;
         }
         
         /// <summary>
@@ -259,17 +259,17 @@ namespace Core_Automata
             ClearAllInBorder();
             ClearUnderBoard();
             ClearAboveBoard();
-            ClearLine(Info_Row);
+            ClearLine(InfoRow);
 
-            int printRow = Menu_Start_Row + 1;
-            Console.SetCursorPosition(Left_Align, printRow);
+            int printRow = MenuStarRow + 1;
+            Console.SetCursorPosition(LeftAlign, printRow);
             Console.Write("Do you really want to exit?");
-            Console.SetCursorPosition(Left_Align, ++printRow);
-            Console.ForegroundColor = Info_FG;
+            Console.SetCursorPosition(LeftAlign, ++printRow);
+            Console.ForegroundColor = InfoFG;
             Console.Write("[ENTER] No, keep playing.");
-            Console.SetCursorPosition(Left_Align, ++printRow);
+            Console.SetCursorPosition(LeftAlign, ++printRow);
             Console.Write("[ESC] Yes, let me out.");
-            Console.ForegroundColor = Default_FG;
+            Console.ForegroundColor = DefaultFG;
         }
         
         /// <summary>
@@ -319,7 +319,7 @@ namespace Core_Automata
                 case FileError.Length:
                     errorStr = "Too many lines for current window size";
                     break;
-                case FileError.Not_Loaded:
+                case FileError.NotLoaded:
                     errorStr = "No file loaded";
                     break;
                 case FileError.Size:
@@ -335,16 +335,16 @@ namespace Core_Automata
 
             int windowCenter = Console.WindowHeight / 2; //Vert position
             int welcomeLeft = (Console.WindowWidth / 2) -
-                (MenuHelper.Msg_Welcome.Length / 2);
+                (MenuHelper.WelcomeMessage.Length / 2);
             int distToBorder = (Console.WindowWidth - 5) - welcomeLeft;
 
             MenuHelper.ClearWithinBorder(windowCenter);
             Console.SetCursorPosition(welcomeLeft, windowCenter - 1);
             Console.Write(errorStr);
             Console.SetCursorPosition(welcomeLeft, windowCenter);
-            Console.Write(MenuHelper.Msg_Loading_Rand);
+            Console.Write(MenuHelper.LoadingRandomMessage);
             Console.SetCursorPosition(welcomeLeft, windowCenter + 1);
-            Console.Write(MenuHelper.Msg_Press_Enter);
+            Console.Write(MenuHelper.PressEnterMessage);
         }
         
         /// <summary>
@@ -355,23 +355,23 @@ namespace Core_Automata
         {
             ClearAllInBorder();
 
-            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.ForegroundColor = MenuHelper.InfoFG;
             Console.SetCursorPosition(5, (Console.WindowHeight) - 4);
-            Console.WriteLine(Msg_Change_Size);
+            Console.WriteLine(SizeChangeMessage);
 
-            Console.ForegroundColor = MenuHelper.Default_FG;
-            Console.SetCursorPosition(Left_Align, Welcome_Row);
-            Console.Write(Msg_Welcome);
+            Console.ForegroundColor = MenuHelper.DefaultFG;
+            Console.SetCursorPosition(LeftAlign, WelcomeRow);
+            Console.Write(WelcomeMessage);
 
-            int curRow = Menu_Start_Row;
+            int curRow = MenuStarRow;
 
-            Console.SetCursorPosition(Left_Align, curRow);
-            Console.Write(Msg_Choose);
-            Console.SetCursorPosition(Left_Align, ++curRow);
+            Console.SetCursorPosition(LeftAlign, curRow);
+            Console.Write(ChooseMessage);
+            Console.SetCursorPosition(LeftAlign, ++curRow);
             //Console.Write(Press_Enter);
             foreach (string choice in choices)
             {
-                Console.SetCursorPosition(Left_Align + 4, ++curRow);
+                Console.SetCursorPosition(LeftAlign + 4, ++curRow);
                 Console.Write(choice);
             }
         }
@@ -401,7 +401,7 @@ namespace Core_Automata
         /// </summary>
         /// <param name="enumVals"></param>
         /// <returns></returns>
-        public static List<string> EnumToChoiceStrings_WithBack(Array enumVals)
+        public static List<string> EnumToChoiceStringsWithBack(Array enumVals)
         {
             var choiceStrings = EnumToChoiceStrings(enumVals);
             var backString = String.Format("{0}) Back", enumVals.Length + 1);
@@ -422,12 +422,12 @@ namespace Core_Automata
             onLastPage = false;
             MenuHelper.ClearLine((Console.WindowHeight - 4));
             var totalNumChoices = choices.Count;
-            var totalPages = totalNumChoices / MenuHelper.Choices_Per_Page;
-            var lo = pageNum * MenuHelper.Choices_Per_Page;
+            var totalPages = totalNumChoices / MenuHelper.ChoicesPerPage;
+            var lo = pageNum * MenuHelper.ChoicesPerPage;
             var hi = -1;
-            if ((lo + MenuHelper.Choices_Per_Page) < totalNumChoices)
+            if ((lo + MenuHelper.ChoicesPerPage) < totalNumChoices)
             {
-                hi = (lo + MenuHelper.Choices_Per_Page);
+                hi = (lo + MenuHelper.ChoicesPerPage);
             }
             else
             {

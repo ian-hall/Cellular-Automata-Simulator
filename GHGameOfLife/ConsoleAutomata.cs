@@ -23,7 +23,7 @@
         public int Rows { get { return this.pr_Rows; } protected set { this.pr_Rows = value; } }
         public int Cols { get { return this.pr_Cols; } protected set { this.pr_Cols = value; } }
         public bool Is_Wrapping { get; set; }
-        public abstract bool[,] Board_Copy { get; }
+        public abstract bool[,] BoardCopy { get; }
 
         protected ConsoleAutomata(int rows, int cols)
         {

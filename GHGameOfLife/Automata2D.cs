@@ -20,12 +20,12 @@ namespace Core_Automata
         public enum BuildTypes { Random, Resource, User };
 
         private bool[,] Board;
-        private const char LIVE_CELL = '☺';
-        private const char DEAD_CELL = ' ';
-        private Rules2D.RuleDelegate Rule;
-        private string Loaded_Population = "";
+        private const char LiveCell = '☺';
+        private const char DeadCell = ' ';
+        private readonly Rules2D.RuleDelegate Rule;
+        private string LoadedPopulation = "";
 
-        public override bool[,] Board_Copy
+        public override bool[,] BoardCopy
         {
             get
             {
@@ -85,9 +85,9 @@ namespace Core_Automata
             }
             newAutomata2D.Is_Initialized = true;
             var infoStr = String.Format("Rule: {0}", rType);
-            if (!String.IsNullOrEmpty(newAutomata2D.Loaded_Population))
+            if (!String.IsNullOrEmpty(newAutomata2D.LoadedPopulation))
             {
-                infoStr = infoStr + String.Format("\tPop: {0}", newAutomata2D.Loaded_Population);
+                infoStr = infoStr + String.Format("\tPop: {0}", newAutomata2D.LoadedPopulation);
             }
             MenuHelper.PrintOnLine(2, infoStr.Replace('_', ' '));
             return newAutomata2D;
@@ -121,8 +121,8 @@ namespace Core_Automata
             string write = "Generation " + this.Generation;
             MenuHelper.PrintOnLine(1, write);
 
-            Console.BackgroundColor = MenuHelper.Default_BG;
-            Console.ForegroundColor = MenuHelper.Board_FG;
+            Console.BackgroundColor = MenuHelper.DefaultBG;
+            Console.ForegroundColor = MenuHelper.BoardFG;
 
             Console.SetCursorPosition(0, MenuHelper.Space);
             StringBuilder sb = new StringBuilder();
@@ -133,19 +133,19 @@ namespace Core_Automata
                 {
                     if (!Board[r, c])
                     {
-                        sb.Append(Automata2D.DEAD_CELL);
+                        sb.Append(Automata2D.DeadCell);
                     }
                     else
                     {
-                        sb.Append(Automata2D.LIVE_CELL);
+                        sb.Append(Automata2D.LiveCell);
                     }
                 }
                 sb.AppendLine("║");
             }
             Console.Write(sb);
 
-            Console.BackgroundColor = MenuHelper.Default_BG;
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.BackgroundColor = MenuHelper.DefaultBG;
+            Console.ForegroundColor = MenuHelper.DefaultFG;
         }
         
         
@@ -222,12 +222,12 @@ namespace Core_Automata
         private void Build2DBoard_Resource(string res)
         {
             string startingPop;
-            MenuHelper.FileError errType = MenuHelper.FileError.Not_Loaded;
+            MenuHelper.FileError errType = MenuHelper.FileError.NotLoaded;
             var isValidResource = IsValidFileOrResource(res, this, out startingPop, out errType, true);
 
             if (isValidResource)
             {
-                this.Loaded_Population = res;
+                this.LoadedPopulation = res;
                 this.FillBoard(startingPop);
             }
             else
@@ -268,7 +268,7 @@ namespace Core_Automata
                 FileInfo file = new FileInfo(filename);
                 if (!file.Exists)
                 {
-                    error = MenuHelper.FileError.Not_Loaded;
+                    error = MenuHelper.FileError.NotLoaded;
                     return false;
                 }
 
@@ -397,7 +397,7 @@ namespace Core_Automata
                 }
             }
             MenuHelper.DrawBorder();
-            Console.ForegroundColor = MenuHelper.Info_FG;
+            Console.ForegroundColor = MenuHelper.InfoFG;
 
 
             int positionPrintRow = MenuHelper.Space - 3;
@@ -546,13 +546,13 @@ namespace Core_Automata
                                     {
                                         if (tempBoard[r - MenuHelper.Space, c - MenuHelper.Space])
                                         {
-                                            Console.ForegroundColor = MenuHelper.Default_FG;
+                                            Console.ForegroundColor = MenuHelper.DefaultFG;
                                             Console.Write('*');
                                             tempBoard[r - MenuHelper.Space, c - MenuHelper.Space] = false;
                                         }
                                         else
                                         {
-                                            Console.ForegroundColor = MenuHelper.Builder_FG;
+                                            Console.ForegroundColor = MenuHelper.BuilderFG;
                                             Console.Write('█');
                                             tempBoard[r - MenuHelper.Space, c - MenuHelper.Space] = true;
                                         }
@@ -566,12 +566,12 @@ namespace Core_Automata
                             bool boardVal = !tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space];
                             if (boardVal)
                             {
-                                Console.ForegroundColor = MenuHelper.Builder_FG;
+                                Console.ForegroundColor = MenuHelper.BuilderFG;
                                 Console.Write('█');
                             }
                             else
                             {
-                                Console.ForegroundColor = MenuHelper.Default_FG;
+                                Console.ForegroundColor = MenuHelper.DefaultFG;
                                 Console.Write('*');
                             }
                             tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space] = boardVal;
@@ -586,8 +586,8 @@ namespace Core_Automata
                     case ConsoleKey.D4:
                     case ConsoleKey.NumPad4:
                         var keyVal = Int32.Parse("" + pressed.Key.ToString().Last());
-                        string smallPop = Core_Automata.BuilderPops.ResourceManager.GetString(MenuHelper.Builder_Pops[keyVal - 1]);
-                        if (popLoaderMode && (loadedPop == MenuHelper.Builder_Pops[keyVal - 1]))
+                        string smallPop = Core_Automata.BuilderPops.ResourceManager.GetString(MenuHelper.BuilderPops[keyVal - 1]);
+                        if (popLoaderMode && (loadedPop == MenuHelper.BuilderPops[keyVal - 1]))
                         {
                             //if the button is pressed that corresponds to the already loaded population we either rotate or mirror
                             if (pressed.Modifiers == ConsoleModifiers.Control)
@@ -595,7 +595,7 @@ namespace Core_Automata
                                 if (!MirrorBuilderPop(ref smallPopVals, ref loadedPopBounds))
                                 {
                                     Console.SetCursorPosition(0, 0);
-                                    Console.ForegroundColor = MenuHelper.Info_FG;
+                                    Console.ForegroundColor = MenuHelper.InfoFG;
                                     Console.Write("Error while trying to mirror");
                                 }
 
@@ -606,7 +606,7 @@ namespace Core_Automata
                                 if (!RotateBuilderPop(ref smallPopVals, ref loadedPopBounds))
                                 {
                                     Console.SetCursorPosition(0, 0);
-                                    Console.ForegroundColor = MenuHelper.Info_FG;
+                                    Console.ForegroundColor = MenuHelper.InfoFG;
                                     Console.Write("Rotating will go out of bounds");
                                 }
                             }
@@ -615,13 +615,13 @@ namespace Core_Automata
                         {
                             if (BuilderLoadPop(smallPop, ref smallPopVals, ref loadedPopBounds))
                             {
-                                loadedPop = MenuHelper.Builder_Pops[keyVal - 1];
+                                loadedPop = MenuHelper.BuilderPops[keyVal - 1];
                                 popLoaderMode = true;
                             }
                             else
                             {
                                 Console.SetCursorPosition(0, 0);
-                                Console.ForegroundColor = MenuHelper.Info_FG;
+                                Console.ForegroundColor = MenuHelper.InfoFG;
                                 Console.Write("Cannot load pop outside of bounds");
                             }
                         }
@@ -655,7 +655,7 @@ namespace Core_Automata
             Console.SetWindowSize(this.Console_Width, this.Console_Height);
             Console.SetBufferSize(this.Console_Width, this.Console_Height);
 
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.ForegroundColor = MenuHelper.DefaultFG;
             MenuHelper.ClearUnderBoard();
             MenuHelper.DrawBorder();
 
@@ -695,7 +695,7 @@ namespace Core_Automata
                         int popCol = c - tempBounds.Left;
 
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuHelper.Info_FG;
+                        Console.ForegroundColor = MenuHelper.InfoFG;
                         if (popByLine[popRow][popCol] == 'O')
                         {
                             Console.Write('█');
@@ -741,7 +741,7 @@ namespace Core_Automata
                     {
                         int popCol = c - tempBounds.Left;
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuHelper.Info_FG;
+                        Console.ForegroundColor = MenuHelper.InfoFG;
                         if (rotated[popRow][popCol])
                         {
                             Console.Write('█');
@@ -788,7 +788,7 @@ namespace Core_Automata
                     {
                         int popCol = c - tempBounds.Left;
                         Console.SetCursorPosition(c, r);
-                        Console.ForegroundColor = MenuHelper.Info_FG;
+                        Console.ForegroundColor = MenuHelper.InfoFG;
                         if (rotated[popRow][popCol])
                         {
                             Console.Write('█');

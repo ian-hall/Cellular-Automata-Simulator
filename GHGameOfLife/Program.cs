@@ -11,19 +11,19 @@ namespace Core_Automata
     class Program
     {
         // Don't go below these values or the text will be screwy
-        static int Min_Cols = 100;
-        static int Min_Rows = 30;
+        static readonly int MinCols = 100;
+        static readonly int MinRows = 30;
         // Don't go below these values or the text will be screwy
 
-        static int Current_Cols, Current_Rows;
+        static int CurrentCols, CurrentRows;
         
         //seriously don't remember how i came up with these numbers
-        static int Max_Cols = 175;
-        static int Max_Rows = 52;  
+        static int MaxCols = 175;
+        static int MaxRows = 52;  
   
-        static int Num_Sizes = 3;  // The amount of different sizes allowed
-        static BoardSize[] Valid_Sizes = new BoardSize[Num_Sizes];
-        static int Curr_Size_Index = 0; // Default to smallest size
+        static readonly int NumSizes = 3;  // The amount of different sizes allowed
+        static BoardSize[] ValidSizes = new BoardSize[NumSizes];
+        static int CurrentSizeIdx = 0; // Default to smallest size
 
         [STAThread]
         static void Main(string[] args)
@@ -60,16 +60,16 @@ namespace Core_Automata
         private static void InitializeConsole()
         {
             Console.OutputEncoding = Encoding.Unicode;
-            Console.BackgroundColor = MenuHelper.Default_BG;
-            Console.ForegroundColor = MenuHelper.Default_FG;
+            Console.BackgroundColor = MenuHelper.DefaultBG;
+            Console.ForegroundColor = MenuHelper.DefaultFG;
             Console.Title = "Ian's Automata Whatever";        
             
             
-            Max_Cols = (Console.LargestWindowWidth < Max_Cols)? Console.LargestWindowWidth : Max_Cols;
-            Max_Rows = (Console.LargestWindowHeight < Max_Rows)? Console.LargestWindowHeight : Max_Rows;
+            MaxCols = (Console.LargestWindowWidth < MaxCols)? Console.LargestWindowWidth : MaxCols;
+            MaxRows = (Console.LargestWindowHeight < MaxRows)? Console.LargestWindowHeight : MaxRows;
 
-            int difWid = (Max_Cols - Min_Cols) / (Num_Sizes - 1);
-            int difHeight = Math.Max(1, (Max_Rows - Min_Rows) / (Num_Sizes - 1));
+            int difWid = (MaxCols - MinCols) / (NumSizes - 1);
+            int difHeight = Math.Max(1, (MaxRows - MinRows) / (NumSizes - 1));
 
             // Initialize with the smallest window size and build from there
             // keeping the window ratio near that of the max window size ratio
@@ -77,51 +77,51 @@ namespace Core_Automata
             // unless you have some weird portrait set up I guess then enjoy your
             // small windows??
 
-            BoardSize max = new BoardSize(Max_Cols, Max_Rows);
+            BoardSize max = new BoardSize(MaxCols, MaxRows);
             double consRatio = max.Ratio;
 
             // Don't actually allow use of the full area to account for something probably
-            Valid_Sizes[Num_Sizes - 1] = new BoardSize(Max_Cols, Max_Rows - 4);
-            for (int i = Num_Sizes - 2; i >= 0; i--)
+            ValidSizes[NumSizes - 1] = new BoardSize(MaxCols, MaxRows - 4);
+            for (int i = NumSizes - 2; i >= 0; i--)
             {
-                int tempCols = Math.Max(Min_Cols, Valid_Sizes[i + 1].Cols - difWid);
-                int tempRows = Math.Max(Min_Rows, Valid_Sizes[i + 1].Rows - difHeight);
-                Valid_Sizes[i] = new BoardSize(tempCols, tempRows);
+                int tempCols = Math.Max(MinCols, ValidSizes[i + 1].Cols - difWid);
+                int tempRows = Math.Max(MinRows, ValidSizes[i + 1].Rows - difHeight);
+                ValidSizes[i] = new BoardSize(tempCols, tempRows);
             }
 
 
             // Check the ratios and adjust as needed
-            foreach (BoardSize cs in Valid_Sizes)
+            foreach (BoardSize cs in ValidSizes)
             {
                 while (cs.Ratio > consRatio)
                 {
-                    if ((cs.Cols - 1) <= Min_Cols)
+                    if ((cs.Cols - 1) <= MinCols)
                     {
-                        cs.Rows = Math.Min(Max_Rows, cs.Rows + 1);
+                        cs.Rows = Math.Min(MaxRows, cs.Rows + 1);
                     }
                     else
                     {
-                        cs.Cols = Math.Max(Min_Cols, cs.Cols - 1);
+                        cs.Cols = Math.Max(MinCols, cs.Cols - 1);
                     }
                 }
 
                 while (cs.Ratio < consRatio)
                 {
-                    if ((cs.Cols + 1) >= Max_Cols)
+                    if ((cs.Cols + 1) >= MaxCols)
                     {
-                        cs.Rows = Math.Max(Min_Rows, cs.Rows = cs.Rows - 1);
+                        cs.Rows = Math.Max(MinRows, cs.Rows = cs.Rows - 1);
                     }
                     else
                     {
-                        cs.Cols = Math.Min(Max_Cols, (cs.Cols + 1));
+                        cs.Cols = Math.Min(MaxCols, (cs.Cols + 1));
                     }
 
                 }
             }
 
-            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
-            Current_Rows = Console.WindowHeight;
-            Current_Cols = Console.WindowWidth;
+            AdjustWindowSize(ValidSizes[CurrentSizeIdx]);
+            CurrentRows = Console.WindowHeight;
+            CurrentCols = Console.WindowWidth;
             MenuHelper.DrawBorder();
         }
         
@@ -144,12 +144,12 @@ namespace Core_Automata
             var ruleTypes1DStrings = MenuHelper.EnumToChoiceStrings(Rules1D.RuleNames);
 
             var initTypes1D = Enum.GetValues(typeof(Automata1D.BuildTypes));
-            var initTypes1DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes1D);
+            var initTypes1DStrings = MenuHelper.EnumToChoiceStringsWithBack(initTypes1D);
 
             var ruleTypes2DStrings = MenuHelper.EnumToChoiceStrings(Rules2D.RuleNames);
 
             var initTypes2D = Enum.GetValues(typeof(Automata2D.BuildTypes));
-            var initTypes2DStrings = MenuHelper.EnumToChoiceStrings_WithBack(initTypes2D);
+            var initTypes2DStrings = MenuHelper.EnumToChoiceStringsWithBack(initTypes2D);
 
             var isTypeChosen = false;
             var isRuleChosen = false;
@@ -214,20 +214,20 @@ namespace Core_Automata
                     {
                         case ConsoleKey.OemPlus:
                         case ConsoleKey.Add:
-                            if (Curr_Size_Index < Valid_Sizes.Count() - 1)
+                            if (CurrentSizeIdx < ValidSizes.Count() - 1)
                             {
-                                Curr_Size_Index++;
+                                CurrentSizeIdx++;
                             }
-                            ReinitializeConsole_NoPrinting();
+                            ReinitializeConsoleWithoutPrinting();
                             consoleResized = true;
                             break;
                         case ConsoleKey.OemMinus:
                         case ConsoleKey.Subtract:
-                            if (Curr_Size_Index > 0)
+                            if (CurrentSizeIdx > 0)
                             {
-                                Curr_Size_Index--;
+                                CurrentSizeIdx--;
                             }
-                            ReinitializeConsole_NoPrinting();
+                            ReinitializeConsoleWithoutPrinting();
                             consoleResized = true;
                             break;
                     }
@@ -277,7 +277,7 @@ namespace Core_Automata
                             case 7:
                                 //a choice has been made, do (page*numPerPage)+choice - 1 to get the index and return
                                 //first check if that is a valid value i.e. cant choose option 5 if only 3 are displayed
-                                var intendedIndex = ((promptPage * MenuHelper.Choices_Per_Page) + keyVal) - 1;
+                                var intendedIndex = ((promptPage * MenuHelper.ChoicesPerPage) + keyVal) - 1;
                                 if (intendedIndex < currentPrompts.Count)
                                 {
                                     //This means we have a valid choice, return this value
@@ -355,7 +355,7 @@ namespace Core_Automata
                         var ruleVal1D = Rules1D.RuleNames[ruleChoice];
                         var initVal1D = (Automata1D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
-                        var autoBoard1D = Automata1D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal1D, ruleVal1D);
+                        var autoBoard1D = Automata1D.InitializeAutomata(CurrentRows - 10, CurrentCols - 10, initVal1D, ruleVal1D);
                         ConsoleRunHelper.ConsoleAutomataRunner(autoBoard1D);
                         break;
                     case 2:
@@ -363,7 +363,7 @@ namespace Core_Automata
                         var ruleVal2D = Rules2D.RuleNames[ruleChoice];
                         var initVal2D = (Automata2D.BuildTypes)(initChoice - 1);
                         MenuHelper.ClearAllInBorder();
-                        var autoBoard2D = Automata2D.InitializeAutomata(Current_Rows - 10, Current_Cols - 10, initVal2D, ruleVal2D, res2D);
+                        var autoBoard2D = Automata2D.InitializeAutomata(CurrentRows - 10, CurrentCols - 10, initVal2D, ruleVal2D, res2D);
                         ConsoleRunHelper.ConsoleAutomataRunner(autoBoard2D);
                         break;
                     default:
@@ -385,7 +385,7 @@ namespace Core_Automata
             //Clear the resize options since we are not supporting resizing here.
             MenuHelper.ClearLine((Console.WindowHeight - 4));
 
-            int numRes = MenuHelper.Large_Pops.Count;
+            int numRes = MenuHelper.LargePops.Count;
             int choiceVal = -1;
             int pageIndex = 0;
             bool onLastPage = false;            
@@ -393,7 +393,7 @@ namespace Core_Automata
             bool isValueChosen = false;
             while (!isValueChosen)
             {
-                choiceVal = MenuHelper.PrintPagedMenu(MenuHelper.Large_Pops, pageIndex, out onLastPage);
+                choiceVal = MenuHelper.PrintPagedMenu(MenuHelper.LargePops, pageIndex, out onLastPage);
 
                 while(!Console.KeyAvailable)
                 {
@@ -417,7 +417,7 @@ namespace Core_Automata
                         case 7:
                             //a choice has been made, do (page*numPerPage)+choice - 1 to get the index and return
                             //first check if that is a valid value i.e. cant choose option 5 if only 3 are displayed
-                            var intendedIndex = ((pageIndex * MenuHelper.Choices_Per_Page) + keyVal) - 1;
+                            var intendedIndex = ((pageIndex * MenuHelper.ChoicesPerPage) + keyVal) - 1;
                             if (intendedIndex < numRes)
                             {
                                 //This means we have a valid choice, return this value
@@ -451,7 +451,7 @@ namespace Core_Automata
             Console.CursorVisible = false;
             if(choiceVal != -1)
             {
-                return MenuHelper.Large_Pops[choiceVal];
+                return MenuHelper.LargePops[choiceVal];
             }
             else
             {
@@ -472,13 +472,13 @@ namespace Core_Automata
         /// <summary>
         /// Reinitialize the console after resizing
         /// </summary>
-        private static void ReinitializeConsole_NoPrinting()
+        private static void ReinitializeConsoleWithoutPrinting()
         {
             Console.Clear();
-            AdjustWindowSize(Valid_Sizes[Curr_Size_Index]);
+            AdjustWindowSize(ValidSizes[CurrentSizeIdx]);
 
-            Current_Rows = Console.WindowHeight;
-            Current_Cols = Console.WindowWidth;
+            CurrentRows = Console.WindowHeight;
+            CurrentCols = Console.WindowWidth;
             MenuHelper.ReInitialize();
             MenuHelper.DrawBorder();
         }
