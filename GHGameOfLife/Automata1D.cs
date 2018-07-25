@@ -13,18 +13,18 @@ namespace Core_Automata
 
     class Automata1D : ConsoleAutomata
     {
-        private readonly Rules1D.RuleDelegate Rule;
+        private readonly Rules1D.RuleDelegate _rule;
         //private delegate bool Rule1D(int col);
         public enum BuildTypes { Random, Single };
 
-        private bool[] CurrentRow;
-        private bool[][] EntireBoard;
-        private const char LiveCell = '█';
-        private const char DeadCell = ' ';
-        private int PrintRow;
-        private readonly List<ConsoleColor> PrintColors;
-        private readonly Random RNG;
-        private string RuleName = "";
+        private bool[] _currentRow;
+        private bool[][] _entireBoard;
+        private const char _liveCell = '█';
+        private const char _deadCell = ' ';
+        private int _printRow;
+        private readonly List<ConsoleColor> _printColors;
+        private readonly Random _rng;
+        private string _ruleName = "";
 
         public override bool[,] BoardCopy
         {
@@ -34,13 +34,13 @@ namespace Core_Automata
                 for (int r = 0; r < this.Rows; r++)
                 {
                     //TODO: Error if trying to copy a partially filled board. Make sure this stops it?? (or just force to False?)
-                    if (this.EntireBoard[r] == null)
+                    if (this._entireBoard[r] == null)
                     {
                         break;
                     }
                     for (int c = 0; c < this.Cols; c++)
                     {
-                        temp[r, c] = this.EntireBoard[r][c];
+                        temp[r, c] = this._entireBoard[r][c];
                     }
                 }
                 return temp;
@@ -49,16 +49,16 @@ namespace Core_Automata
 
         private Automata1D(int rowMax, int colMax, string rule) : base(rowMax, colMax)
         {
-            this.PrintRow = 0;
-            this.CurrentRow = new bool[this.Cols];
-            this.EntireBoard = new bool[this.Rows][];
-            this.RNG = new Random();
+            this._printRow = 0;
+            this._currentRow = new bool[this.Cols];
+            this._entireBoard = new bool[this.Rows][];
+            this._rng = new Random();
 
-            this.PrintColors = (Enum.GetValues(typeof(ConsoleColor)) as ConsoleColor[]).Where(color => color != ConsoleColor.Black).ToList();
+            this._printColors = (Enum.GetValues(typeof(ConsoleColor)) as ConsoleColor[]).Where(color => color != ConsoleColor.Black).ToList();
             var chosenRule = Rules1D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
-            this.RuleName = rule;
-            Rules1D.RuleDict_Initialized = false;
+            this._rule = (Rules1D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules1D.RuleDelegate), chosenRule);
+            this._ruleName = rule;
+            Rules1D.IsRuleDictInitialized = false;
         }
 
         public static Automata1D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType)
@@ -89,7 +89,7 @@ namespace Core_Automata
                 MenuHelper.ClearAllInBorder();
                 var ruleStr = "R" + range + ",W" + hex;
                 Rules1D.UserRule = ruleStr;
-                newAutomata1D.RuleName = ruleStr;
+                newAutomata1D._ruleName = ruleStr;
             }
             switch (bType)
             {
@@ -101,7 +101,7 @@ namespace Core_Automata
                     break;
             }
             newAutomata1D.Is_Initialized = true;
-            MenuHelper.PrintOnLine(2, newAutomata1D.RuleName.Replace('_', ' '));
+            MenuHelper.PrintOnLine(2, newAutomata1D._ruleName.Replace('_', ' '));
             return newAutomata1D;
         }
 
@@ -114,22 +114,22 @@ namespace Core_Automata
             var nextRow = new bool[this.Cols];
             for (int i = 0; i < Cols; i++)
             {
-                nextRow[(i + this.Cols) % this.Cols] = this.Rule(this.CurrentRow, i);
+                nextRow[(i + this.Cols) % this.Cols] = this._rule(this._currentRow, i);
             }
 
             //Shift the entire board up if it is already filled, and place this new row
             //at the bottom
-            if (this.PrintRow >= this.Rows)
+            if (this._printRow >= this.Rows)
             {
-                this.EntireBoard = GenericHelp<bool>.ShiftUp(this.EntireBoard);
-                this.EntireBoard[(this.Rows - 1)] = nextRow;
+                this._entireBoard = GenericHelp<bool>.ShiftUp(this._entireBoard);
+                this._entireBoard[(this.Rows - 1)] = nextRow;
             }
             else
             {
-                this.EntireBoard[this.PrintRow] = nextRow;
+                this._entireBoard[this._printRow] = nextRow;
             }
 
-            this.CurrentRow = nextRow;
+            this._currentRow = nextRow;
         }
 
         /// <summary>
@@ -137,27 +137,27 @@ namespace Core_Automata
         /// </summary>
         public override void PrintBoard()
         {
-            if (this.PrintRow >= this.Rows)
+            if (this._printRow >= this.Rows)
             {
                 //If we are at the number of rows, we need to shift everything up
                 //by one except the first row and then continue printing and the bottom
                 //of the screen
                 Console.MoveBufferArea(MenuHelper.Space, MenuHelper.Space + 1, this.Cols, this.Rows - 1, MenuHelper.Space, MenuHelper.Space);
-                this.PrintRow--;
+                this._printRow--;
             }
-            Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this.PrintRow);
+            Console.SetCursorPosition(MenuHelper.Space, MenuHelper.Space + this._printRow);
             var printRow = new StringBuilder();
-            foreach (bool val in this.CurrentRow)
+            foreach (bool val in this._currentRow)
             {
                 if (val)
-                    printRow.Append(LiveCell);
+                    printRow.Append(_liveCell);
                 else
-                    printRow.Append(DeadCell);
+                    printRow.Append(_deadCell);
             }
 
-            Console.ForegroundColor = this.PrintColors[this.RNG.Next(this.PrintColors.Count)];
+            Console.ForegroundColor = this._printColors[this._rng.Next(this._printColors.Count)];
             Console.Write(printRow);
-            this.PrintRow++;
+            this._printRow++;
         }
 
         /// <summary>
@@ -167,15 +167,15 @@ namespace Core_Automata
         {
             for (int i = 0; i < this.Cols; i++)
             {
-                this.CurrentRow[i] = (this.RNG.Next() % 2 == 0);
+                this._currentRow[i] = (this._rng.Next() % 2 == 0);
             }
-            this.EntireBoard[0] = this.CurrentRow;
+            this._entireBoard[0] = this._currentRow;
         }
 
         private void Build1DBoard_Single()
         {
-            this.CurrentRow[this.Cols / 2] = true;
-            this.EntireBoard[0] = this.CurrentRow;
+            this._currentRow[this.Cols / 2] = true;
+            this._entireBoard[0] = this._currentRow;
         }
     }
 }

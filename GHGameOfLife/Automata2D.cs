@@ -19,11 +19,11 @@ namespace Core_Automata
     {
         public enum BuildTypes { Random, Resource, User };
 
-        private bool[,] Board;
-        private const char LiveCell = '☺';
-        private const char DeadCell = ' ';
-        private readonly Rules2D.RuleDelegate Rule;
-        private string LoadedPopulation = "";
+        private bool[,] _board;
+        private const char _liveCell = '☺';
+        private const char _deadCell = ' ';
+        private readonly Rules2D.RuleDelegate _rule;
+        private string _loadedPopulation = "";
 
         public override bool[,] BoardCopy
         {
@@ -34,16 +34,16 @@ namespace Core_Automata
                 {
                     for( int c = 0; c < this.Cols; c++ )
                     {
-                        temp[r, c] = this.Board[r, c];
+                        temp[r, c] = this._board[r, c];
                     }
                 }
                 return temp;
             }
         }
         //Values used only for Build2DBoard_user
-        private IEnumerable<int> Valid_Lefts;
-        private IEnumerable<int> Valid_Tops;
-        private int Cursor_Left, Cursor_Top;
+        private IEnumerable<int> _validLefts;
+        private IEnumerable<int> _validTops;
+        private int _cursorLeft, _cursorRight;
         
         /// <summary>
         /// Constructor for the GoLBoard class. Size of the board will be based
@@ -53,10 +53,10 @@ namespace Core_Automata
         /// <param name="colMax">Number of columns</param>
         private Automata2D(int rowMax, int colMax, string rule) : base(rowMax,colMax)
         {
-            this.Board = new bool[rowMax, colMax];
+            this._board = new bool[rowMax, colMax];
             this.CalcBuilderBounds();
             var chosenRule = Rules2D.RuleMethods.Where(fn => fn.Name.Contains(rule)).First();
-            this.Rule = (Rules2D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules2D.RuleDelegate), chosenRule);
+            this._rule = (Rules2D.RuleDelegate)Delegate.CreateDelegate(typeof(Rules2D.RuleDelegate), chosenRule);
         }
         
         public static Automata2D InitializeAutomata(int rowMax, int colMax, BuildTypes bType, string rType, string res = null)
@@ -85,9 +85,9 @@ namespace Core_Automata
             }
             newAutomata2D.Is_Initialized = true;
             var infoStr = String.Format("Rule: {0}", rType);
-            if (!String.IsNullOrEmpty(newAutomata2D.LoadedPopulation))
+            if (!String.IsNullOrEmpty(newAutomata2D._loadedPopulation))
             {
-                infoStr = infoStr + String.Format("\tPop: {0}", newAutomata2D.LoadedPopulation);
+                infoStr = infoStr + String.Format("\tPop: {0}", newAutomata2D._loadedPopulation);
             }
             MenuHelper.PrintOnLine(2, infoStr.Replace('_', ' '));
             return newAutomata2D;
@@ -98,17 +98,17 @@ namespace Core_Automata
         /// </summary>
         public override void NextGeneration()
         {
-            var lastBoard = this.Board;
+            var lastBoard = this._board;
             var nextBoard = new bool[Rows, Cols];
             for (int r = 0; r < Rows; r++)
             {
                 for (int c = 0; c < Cols; c++)
                 {
-                    nextBoard[r, c] = this.Rule(lastBoard, r, c);
+                    nextBoard[r, c] = this._rule(lastBoard, r, c);
                 }
             }
-            this.Generation++;
-            this.Board = nextBoard;                  
+            this._generation++;
+            this._board = nextBoard;                  
         }
         
         /// <summary>
@@ -118,7 +118,7 @@ namespace Core_Automata
         {
             Console.SetCursorPosition(0, 1);
             Console.Write(" ".PadRight(Console.WindowWidth));
-            string write = "Generation " + this.Generation;
+            string write = "Generation " + this._generation;
             MenuHelper.PrintOnLine(1, write);
 
             Console.BackgroundColor = MenuHelper.DefaultBG;
@@ -131,13 +131,13 @@ namespace Core_Automata
                 sb.Append("    ║");
                 for (int c = 0; c < this.Cols; c++)
                 {
-                    if (!Board[r, c])
+                    if (!_board[r, c])
                     {
-                        sb.Append(Automata2D.DeadCell);
+                        sb.Append(Automata2D._deadCell);
                     }
                     else
                     {
-                        sb.Append(Automata2D.LiveCell);
+                        sb.Append(Automata2D._liveCell);
                     }
                 }
                 sb.AppendLine("║");
@@ -164,7 +164,7 @@ namespace Core_Automata
             {
                 for (int c = 0; c < this.Cols; c++)
                 {
-                    this.Board[r, c] = (rand.Next() % 2 == 0);
+                    this._board[r, c] = (rand.Next() % 2 == 0);
                 }
             }
         }
@@ -227,7 +227,7 @@ namespace Core_Automata
 
             if (isValidResource)
             {
-                this.LoadedPopulation = res;
+                this._loadedPopulation = res;
                 this.FillBoard(startingPop);
             }
             else
@@ -382,16 +382,16 @@ namespace Core_Automata
         /// For pops: 1: Glider 2: Ship 3: Acorn 4: BlockLayer
         private void Build2DBoard_User()
         {
-            Console.SetBufferSize(this.Console_Width + 50, this.Console_Height);
+            Console.SetBufferSize(this._consoleWidth + 50, this._consoleHeight);
             Console.ForegroundColor = ConsoleColor.White;
 
-            bool[,] tempBoard = new bool[Valid_Tops.Count(), Valid_Lefts.Count()];
+            bool[,] tempBoard = new bool[_validTops.Count(), _validLefts.Count()];
 
-            for (int i = 0; i < Valid_Tops.Count(); i++)
+            for (int i = 0; i < _validTops.Count(); i++)
             {
-                for (int j = 0; j < Valid_Lefts.Count(); j++)
+                for (int j = 0; j < _validLefts.Count(); j++)
                 {
-                    Console.SetCursorPosition(Valid_Lefts.ElementAt(j), Valid_Tops.ElementAt(i));
+                    Console.SetCursorPosition(_validLefts.ElementAt(j), _validTops.ElementAt(i));
                     Console.Write('*');
                     tempBoard[i, j] = false;
                 }
@@ -404,12 +404,12 @@ namespace Core_Automata
 
             MenuHelper.PrintCreationControls();
 
-            int blinkLeft = this.Console_Width + 5;
+            int blinkLeft = this._consoleWidth + 5;
             int charLeft = blinkLeft + 1;
             int extraTop = 2;
 
-            Cursor_Left = Valid_Lefts.ElementAt(Valid_Lefts.Count() / 2);
-            Cursor_Top = Valid_Tops.ElementAt(Valid_Tops.Count() / 2);
+            _cursorLeft = _validLefts.ElementAt(_validLefts.Count() / 2);
+            _cursorRight = _validTops.ElementAt(_validTops.Count() / 2);
             int nextLeft;
             int nextTop;
             bool exit = false;
@@ -425,8 +425,8 @@ namespace Core_Automata
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 MenuHelper.ClearLine(MenuHelper.Space - 3);
-                string positionStr = String.Format("Current position: ({0},{1})", Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space);
-                Console.SetCursorPosition(this.Console_Width / 2 - positionStr.Length / 2, positionPrintRow);
+                string positionStr = String.Format("Current position: ({0},{1})", _cursorRight - MenuHelper.Space, _cursorLeft - MenuHelper.Space);
+                Console.SetCursorPosition(this._consoleWidth / 2 - positionStr.Length / 2, positionPrintRow);
                 Console.Write(positionStr);
                 Console.SetCursorPosition(0, 0);
 
@@ -438,20 +438,20 @@ namespace Core_Automata
                         int storeBoardLeft = loadedPopBounds.Left + loadedPopBounds.Width + 1;
                         int storeBoardTop = loadedPopBounds.Top;
 
-                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, storeBoardLeft, storeBoardTop);
-                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, loadedPopBounds.Width, loadedPopBounds.Height, Cursor_Left, Cursor_Top);
+                        Console.MoveBufferArea(_cursorLeft, _cursorRight, loadedPopBounds.Width, loadedPopBounds.Height, storeBoardLeft, storeBoardTop);
+                        Console.MoveBufferArea(loadedPopBounds.Left, loadedPopBounds.Top, loadedPopBounds.Width, loadedPopBounds.Height, _cursorLeft, _cursorRight);
                         System.Threading.Thread.Sleep(250);
-                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, loadedPopBounds.Width, loadedPopBounds.Height, loadedPopBounds.Left, loadedPopBounds.Top);
-                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, loadedPopBounds.Width, loadedPopBounds.Height, Cursor_Left, Cursor_Top);
+                        Console.MoveBufferArea(_cursorLeft, _cursorRight, loadedPopBounds.Width, loadedPopBounds.Height, loadedPopBounds.Left, loadedPopBounds.Top);
+                        Console.MoveBufferArea(storeBoardLeft, storeBoardTop, loadedPopBounds.Width, loadedPopBounds.Height, _cursorLeft, _cursorRight);
                         System.Threading.Thread.Sleep(150);
                     }
                     else
                     {
-                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, 1, 1, charLeft, extraTop);
-                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, Cursor_Left, Cursor_Top);
+                        Console.MoveBufferArea(_cursorLeft, _cursorRight, 1, 1, charLeft, extraTop);
+                        Console.MoveBufferArea(blinkLeft, extraTop, 1, 1, _cursorLeft, _cursorRight);
                         System.Threading.Thread.Sleep(150);
-                        Console.MoveBufferArea(Cursor_Left, Cursor_Top, 1, 1, blinkLeft, extraTop);
-                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, Cursor_Left, Cursor_Top);
+                        Console.MoveBufferArea(_cursorLeft, _cursorRight, 1, 1, blinkLeft, extraTop);
+                        Console.MoveBufferArea(charLeft, extraTop, 1, 1, _cursorLeft, _cursorRight);
                         System.Threading.Thread.Sleep(150);
                     }
 
@@ -466,68 +466,68 @@ namespace Core_Automata
                         exit = true;
                         continue;
                     case ConsoleKey.RightArrow:
-                        nextLeft = ++Cursor_Left;
+                        nextLeft = ++_cursorLeft;
                         if (popLoaderMode)
                         {
-                            if (nextLeft >= (Valid_Lefts.Last() - loadedPopBounds.Width) + 2)
+                            if (nextLeft >= (_validLefts.Last() - loadedPopBounds.Width) + 2)
                             {
-                                nextLeft = Valid_Lefts.Min();
+                                nextLeft = _validLefts.Min();
                             }
                         }
 
-                        if (!Valid_Lefts.Contains(nextLeft))
+                        if (!_validLefts.Contains(nextLeft))
                         {
-                            nextLeft = Valid_Lefts.Min();
+                            nextLeft = _validLefts.Min();
                         }
-                        Cursor_Left = nextLeft;
+                        _cursorLeft = nextLeft;
                         break;
                     case ConsoleKey.LeftArrow:
-                        nextLeft = --Cursor_Left;
+                        nextLeft = --_cursorLeft;
                         if (popLoaderMode)
                         {
-                            if (!Valid_Lefts.Contains(nextLeft))
+                            if (!_validLefts.Contains(nextLeft))
                             {
-                                nextLeft = (Valid_Lefts.Last() - loadedPopBounds.Width) + 1;
+                                nextLeft = (_validLefts.Last() - loadedPopBounds.Width) + 1;
                             }
                         }
 
-                        if (!Valid_Lefts.Contains(nextLeft))
+                        if (!_validLefts.Contains(nextLeft))
                         {
-                            nextLeft = Valid_Lefts.Max();
+                            nextLeft = _validLefts.Max();
                         }
-                        Cursor_Left = nextLeft;
+                        _cursorLeft = nextLeft;
                         break;
                     case ConsoleKey.UpArrow:
-                        nextTop = --Cursor_Top;
+                        nextTop = --_cursorRight;
                         if (popLoaderMode)
                         {
-                            if (!Valid_Tops.Contains(nextTop))
+                            if (!_validTops.Contains(nextTop))
                             {
-                                nextTop = (Valid_Tops.Last() - loadedPopBounds.Height) + 1;
+                                nextTop = (_validTops.Last() - loadedPopBounds.Height) + 1;
                             }
                         }
 
-                        if (!Valid_Tops.Contains(nextTop))
+                        if (!_validTops.Contains(nextTop))
                         {
-                            nextTop = Valid_Tops.Max();
+                            nextTop = _validTops.Max();
                         }
-                        Cursor_Top = nextTop;
+                        _cursorRight = nextTop;
                         break;
                     case ConsoleKey.DownArrow:
-                        nextTop = ++Cursor_Top;
+                        nextTop = ++_cursorRight;
                         if (popLoaderMode)
                         {
-                            if (nextTop >= (Valid_Tops.Last() - loadedPopBounds.Height) + 2)
+                            if (nextTop >= (_validTops.Last() - loadedPopBounds.Height) + 2)
                             {
-                                nextTop = Valid_Tops.Min();
+                                nextTop = _validTops.Min();
                             }
                         }
 
-                        if (!Valid_Tops.Contains(nextTop))
+                        if (!_validTops.Contains(nextTop))
                         {
-                            nextTop = Valid_Tops.Min();
+                            nextTop = _validTops.Min();
                         }
-                        Cursor_Top = nextTop;
+                        _cursorRight = nextTop;
                         break;
                     case ConsoleKey.Spacebar:
                         if (popLoaderMode)
@@ -537,12 +537,12 @@ namespace Core_Automata
                             int popRows = (loadedPopBounds.Bottom - loadedPopBounds.Top);
                             int popCols = (loadedPopBounds.Right - loadedPopBounds.Left);
 
-                            for (int r = Cursor_Top; r < Cursor_Top + popRows; r++)
+                            for (int r = _cursorRight; r < _cursorRight + popRows; r++)
                             {
-                                for (int c = Cursor_Left; c < Cursor_Left + popCols; c++)
+                                for (int c = _cursorLeft; c < _cursorLeft + popCols; c++)
                                 {
                                     Console.SetCursorPosition(c, r);
-                                    if (smallPopVals[r - Cursor_Top][c - Cursor_Left])
+                                    if (smallPopVals[r - _cursorRight][c - _cursorLeft])
                                     {
                                         if (tempBoard[r - MenuHelper.Space, c - MenuHelper.Space])
                                         {
@@ -562,8 +562,8 @@ namespace Core_Automata
                         }
                         else
                         {
-                            Console.SetCursorPosition(Cursor_Left, Cursor_Top);
-                            bool boardVal = !tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space];
+                            Console.SetCursorPosition(_cursorLeft, _cursorRight);
+                            bool boardVal = !tempBoard[_cursorRight - MenuHelper.Space, _cursorLeft - MenuHelper.Space];
                             if (boardVal)
                             {
                                 Console.ForegroundColor = MenuHelper.BuilderFG;
@@ -574,7 +574,7 @@ namespace Core_Automata
                                 Console.ForegroundColor = MenuHelper.DefaultFG;
                                 Console.Write('*');
                             }
-                            tempBoard[Cursor_Top - MenuHelper.Space, Cursor_Left - MenuHelper.Space] = boardVal;
+                            tempBoard[_cursorRight - MenuHelper.Space, _cursorLeft - MenuHelper.Space] = boardVal;
                         }
                         break;
                     case ConsoleKey.D1:
@@ -639,21 +639,21 @@ namespace Core_Automata
             }
 
             StringBuilder popString = new StringBuilder();
-            for (int r = 0; r < Valid_Tops.Count(); r++)
+            for (int r = 0; r < _validTops.Count(); r++)
             {
-                for (int c = 0; c < Valid_Lefts.Count(); c++)
+                for (int c = 0; c < _validLefts.Count(); c++)
                 {
                     if (tempBoard[r, c])
                         popString.Append('O');
                     else
                         popString.Append('.');
                 }
-                if (r != Valid_Tops.Count() - 1)
+                if (r != _validTops.Count() - 1)
                     popString.AppendLine();
             }
 
-            Console.SetWindowSize(this.Console_Width, this.Console_Height);
-            Console.SetBufferSize(this.Console_Width, this.Console_Height);
+            Console.SetWindowSize(this._consoleWidth, this._consoleHeight);
+            Console.SetBufferSize(this._consoleWidth, this._consoleHeight);
 
             Console.ForegroundColor = MenuHelper.DefaultFG;
             MenuHelper.ClearUnderBoard();
@@ -683,7 +683,7 @@ namespace Core_Automata
             bool loaded = false;
 
             // Checks if the loaded pop is going to fit in the window at the current cursor position
-            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
+            if ((_cursorLeft <= (_validLefts.Last() - colsNum) + 1) && (_cursorRight <= (_validTops.Last() - rowsNum) + 1))
             {
                 popVals = new bool[rowsNum][];
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
@@ -732,7 +732,7 @@ namespace Core_Automata
             bool loaded = false;
             Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
 
-            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
+            if ((_cursorLeft <= (_validLefts.Last() - colsNum) + 1) && (_cursorRight <= (_validTops.Last() - rowsNum) + 1))
             {
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                 {
@@ -779,7 +779,7 @@ namespace Core_Automata
 
             Rect tempBounds = Center(rowsNum, colsNum, midRow, midCol);
 
-            if ((Cursor_Left <= (Valid_Lefts.Last() - colsNum) + 1) && (Cursor_Top <= (Valid_Tops.Last() - rowsNum) + 1))
+            if ((_cursorLeft <= (_validLefts.Last() - colsNum) + 1) && (_cursorRight <= (_validTops.Last() - rowsNum) + 1))
             {
                 for (int r = tempBounds.Top; r < tempBounds.Bottom; r++)
                 {
@@ -835,9 +835,9 @@ namespace Core_Automata
                     int popCol = c - bounds.Left;
 
                     if (popByLine[popRow][popCol] == '.')
-                        this.Board[r, c] = false;
+                        this._board[r, c] = false;
                     else
-                        this.Board[r, c] = true;
+                        this._board[r, c] = true;
                 }
             }
         }
@@ -880,8 +880,8 @@ namespace Core_Automata
 
         private void CalcBuilderBounds()
         {
-            this.Valid_Lefts = Enumerable.Range(MenuHelper.Space, this.Console_Width - 2 * MenuHelper.Space);
-            this.Valid_Tops = Enumerable.Range(MenuHelper.Space, this.Console_Height - 2 * MenuHelper.Space);
+            this._validLefts = Enumerable.Range(MenuHelper.Space, this._consoleWidth - 2 * MenuHelper.Space);
+            this._validTops = Enumerable.Range(MenuHelper.Space, this._consoleHeight - 2 * MenuHelper.Space);
         }
         
         #endregion Builders

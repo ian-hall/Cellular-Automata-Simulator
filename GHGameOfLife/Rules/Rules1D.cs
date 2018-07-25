@@ -10,21 +10,21 @@ namespace Core_Automata.Rules
     /// </summary>
     class Rules1D
     {
-        private static Dictionary<string, bool> RuleDict;
-        private static RuleDelegate RandomRule;
-        private static Random RNG = new Random();
-        private static string CustomRule = String.Empty;
-        public static bool RuleDict_Initialized = false;
+        private static Dictionary<string, bool> _ruleDict;
+        private static RuleDelegate _randomRule;
+        private static Random _rng = new Random();
+        private static string _customRule = String.Empty;
+        public static bool IsRuleDictInitialized = false;
         public delegate bool RuleDelegate(bool[] row, int col);
         public static string UserRule
         {
             get
             {
-                return Rules1D.CustomRule;
+                return Rules1D._customRule;
             }
             set
             {
-                Rules1D.CustomRule = value;
+                Rules1D._customRule = value;
             }
         }
         public static IEnumerable<System.Reflection.MethodInfo> RuleMethods
@@ -101,73 +101,73 @@ namespace Core_Automata.Rules
         {
             var ruleStr = "R2,WBC82271C";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(ruleStr);
+                _ruleDict = BuildRulesDict(ruleStr);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_Glider_P168(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W6C1E53A8";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(ruleStr);
+                _ruleDict = BuildRulesDict(ruleStr);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_Inverted_Gliders(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W360A96F9";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(ruleStr);
+                _ruleDict = BuildRulesDict(ruleStr);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_Fish_Bones(bool[] currentRow, int col)
         {
             var ruleStr = "R2,W5F0C9AD8";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(ruleStr);
+                _ruleDict = BuildRulesDict(ruleStr);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_R3_Glider(bool[] currentRow, int col)
         {
             var ruleStr = "R3,W3B469C0EE4F7FA96F93B4D32B09ED0E0";
             var range = int.Parse(ruleStr.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(ruleStr);
+                _ruleDict = BuildRulesDict(ruleStr);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_Custom(bool[] currentRow, int col)
         {
             //Should maybe sanity check that the CustomRule string is set and, if it isn't, put some default 
             //value in so we dont just error out. Maybe have it change to a new rule and reset the rulesdict
-            var range = int.Parse(Rules1D.CustomRule.Split(',')[0].Substring(1));
-            if (!RuleDict_Initialized)
+            var range = int.Parse(Rules1D._customRule.Split(',')[0].Substring(1));
+            if (!IsRuleDictInitialized)
             {
-                RuleDict = BuildRulesDict(Rules1D.CustomRule);
+                _ruleDict = BuildRulesDict(Rules1D._customRule);
             }
             var neighborhood = GetNeighborsBinary(currentRow, col, range);
-            return RuleDict[neighborhood];
+            return _ruleDict[neighborhood];
         }
         
         public static bool Rule_Random(bool[] currentRow, int col)
@@ -175,13 +175,13 @@ namespace Core_Automata.Rules
             // Need to keep this last so the randomRule thing below doesn't include it.
             if(col%20 == 0)
             {
-                RuleDict_Initialized = false;
+                IsRuleDictInitialized = false;
                 // magic number 2 because Rule_Random is last and we don't want some kind of horrible recursion happening
                 // Also because we don't want to accidentally call Rule_Custom
-                var chosen = RuleMethods.Take(RuleMethods.Count() - 2).ElementAt(RNG.Next(RuleMethods.Count() - 2));
-                RandomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
+                var chosen = RuleMethods.Take(RuleMethods.Count() - 2).ElementAt(_rng.Next(RuleMethods.Count() - 2));
+                _randomRule = (RuleDelegate)Delegate.CreateDelegate(typeof(RuleDelegate), chosen);
             }
-            return RandomRule(currentRow, col);
+            return _randomRule(currentRow, col);
         }
         
         #region Helpers
@@ -274,7 +274,7 @@ namespace Core_Automata.Rules
                 var val = ruleVals[i];
                 rule[currRule] = (val == '1') /*? true : false*/;
             }
-            RuleDict_Initialized = true;
+            IsRuleDictInitialized = true;
             return rule;
         }
         
@@ -312,17 +312,6 @@ namespace Core_Automata.Rules
             }
             return sb.ToString();
         }
-        
-        /// <summary>
-        /// Checks if a given string is hex
-        /// </summary>
-        /// <param name="s">a string</param>
-        /// <returns>if the string is a hex</returns>
-        private static bool IsValidHex(string s)
-        {
-            return s.All(c => "0123456789ABCDEF".Contains(c));
-        }
-        
         #endregion Helpers
     }
 }

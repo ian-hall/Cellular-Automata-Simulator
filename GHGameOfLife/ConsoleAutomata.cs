@@ -12,16 +12,16 @@
 
     abstract class ConsoleAutomata
     {
-        protected bool pr_Initialized;
-        protected int pr_Rows;
-        protected int pr_Cols;
-        protected int Console_Height;
-        protected int Console_Width;
-        protected int Generation;
+        protected bool _prInitialized;
+        protected int _prRows;
+        protected int _prCols;
+        protected int _consoleHeight;
+        protected int _consoleWidth;
+        protected int _generation;
 
-        public bool Is_Initialized { get { return this.pr_Initialized; } protected set { this.pr_Initialized = value; } }
-        public int Rows { get { return this.pr_Rows; } protected set { this.pr_Rows = value; } }
-        public int Cols { get { return this.pr_Cols; } protected set { this.pr_Cols = value; } }
+        public bool Is_Initialized { get { return this._prInitialized; } protected set { this._prInitialized = value; } }
+        public int Rows { get { return this._prRows; } protected set { this._prRows = value; } }
+        public int Cols { get { return this._prCols; } protected set { this._prCols = value; } }
         public bool Is_Wrapping { get; set; }
         public abstract bool[,] BoardCopy { get; }
 
@@ -29,9 +29,9 @@
         {
             this.Rows = rows;
             this.Cols = cols;
-            this.Console_Height = System.Console.WindowHeight;
-            this.Console_Width = System.Console.WindowWidth;
-            this.Generation = 1;
+            this._consoleHeight = System.Console.WindowHeight;
+            this._consoleWidth = System.Console.WindowWidth;
+            this._generation = 1;
             this.Is_Wrapping = true;
             this.Is_Initialized = false;
         }
